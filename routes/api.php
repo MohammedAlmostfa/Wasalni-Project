@@ -89,7 +89,7 @@ Route::middleware('auth:api')->group(function () {
 
     // API resource routes for bookings (CRUD operations)
     Route::apiResource('booking', BookingController::class); // Handles CRUD for bookings
-    //Route::get
+    Route::get('')
     // Accept a booking
     Route::post('/booking/{booking}/accept', [BookingController::class, 'accept']); // Accepts a booking request
 
