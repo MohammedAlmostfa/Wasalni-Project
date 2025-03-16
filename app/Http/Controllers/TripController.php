@@ -46,9 +46,55 @@ class TripController extends Controller
 
         // Return a paginated response if the status is 200, otherwise return an error response
         return $result['status'] === 200
-           ? $this->paginated($result['data'], TripResource::class, $result['message'], $result['status'])
-           : self::error(null, $result['message'], $result['status']);
+            ? $this->paginated($result['data'], TripResource::class, $result['message'], $result['status'])
+            : self::error(null, $result['message'], $result['status']);
     }
+
+    /**
+     * Display the authenticated user's trips.
+     *
+     * This method retrieves trips associated with the authenticated user using the trip service and returns a paginated response.
+     *
+     * @param FilteringTripsData $request The request containing filtering data.
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function showhisTrips(FilteringTripsData $request)
+    {
+        // Validate the request data
+        $validationData = $request->validated();
+
+        // Call the trip service to retrieve the authenticated user's trips
+        $result = $this->tripService->showhisTrips($validationData);
+
+        // Return a paginated response if the status is 200, otherwise return an error response
+        return $result['status'] === 200
+            ? $this->paginated($result['data'], TripResource::class, $result['message'], $result['status'])
+            : self::error(null, $result['message'], $result['status']);
+    }
+
+    /**
+     * Display trips for a specific user.
+     *
+     * This method retrieves trips associated with a specific user using the trip service and returns a paginated response.
+     *
+     * @param FilteringTripsData $request The request containing filtering data.
+     * @param int $id The ID of the user whose trips are to be retrieved.
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function showuserTrips(FilteringTripsData $request, $id)
+    {
+        // Validate the request data
+        $validationData = $request->validated();
+
+        // Call the trip service to retrieve trips for the specified user
+        $result = $this->tripService->showuserTrips($validationData, $id);
+
+        // Return a paginated response if the status is 200, otherwise return an error response
+        return $result['status'] === 200
+            ? $this->paginated($result['data'], TripResource::class, $result['message'], $result['status'])
+            : self::error(null, $result['message'], $result['status']);
+    }
+
 
     /**
      * Store a newly created trip in storage.

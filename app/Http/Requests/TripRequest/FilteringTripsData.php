@@ -28,7 +28,7 @@ class FilteringTripsData extends FormRequest
             'trip_start' => 'nullable|date_format:Y-m-d H:i:s|after:now',
             'from' => 'nullable|exists:cities,id',
             'to' => 'nullable|exists:cities,id|different:from',
-        'status' => 'nullable|string',
+            'status' => 'nullable|string',
             'seat_price' => 'nullable|integer|min:0',
             'available_seats' => 'nullable|integer|min:0',
 

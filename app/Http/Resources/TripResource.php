@@ -19,10 +19,13 @@ class TripResource extends JsonResource
             'id' => $this->id,
             'description' => $this->description,
             'status' => $this->status,
-            'name' => $this->first_name ." ". $this->last_name ,
+            'name' => $this->first_name ." ". $this->last_name ??null,
             'from_city' => $this->from_city,
             'to_city' => $this->to_city,
-              'created_at' => $this->created_at,
+            'created_at' => $this->created_at,
+            'trip_start' => $this->created_at,
+             'seat_price' => $this->created_at,
+              'available_seats' => $this->created_at,
         ];
     }
 }

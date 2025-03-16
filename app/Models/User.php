@@ -92,9 +92,9 @@ class User extends Authenticatable implements JWTSubject
     }
     // Other methods and properties...
 
-    public function trip()
+    public function trips()
     {
-        return $this->hasOne(Trip::class) ;
+        return $this->hasMany(Trip::class) ;
     }
     /**
      * Get the favorite people added by this user.
@@ -110,5 +110,11 @@ class User extends Authenticatable implements JWTSubject
     public function favoritedBy()
     {
         return $this->hasMany(FavoritePerson::class, 'favorite_user_id');
+    }
+
+    public function booking()
+    {
+
+        return $this->hasOne(User::class);
     }
 }

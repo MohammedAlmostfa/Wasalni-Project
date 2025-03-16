@@ -8,13 +8,12 @@ class FavoriteUserResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'id' => $this->id,
-            'favorited_user' => [
-                'id' => $this->favoriteUser->id,
-                'name' => $this->favoriteUser->profile->first_name,
-                'email' => $this->favoriteUser->email,
-            ],
-            'added_on' => $this->created_at->format('Y-m-d'),
-        ];
+                 'id' => $this->id,
+
+                     'favorite_user_id' => $this->favoriteUser->id,
+                         'name' => $this->favoriteUser->profile->first_name." ".  $this->favoriteUser->profile->last_name,
+
+                      'add on' => $this->created_at->format('Y-m-d H:i:s'),
+             ];
     }
 }

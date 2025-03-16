@@ -29,6 +29,16 @@ class BookingController extends Controller
     {
 
     }
+    public function showbookingsbytrip($id)
+    {
+
+        $result = $this->BookingService->showbookingsbytrip($id);
+
+        // Return a success or error response based on the result
+        return $result['status'] === 200
+            ? self::success($result['data'], $result['message'], $result['status'])
+            : self::error(null, $result['message'], $result['status']);
+    }
 
     /**
      * Store a newly created booking in storage.

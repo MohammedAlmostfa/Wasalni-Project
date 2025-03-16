@@ -23,7 +23,7 @@ class StorFavoritePersonRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'user_id' => 'required|exists:users,id|unique:favorite_people,favorite_user_id,NULL,id,user_id,' . auth()->id(),
+            'favorite_user_id' => 'required|exists:users,id|unique:favorite_people,favorite_user_id,NULL,id,user_id,' . auth()->id(),
         ];
 
     }

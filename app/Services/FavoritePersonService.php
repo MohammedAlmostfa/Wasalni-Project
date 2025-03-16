@@ -18,7 +18,10 @@ class FavoritePersonService
     {
         try {
             // Get the authenticated user's favorite persons with pagination
-            $favorite_users = Auth::user()->favoritePeople()->paginate(10);
+            $favorite_users = Auth::user()
+                ->favoritePeople()
+                ->with('favoriteUser.profile')
+                ->paginate(10);
 
             return [
                 'message' => 'All favorite users retrieved successfully.',
@@ -49,7 +52,7 @@ class FavoritePersonService
     {
         try {
             // Check if the user is trying to add themselves
-            if (Auth::user()->id == $data['user_id']) {
+            if (Auth::user()->id == $data['favorite_user_id']) {
                 return [
                     'status' => 400,
                     'message' => [
@@ -57,28 +60,15 @@ class FavoritePersonService
                     ],
                 ];
             }
-
-            // Check if the user is already in the favorite list
-            if (FavoritePerson::where('user_id', Auth::user()->id)
-                ->where('favorite_user_id', $data['user_id'])
-                ->exists()) {
-                return [
-                    'status' => 400,
-                    'message' => [
-                        'errorDetails' => ['User is already in your favorite list.'],
-                    ],
-                ];
-            }
-
             // Add to favorite list
             $favorite = FavoritePerson::create([
                 'user_id' => Auth::user()->id,
-                'favorite_user_id' => $data['user_id'],
+                'favorite_user_id' => $data['favorite_user_id'],
             ]);
 
             return [
-                'message' => 'User added to your favorite list.',
-                'data' => $favorite,
+                'message' => 'User added to your favorite users.',
+                'data' => null,
                 'status' => 201,
             ];
         } catch (Exception $e) {

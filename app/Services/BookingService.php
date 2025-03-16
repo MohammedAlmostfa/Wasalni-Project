@@ -15,14 +15,25 @@ class BookingService
      *
      * @return array Response containing status, message, and data
      */
-    public function showhisbookings()
+    public function showbookingsbytrip($id)
     {
         try {
-            $bookings = Booking::all();
+            $trip = Trip::with(['bookings.user.profile'])->find($id);
+
+
+            if (!$trip) {
+                return [
+                    'status' => 404,
+                    'message' => [
+                        'errorDetails' => ['Trip not found.'],
+                    ],
+                ];
+            }
+
 
             return [
                 'message' => 'All bookings retrieved successfully',
-                'data' => $bookings,
+                'data' => $trip,
                 'status' => 200,
             ];
         } catch (Exception $e) {

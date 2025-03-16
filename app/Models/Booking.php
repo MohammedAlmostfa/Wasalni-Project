@@ -24,5 +24,10 @@ class Booking extends Model
     {
         return $this->hasOne(Rating::class);
     }
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+
+    }
 
 }

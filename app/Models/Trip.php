@@ -55,7 +55,7 @@ class Trip extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function booking()
+    public function bookings()
     {
         return $this->hasMany(Booking::class);
     }

@@ -17,11 +17,13 @@ class UserSeeder extends Seeder
         $faker = Faker::create();
 
         for ($i = 0; $i < 10; $i++) {
-            User::create([
+            $user= User::create([
 
-                'email' => $faker->unique()->email(),
-                'password' => bcrypt('P@ssw0rd123'),
-            ]);
+                 'email' => $faker->unique()->email(),
+                 'password' => bcrypt('P@ssw0rd123'),
+
+             ]);
+            $user->assignRole($faker->randomElement(['Admin', 'User','PrivateUser']));
         }
     }
 }
