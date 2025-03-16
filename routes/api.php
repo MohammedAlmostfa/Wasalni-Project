@@ -48,7 +48,7 @@ Route::post('/resendCode', [AuthController::class, 'resendCode']); // Resends th
 
 // Change password routes
 Route::post('/changePassword', [ForgetPasswordController::class, 'changePassword']); // Handles password change
-Route::('/checkEmail', [ForgetPasswordController::class, 'checkEmail']); // Checks if the email exists for password reset
+Route::post('/checkEmail', [ForgetPasswordController::class, 'checkEmail']); // Checks if the email exists for password reset
 Route::post('/checkCode', [ForgetPasswordController::class, 'checkCode']); // Verifies a password reset code
 
 // Protected routes (require authentication)

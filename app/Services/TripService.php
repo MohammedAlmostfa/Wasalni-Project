@@ -73,6 +73,9 @@ class TripService
                     'trips.description',
                     'trips.status',
                     'trips.created_at',
+                    'trips.trip_start',
+                    'trips.seat_price',
+                    'trips.available_seats',
                     'city_from.city_name as from_city',
                     'city_to.city_name as to_city'
                 )
@@ -131,6 +134,9 @@ class TripService
                     'trips.description',
                     'trips.status',
                     'trips.created_at',
+                    'trips.trip_start',
+                    'trips.seat_price',
+                    'trips.available_seats',
                     'city_from.city_name as from_city',
                     'city_to.city_name as to_city'
                 )
