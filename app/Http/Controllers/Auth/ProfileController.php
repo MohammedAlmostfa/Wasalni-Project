@@ -61,6 +61,7 @@ class ProfileController extends Controller
             : self::error(null, $result['message'], $result['status']);
     }
 
+
     /**
      * Get the authenticated user's data.
      *

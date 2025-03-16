@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\UserService;
+use App\Models\User;
 use Illuminate\Http\Request;
+use App\Services\UserService;
 
 class UserController extends Controller
 {
@@ -46,7 +47,30 @@ class UserController extends Controller
             : $this->error(null, $result['message'], $result['status']);
     }
 
+    /**
+     * Retrieve profile details of a specific user.
+     *
+     * This method calls the `showUser` method of the `UserService` to fetch the profile details of a user, including:
+     * - First name
+     * - Last name
+     * - Gender
+     * - Phone number
+     * - Address
+     * - Country name
+     *
+     * @param User $user The user whose profile details are to be retrieved.
+     * @return \Illuminate\Http\JsonResponse
+     *   - If successful: Returns a JSON response with the profile details and a success message.
+     *   - If an error occurs: Returns a JSON response with an error message and status code.
+     */
+    public function show(User $user)
+    {
+        // Call the UserService to fetch user profile details
+        $result = $this->userService->showUser($user);
 
-
-
+        // Return a JSON response based on the result status
+        return $result['status'] === 200
+            ? $this->success($result['data'], $result['message'], $result['status'])
+            : $this->error(null, $result['message'], $result['status']);
+    }
 }

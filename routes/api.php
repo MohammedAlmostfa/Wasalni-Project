@@ -57,7 +57,7 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/me', [ProfileController::class, 'getme']); // Retrieves details of the logged-in user
 
     // API resource routes for users (CRUD operations)
-    Route::apiResource('users', UserController::class); // Handles CRUD for users
+    Route::apiResource('user', UserController::class); // Handles CRUD for users
 
 
     // API resource routes for favorite persons
@@ -89,7 +89,7 @@ Route::middleware('auth:api')->group(function () {
 
     // API resource routes for bookings (CRUD operations)
     Route::apiResource('booking', BookingController::class); // Handles CRUD for bookings
-    /// Route::get('')
+    Route::get('trip/bokking/{id}', [BookingController::class,'showbookingsbytrip']);
     // Accept a booking
     Route::post('/booking/{booking}/accept', [BookingController::class, 'accept']); // Accepts a booking request
 
