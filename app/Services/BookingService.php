@@ -11,40 +11,94 @@ use Illuminate\Support\Facades\Auth;
 class BookingService
 {
     /**
-     * Show all bookings.
+     * Retrieve all bookings for the authenticated user.
      *
+     * @return array Response containing status, message, and data
+     */
+    public function showbookingsbybooking()
+    {
+        try {
+            // Retrieve the authenticated user
+            $user = auth()->user();
+
+            // Retrieve the user's bookings with pagination
+            $bookings = $user->bookings()->paginate(10);
+            if (!$bookings) {
+                return [
+                    'status' => 404,
+                    'message' => [
+                        'errorDetails' => [__('booking.booking_not_found')],
+                    ],
+                ];
+            }
+
+            // Return success response with bookings data
+            return [
+                'message' => __('booking.mybookings_retrieved'),
+                'data' => $bookings,
+                'status' => 200,
+            ];
+        } catch (Exception $e) {
+            // Log the error
+            Log::error('Error in show my booking: ' . $e->getMessage());
+
+            // Return error response
+            return [
+                'status' => 500,
+                'message' => [
+                    'errorDetails' => [__('booking.general_error')],
+                ],
+            ];
+        }
+    }
+
+    /**
+     * Retrieve all bookings for a specific trip.
+     *
+     * @param int $id The ID of the trip
      * @return array Response containing status, message, and data
      */
     public function showbookingsbytrip($id)
     {
         try {
-            $trip = Trip::with(['bookings.user.profile'])->find($id);
+            // Retrieve the trip by ID
+            $trip = Trip::find($id);
 
-
+            // Check if the trip exists
             if (!$trip) {
                 return [
                     'status' => 404,
                     'message' => [
-                        'errorDetails' => ['Trip not found.'],
+                        'errorDetails' => [__('booking.trip_not_found')],
                     ],
                 ];
             }
 
+            // Retrieve the trip's bookings with related user and profile data
+            $bookings = $trip->bookings()->with([
+                'user' => function ($query) {
+                    $query->select('id'); // Select only the user ID
+                },
+                'user.profile' => function ($query) {
+                    $query->select('user_id', 'first_name', 'last_name');
+                }
+            ])->paginate(10);
 
+            // Return success response with bookings data
             return [
-                'message' => 'All bookings retrieved successfully',
-                'data' => $trip,
+                'message' => __('booking.bookings_retrieved'),
+                'data' => $bookings,
                 'status' => 200,
             ];
         } catch (Exception $e) {
-            // Log the error if an exception occurs
-            Log::error('Error in showhisbookings: ' . $e->getMessage());
+            // Log the error
+            Log::error('Error in show booking by trip: ' . $e->getMessage());
 
-            // Return an error message and status
+            // Return error response
             return [
                 'status' => 500,
                 'message' => [
-                    'errorDetails' => ['Failed to retrieve bookings.'],
+                    'errorDetails' => [__('booking.general_error')],
                 ],
             ];
         }
@@ -65,7 +119,7 @@ class BookingService
                 return [
                     'status' => 404,
                     'message' => [
-                        'errorDetails' => ['Trip not found.'],
+                        'errorDetails' => [__('booking.trip_not_found')],
                     ],
                 ];
             }
@@ -79,19 +133,19 @@ class BookingService
 
             // Return success response
             return [
-                'message' => 'Booking created successfully',
+                'message' => __('booking.booking_created'),
                 'status' => 200,
                 'data' => $booking,
             ];
         } catch (Exception $e) {
-            // Log the error if an exception occurs
+            // Log the error
             Log::error('Error in createBooking: ' . $e->getMessage());
 
-            // Return an error message and status
+            // Return error response
             return [
                 'status' => 500,
                 'message' => [
-                    'errorDetails' => ['Failed to create booking.'],
+                    'errorDetails' => [__('booking.general_error')],
                 ],
             ];
         }
@@ -107,7 +161,7 @@ class BookingService
     public function updateBooking($data, Booking $booking)
     {
         try {
-            // Fill the booking with new data
+            // Update the booking with new data
             $booking->fill([
                 'trip_id' => $data['trip_id'] ?? $booking->trip_id,
                 'seats_number' => $data['seats_number'] ?? $booking->seats_number,
@@ -118,19 +172,19 @@ class BookingService
 
             // Return success response
             return [
-                'message' => 'Booking updated successfully',
+                'message' => __('booking.booking_updated'),
                 'status' => 200,
                 'data' => $booking,
             ];
         } catch (Exception $e) {
-            // Log the error if an exception occurs
+            // Log the error
             Log::error('Error in updateBooking: ' . $e->getMessage());
 
-            // Return an error message and status
+            // Return error response
             return [
                 'status' => 500,
                 'message' => [
-                    'errorDetails' => ['Failed to update booking.'],
+                    'errorDetails' => [__('booking.general_error')],
                 ],
             ];
         }
@@ -150,18 +204,18 @@ class BookingService
 
             // Return success response
             return [
-                'message' => 'Booking deleted successfully',
+                'message' => __('booking.booking_deleted'),
                 'status' => 200,
             ];
         } catch (Exception $e) {
-            // Log the error if an exception occurs
+            // Log the error
             Log::error('Error in deleteBooking: ' . $e->getMessage());
 
-            // Return an error message and status
+            // Return error response
             return [
                 'status' => 500,
                 'message' => [
-                    'errorDetails' => ['Failed to delete booking.'],
+                    'errorDetails' => [__('booking.general_error')],
                 ],
             ];
         }
@@ -181,7 +235,7 @@ class BookingService
                 return [
                     'status' => 400,
                     'message' => [
-                        'errorDetails' => ['Booking is already accepted.'],
+                        'errorDetails' => [__('booking.booking_already_accepted')],
                     ],
                 ];
             }
@@ -193,19 +247,19 @@ class BookingService
 
             // Return success response
             return [
-                'message' => 'Booking accepted successfully',
+                'message' => __('booking.booking_accepted'),
                 'status' => 200,
                 'data' => $booking,
             ];
         } catch (Exception $e) {
-            // Log the error if an exception occurs
+            // Log the error
             Log::error('Error in acceptedBooking: ' . $e->getMessage());
 
-            // Return an error message and status
+            // Return error response
             return [
                 'status' => 500,
                 'message' => [
-                    'errorDetails' => ['Failed to accept booking.'],
+                    'errorDetails' => [__('booking.general_error')],
                 ],
             ];
         }
@@ -225,7 +279,7 @@ class BookingService
                 return [
                     'status' => 400,
                     'message' => [
-                        'errorDetails' => ['Booking is already rejected.'],
+                        'errorDetails' => [__('booking.booking_already_rejected')],
                     ],
                 ];
             }
@@ -237,19 +291,19 @@ class BookingService
 
             // Return success response
             return [
-                'message' => 'Booking rejected successfully',
+                'message' => __('booking.booking_rejected'),
                 'status' => 200,
                 'data' => $booking,
             ];
         } catch (Exception $e) {
-            // Log the error if an exception occurs
+            // Log the error
             Log::error('Error in rejectBooking: ' . $e->getMessage());
 
-            // Return an error message and status
+            // Return error response
             return [
                 'status' => 500,
                 'message' => [
-                    'errorDetails' => ['Failed to reject booking.'],
+                    'errorDetails' => [__('booking.general_error')],
                 ],
             ];
         }

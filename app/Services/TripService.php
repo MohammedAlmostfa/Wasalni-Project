@@ -11,6 +11,12 @@ use Illuminate\Support\Facades\Auth;
 
 class TripService
 {
+    /**
+     * Retrieve a paginated list of trips with filtering options.
+     *
+     * @param array $filteringData An array of filtering criteria (e.g., trip_start, from, to, status, etc.).
+     * @return array Contains the status, message, and paginated trip data.
+     */
     public function showTrips($filteringData)
     {
         try {
@@ -35,12 +41,18 @@ class TripService
             return [
                 'status' => 500,
                 'message' => [
-                    'errorDetails' => [__('trip.show_trips_error')],
+                   'errorDetails' => [__('trip.general_error')],
                 ],
             ];
         }
     }
 
+    /**
+     * Retrieve a paginated list of trips for the authenticated user with filtering options.
+     *
+     * @param array $filteringData An array of filtering criteria.
+     * @return array Contains the status, message, and paginated trip data.
+     */
     public function showhisTrips($filteringData)
     {
         try {
@@ -74,12 +86,19 @@ class TripService
             return [
                 'status' => 500,
                 'message' => [
-                   'errorDetails' => [__('trip.general_error')],
+                    'errorDetails' => [__('trip.general_error')],
                 ],
             ];
         }
     }
 
+    /**
+     * Retrieve a paginated list of trips for a specific user with filtering options.
+     *
+     * @param array $filteringData An array of filtering criteria.
+     * @param int $id The ID of the user whose trips are being retrieved.
+     * @return array Contains the status, message, and paginated trip data.
+     */
     public function showuserTrips($filteringData, $id)
     {
         try {
@@ -122,12 +141,18 @@ class TripService
             return [
                 'status' => 500,
                 'message' => [
-                      'errorDetails' => [__('trip.general_error')],
+                    'errorDetails' => [__('trip.general_error')],
                 ],
             ];
         }
     }
 
+    /**
+     * Create a new trip.
+     *
+     * @param array $data An array of trip data (e.g., description, trip_start, from, to, etc.).
+     * @return array Contains the status, message, and created trip data.
+     */
     public function creattrip($data)
     {
         try {
@@ -161,12 +186,19 @@ class TripService
             return [
                 'status' => 500,
                 'message' => [
-                      'errorDetails' => [__('trip.general_error')],
+                    'errorDetails' => [__('trip.general_error')],
                 ],
             ];
         }
     }
 
+    /**
+     * Update an existing trip.
+     *
+     * @param array $data An array of updated trip data.
+     * @param Trip $trip The trip model to be updated.
+     * @return array Contains the status, message, and updated trip data.
+     */
     public function updatetrip($data, Trip $trip)
     {
         try {
@@ -199,12 +231,18 @@ class TripService
             return [
                 'status' => 500,
                 'message' => [
-                     'errorDetails' => [__('trip.general_error')],
+                    'errorDetails' => [__('trip.general_error')],
                 ],
             ];
         }
     }
 
+    /**
+     * Delete a trip.
+     *
+     * @param Trip $trip The trip model to be deleted.
+     * @return array Contains the status and message.
+     */
     public function delettrip(Trip $trip)
     {
         try {
@@ -222,12 +260,18 @@ class TripService
             return [
                 'status' => 500,
                 'message' => [
-                      'errorDetails' => [__('trip.general_error')],
+                    'errorDetails' => [__('trip.general_error')],
                 ],
             ];
         }
     }
 
+    /**
+     * Mark a trip as "Ending".
+     *
+     * @param int $id The ID of the trip to be marked as ending.
+     * @return array Contains the status and message.
+     */
     public function endingTrip($id)
     {
         try {
@@ -241,6 +285,7 @@ class TripService
                     'status' => 404,
                 ];
             }
+
             // Update the trip status to "Ending"
             $trip->update([
                 'status' => 'Ending',
@@ -258,7 +303,7 @@ class TripService
             return [
                 'status' => 500,
                 'message' => [
-                  'errorDetails' => [__('trip.general_error')],
+                    'errorDetails' => [__('trip.general_error')],
                 ],
             ];
         }

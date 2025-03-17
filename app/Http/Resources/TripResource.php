@@ -24,8 +24,8 @@ class TripResource extends JsonResource
             'to_city' => $this->to_city,
             'created_at' => $this->created_at,
             'trip_start' => $this->trip_start,
-             'seat_price' => $this->seat_price,
-              'available_seats' => $this->available_seats,
+            'seat_price' => $this->seat_price,
+             'available_seats' => $this->available_seats,
         ];
     }
 }

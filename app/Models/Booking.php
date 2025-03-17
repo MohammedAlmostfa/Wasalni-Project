@@ -1,34 +1,41 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Booking extends Model
 {
     use HasFactory;
-    protected $fillable=[
+
+    protected $fillable = [
         "trip_id",
         "status",
         "seats_number",
         "user_id",
-
     ];
 
+    /**
+     * Define the relationship with the Trip model.
+     */
     public function trip()
     {
         return $this->belongsTo(Trip::class);
     }
+
+    /**
+     * Define the relationship with the Rating model.
+     */
     public function rating()
     {
         return $this->hasOne(Rating::class);
     }
+
+    /**
+     * Define the relationship with the User model.
+     */
     public function user()
     {
         return $this->belongsTo(User::class);
-
     }
-
 }

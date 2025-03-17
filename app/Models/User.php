@@ -1,12 +1,9 @@
 <?php
-
 namespace App\Models;
 
-use App\Models\Profile;
 use Spatie\Permission\Traits\HasRoles;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
@@ -14,51 +11,26 @@ class User extends Authenticatable implements JWTSubject
 {
     use HasFactory, Notifiable, HasRoles;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
     protected $fillable = [
         'email',
         'password',
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
 
-    /**
-     * Get the identifier that will be stored in the subject claim of the JWT.
-     *
-     * @return mixed
-     */
     public function getJWTIdentifier()
     {
         return $this->getKey();
     }
 
-    /**
-     * Return a key value array, containing any custom claims to be added to the JWT.
-     *
-     * @return array
-     */
     public function getJWTCustomClaims()
     {
         return [];
@@ -66,8 +38,6 @@ class User extends Authenticatable implements JWTSubject
 
     /**
      * Define a one-to-one relationship with the Profile model.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
     public function profile()
     {
@@ -75,9 +45,7 @@ class User extends Authenticatable implements JWTSubject
     }
 
     /**
-     * Define a has-many-through relationship to access cities through the user's profile and country.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasManyThrough
+     * Define a has-many-through relationship to access cities through the profile and country.
      */
     public function cities()
     {
@@ -90,12 +58,15 @@ class User extends Authenticatable implements JWTSubject
             'country_id'  // Local key on profiles table
         );
     }
-    // Other methods and properties...
 
+    /**
+     * Define a has-many relationship with the Trip model.
+     */
     public function trips()
     {
-        return $this->hasMany(Trip::class) ;
+        return $this->hasMany(Trip::class);
     }
+
     /**
      * Get the favorite people added by this user.
      */
@@ -112,9 +83,11 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasMany(FavoritePerson::class, 'favorite_user_id');
     }
 
-    public function booking()
+    /**
+     * Define a has-many relationship with the Booking model.
+     */
+    public function bookings()
     {
-
-        return $this->hasOne(User::class);
+        return $this->hasMany(Booking::class);
     }
 }

@@ -26,7 +26,7 @@ return [
     'token_refresh_error' => "حدث خطأ أثناء تحديث الرمز.",
     'google_auth_failed' => "فشل في جلب معلومات المستخدم من Google.",
     'google_login_success' => "تم تسجيل الدخول بنجاح.",
-    'general_error' => "حدث خطأ غير متوقع.",
+      'general_error' => 'حدث خطأ عام. يرجى المحاولة مرة أخرى لاحقًا.',
     'invalid_verification_code' => "رمز التحقق غير صالح.",
     'email_verified_and_registered' => "تم التحقق من البريد الإلكتروني وتسجيل المستخدم بنجاح.",
     'not_registered_yet' => "لم تقم بالتسجيل بعد.",
