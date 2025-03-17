@@ -11,17 +11,6 @@ use Illuminate\Support\Facades\Auth;
 
 class TripService
 {
-    /**
-     * Retrieve all trips with optional filtering.
-     *
-     * This method retrieves all trips, optionally filtered by the provided data, and returns a paginated response.
-     *
-     * @param array $filteringData The filtering criteria.
-     * @return array Returns an array containing the result of the operation.
-     *               - 'message': A message describing the outcome.
-     *               - 'data': The paginated list of trips.
-     *               - 'status': The HTTP status code (200 for success, 500 for error).
-     */
     public function showTrips($filteringData)
     {
         try {
@@ -35,7 +24,7 @@ class TripService
                 ->paginate(10);
 
             return [
-                'message' => 'All trips retrieved successfully',
+                'message' => __('trip.show_trips_success'),
                 'data' => $trips,
                 'status' => 200,
             ];
@@ -46,23 +35,12 @@ class TripService
             return [
                 'status' => 500,
                 'message' => [
-                    'errorDetails' => ['An error occurred while retrieving trips.'],
+                    'errorDetails' => [__('trip.show_trips_error')],
                 ],
             ];
         }
     }
 
-    /**
-     * Retrieve trips for the authenticated user with optional filtering.
-     *
-     * This method retrieves trips associated with the authenticated user, optionally filtered by the provided data, and returns a paginated response.
-     *
-     * @param array $filteringData The filtering criteria.
-     * @return array Returns an array containing the result of the operation.
-     *               - 'message': A message describing the outcome.
-     *               - 'data': The paginated list of trips.
-     *               - 'status': The HTTP status code (200 for success, 500 for error).
-     */
     public function showhisTrips($filteringData)
     {
         try {
@@ -79,14 +57,13 @@ class TripService
                     'city_from.city_name as from_city',
                     'city_to.city_name as to_city'
                 )
-
                 ->leftJoin('cities AS city_from', 'trips.from', '=', 'city_from.id')
                 ->leftJoin('cities AS city_to', 'trips.to', '=', 'city_to.id')
                 ->filterby($filteringData)
                 ->paginate(10);
 
             return [
-                'message' => 'Your trips retrieved successfully',
+                'message' => __('trip.show_your_trips_success'),
                 'data' => $trips,
                 'status' => 200,
             ];
@@ -97,24 +74,12 @@ class TripService
             return [
                 'status' => 500,
                 'message' => [
-                    'errorDetails' => ['An error occurred while retrieving your trips.'],
+                   'errorDetails' => [__('trip.general_error')],
                 ],
             ];
         }
     }
 
-    /**
-     * Retrieve trips for a specific user with optional filtering.
-     *
-     * This method retrieves trips associated with a specific user, optionally filtered by the provided data, and returns a paginated response.
-     *
-     * @param array $filteringData The filtering criteria.
-     * @param int $id The ID of the user whose trips are to be retrieved.
-     * @return array Returns an array containing the result of the operation.
-     *               - 'message': A message describing the outcome.
-     *               - 'data': The paginated list of trips.
-     *               - 'status': The HTTP status code (200 for success, 500 for error).
-     */
     public function showuserTrips($filteringData, $id)
     {
         try {
@@ -123,7 +88,7 @@ class TripService
                 return [
                     'status' => 404,
                     'message' => [
-                        'errorDetails' => ['user not found.'],
+                        'errorDetails' => [__('auth.not_found')],
                     ],
                 ];
             }
@@ -146,7 +111,7 @@ class TripService
                 ->paginate(10);
 
             return [
-                'message' => 'User trips retrieved successfully',
+                'message' => __('trip.show_user_trips_success'),
                 'data' => $trips,
                 'status' => 200,
             ];
@@ -157,24 +122,12 @@ class TripService
             return [
                 'status' => 500,
                 'message' => [
-                    'errorDetails' => ['An error occurred while retrieving user trips.'],
+                      'errorDetails' => [__('trip.general_error')],
                 ],
             ];
         }
     }
 
-
-    /**
-     * Create a new trip.
-     *
-     * This method creates a new trip using the provided data.
-     *
-     * @param array $data The trip data.
-     * @return array Returns an array containing the result of the operation.
-     *               - 'message': A message describing the outcome.
-     *               - 'data': The created trip.
-     *               - 'status': The HTTP status code (200 for success, 500 for error).
-     */
     public function creattrip($data)
     {
         try {
@@ -197,7 +150,7 @@ class TripService
             $trip->to = $toCity->city_name;
 
             return [
-                'message' => 'Trip created successfully',
+                'message' => __('trip.create_success'),
                 'status' => 200,
                 'data' => $trip,
             ];
@@ -208,25 +161,12 @@ class TripService
             return [
                 'status' => 500,
                 'message' => [
-                    'errorDetails' => ['An error occurred while creating the trip.'],
+                      'errorDetails' => [__('trip.general_error')],
                 ],
             ];
         }
     }
 
-    /**
-     * Update the trip details.
-     *
-     * This method updates the trip details based on the provided data.
-     * If a specific field is not provided in the data, the existing value of the trip is retained.
-     *
-     * @param array $data The data to update the trip with.
-     * @param Trip $trip The trip model to be updated.
-     * @return array Returns an array containing the result of the operation.
-     *               - 'message': A message describing the outcome.
-     *               - 'data': The updated trip data or null if an error occurred.
-     *               - 'status': The HTTP status code (200 for success, 500 for error).
-     */
     public function updatetrip($data, Trip $trip)
     {
         try {
@@ -248,7 +188,7 @@ class TripService
             $trip->to = $toCity->city_name;
 
             return [
-                'message' => 'Trip updated successfully',
+                'message' => __('trip.update_success'),
                 'data' => $trip,
                 'status' => 200,
             ];
@@ -259,24 +199,12 @@ class TripService
             return [
                 'status' => 500,
                 'message' => [
-                    'errorDetails' => ['An error occurred while updating the trip.'],
+                     'errorDetails' => [__('trip.general_error')],
                 ],
             ];
         }
     }
 
-    /**
-     * Delete a trip.
-     *
-     * This method deletes the specified trip. If the deletion is successful,
-     * it returns a success response. If an exception occurs, it logs the error
-     * and returns an error response.
-     *
-     * @param Trip $trip The trip to be deleted.
-     * @return array Returns an array containing the result of the operation.
-     *               - 'message': A message describing the outcome.
-     *               - 'status': The HTTP status code (200 for success, 500 for error).
-     */
     public function delettrip(Trip $trip)
     {
         try {
@@ -284,7 +212,7 @@ class TripService
             $trip->delete();
 
             return [
-                'message' => 'Trip deleted successfully',
+                'message' => __('trip.delete_success'),
                 'status' => 200,
             ];
         } catch (Exception $e) {
@@ -294,42 +222,43 @@ class TripService
             return [
                 'status' => 500,
                 'message' => [
-                    'errorDetails' => ['An error occurred while deleting the trip.'],
+                      'errorDetails' => [__('trip.general_error')],
                 ],
             ];
         }
     }
 
-    /**
-     * End a trip.
-     *
-     * This method marks a trip as ended.
-     *
-     * @param Trip $trip The trip to be ended.
-     * @return array Returns an array containing the result of the operation.
-     *               - 'message': A message describing the outcome.
-     *               - 'status': The HTTP status code (200 for success, 500 for error).
-     */
-    public function endingTrip(Trip $trip)
+    public function endingTrip($id)
     {
         try {
-            // Mark the trip as ended
+            // Find the trip by ID
+            $trip = Trip::find($id);
+
+            // Check if the trip exists
+            if (!$trip) {
+                return [
+                    'message' => __('trip.not_found'),
+                    'status' => 404,
+                ];
+            }
+            // Update the trip status to "Ending"
             $trip->update([
-                'status' => 'ended',
+                'status' => 'Ending',
             ]);
 
             return [
-                'message' => 'Trip ended successfully',
+                'message' => __('trip.end_success'),
                 'status' => 200,
             ];
         } catch (Exception $e) {
-            // Log the error if an exception occurs
+            // Log the exception for debugging
             Log::error('Error in endingTrip: ' . $e->getMessage());
 
+            // Return a generic error response
             return [
                 'status' => 500,
                 'message' => [
-                    'errorDetails' => ['An error occurred while ending the trip.'],
+                  'errorDetails' => [__('trip.general_error')],
                 ],
             ];
         }

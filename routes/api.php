@@ -59,7 +59,6 @@ Route::middleware('auth:api')->group(function () {
     // API resource routes for users (CRUD operations)
     Route::apiResource('user', UserController::class); // Handles CRUD for users
 
-
     // API resource routes for favorite persons
     Route::apiResource("favorite", FavoritePersonController::class); // Handles CRUD operations for favorite persons
 
@@ -77,11 +76,11 @@ Route::middleware('auth:api')->group(function () {
         'update' => 'trip.update', // Update a trip
         'destroy' => 'trip.delete', // Delete a trip
     ]);
+    Route::post('/trip/ending/{id}', [TripController::class, 'endingTrip']);
 
     // Additional trip-related routes
     Route::get('/show_his_Trip', [TripController::class, 'showhisTrips']); // Retrieve trips for the authenticated user
     Route::get('/show_user_Trip/{id}', [TripController::class, 'showuserTrips']); // Retrieve trips for a specific user
-
 
     // API resource routes for user profile
     Route::put('profile', [ProfileController::class, 'update']); // Updates user profile
@@ -89,7 +88,8 @@ Route::middleware('auth:api')->group(function () {
 
     // API resource routes for bookings (CRUD operations)
     Route::apiResource('booking', BookingController::class); // Handles CRUD for bookings
-    Route::get('trip/bokking/{id}', [BookingController::class,'showbookingsbytrip']);
+    Route::get('trip/bokking/{id}', [BookingController::class,'showbookingsbytrip']); // Retrieve bookings for a specific trip
+
     // Accept a booking
     Route::post('/booking/{booking}/accept', [BookingController::class, 'accept']); // Accepts a booking request
 
@@ -98,5 +98,4 @@ Route::middleware('auth:api')->group(function () {
 
     // API resource routes for ratings
     Route::apiResource("rating", RatingController::class); // Handles CRUD operations for ratings
-
 });

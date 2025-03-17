@@ -40,7 +40,7 @@ return [
     'password_changed' => "Password changed successfully.",
     'user_not_found' => "There is no user with this email.",
     'no_code_found' => "Please try again.",
-
+"not_found"=> "User not found",
     'invalid_code' => "The provided code is invalid or does not match. Please try again.",
     'invalid_key' => "The provided key is invalid or has expired. Please request a new code.",
 ];

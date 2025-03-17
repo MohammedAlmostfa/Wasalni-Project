@@ -21,30 +21,32 @@ class TripController extends Controller
     /**
      * Create a new TripController instance.
      *
+     * This constructor injects the trip service which will be used to handle business logic for trips.
+     *
      * @param TripService $tripService The trip service instance.
      */
     public function __construct(TripService $tripService)
     {
-        $this->tripService = $tripService;
+        $this->tripService = $tripService;  // Initialize the trip service to be used throughout the controller
     }
 
     /**
      * Display a listing of the trips.
      *
-     * This method retrieves all trips using the trip service and returns a paginated response.
+     * This method retrieves trips from the service and returns them with pagination, applying any filters from the request.
      *
-     * @param FilteringTripsData $request The request containing filtering data.
+     * @param FilteringTripsData $request The request containing filtering data for the trips.
      * @return \Illuminate\Http\JsonResponse
      */
     public function index(FilteringTripsData $request)
     {
-        // Validate the request data
+        // Validate the filtering data passed in the request
         $validationData = $request->validated();
 
-        // Call the trip service to retrieve all trips
+        // Call the trip service to retrieve trips based on the filtering data
         $result = $this->tripService->showTrips($validationData);
 
-        // Return a paginated response if the status is 200, otherwise return an error response
+        // If the status is 200, return paginated results; otherwise, return an error response
         return $result['status'] === 200
             ? $this->paginated($result['data'], TripResource::class, $result['message'], $result['status'])
             : self::error(null, $result['message'], $result['status']);
@@ -53,9 +55,9 @@ class TripController extends Controller
     /**
      * Display the authenticated user's trips.
      *
-     * This method retrieves trips associated with the authenticated user using the trip service and returns a paginated response.
+     * This method retrieves the trips that belong to the currently authenticated user and returns a paginated response.
      *
-     * @param FilteringTripsData $request The request containing filtering data.
+     * @param FilteringTripsData $request The request containing filtering data for the user's trips.
      * @return \Illuminate\Http\JsonResponse
      */
     public function showhisTrips(FilteringTripsData $request)
@@ -63,10 +65,10 @@ class TripController extends Controller
         // Validate the request data
         $validationData = $request->validated();
 
-        // Call the trip service to retrieve the authenticated user's trips
+        // Retrieve trips for the authenticated user via the trip service
         $result = $this->tripService->showhisTrips($validationData);
 
-        // Return a paginated response if the status is 200, otherwise return an error response
+        // Return paginated response if status is 200, or return an error message
         return $result['status'] === 200
             ? $this->paginated($result['data'], TripResource::class, $result['message'], $result['status'])
             : self::error(null, $result['message'], $result['status']);
@@ -75,10 +77,10 @@ class TripController extends Controller
     /**
      * Display trips for a specific user.
      *
-     * This method retrieves trips associated with a specific user using the trip service and returns a paginated response.
+     * This method allows you to retrieve trips associated with a specific user, based on the user ID.
      *
-     * @param FilteringTripsData $request The request containing filtering data.
-     * @param int $id The ID of the user whose trips are to be retrieved.
+     * @param FilteringTripsData $request The request containing filtering data for the user's trips.
+     * @param int $id The ID of the user whose trips should be retrieved.
      * @return \Illuminate\Http\JsonResponse
      */
     public function showuserTrips(FilteringTripsData $request, $id)
@@ -86,36 +88,35 @@ class TripController extends Controller
         // Validate the request data
         $validationData = $request->validated();
 
-        // Call the trip service to retrieve trips for the specified user
+        // Call the service to retrieve trips for the specified user
         $result = $this->tripService->showuserTrips($validationData, $id);
 
-        // Return a paginated response if the status is 200, otherwise return an error response
+        // Return paginated response if the status is 200; otherwise, return an error message
         return $result['status'] === 200
             ? $this->paginated($result['data'], TripResource::class, $result['message'], $result['status'])
             : self::error(null, $result['message'], $result['status']);
     }
 
-
     /**
      * Store a newly created trip in storage.
      *
-     * This method validates the request data and creates a new trip using the trip service.
+     * This method validates the incoming request data and creates a new trip using the trip service.
      *
-     * @param StoreTripRequest $request The request containing trip data.
+     * @param StoreTripRequest $request The request containing the trip data to be stored.
      * @return \Illuminate\Http\JsonResponse
      */
     public function store(StoreTripRequest $request)
     {
-        // Authorize the user to create a trip (if needed)
-        // $this->authorize('create');
+        // Authorize the user to create a new trip
+        $this->authorize('createtrip', Trip::class);
 
-        // Validate the request data
+        // Validate the incoming data from the request
         $validationData = $request->validated();
 
         // Call the trip service to create the trip
         $result = $this->tripService->creattrip($validationData);
 
-        // Return a success or error response based on the result
+        // Return success or error response based on the result from the trip service
         return $result['status'] === 200
             ? $this->success($result['data'], $result['message'], $result['status'])
             : $this->error(null, $result['message'], $result['status']);
@@ -124,24 +125,24 @@ class TripController extends Controller
     /**
      * Update the specified trip in storage.
      *
-     * This method validates the request data and updates the specified trip using the trip service.
+     * This method validates the updated trip data and uses the trip service to update the trip.
      *
-     * @param UpdateTripRequest $request The request containing updated trip data.
-     * @param Trip $trip The trip to be updated.
+     * @param UpdateTripRequest $request The request containing the updated trip data.
+     * @param Trip $trip The trip that will be updated.
      * @return \Illuminate\Http\JsonResponse
      */
     public function update(UpdateTripRequest $request, Trip $trip)
     {
-        // Authorize the user to update the trip
-        $this->authorize('update', $trip);
+        // Authorize the user to update this specific trip
+        $this->authorize('updatetrip', $trip);
 
-        // Validate the request data
+        // Validate the incoming request data
         $validationData = $request->validated();
 
-        // Call the trip service to update the trip
+        // Call the trip service to update the trip with the validated data
         $result = $this->tripService->updateTrip($validationData, $trip);
 
-        // Return a success or error response based on the result
+        // Return a success or error response based on the result of the update
         return $result['status'] === 200
             ? $this->success($result['data'], $result['message'], $result['status'])
             : $this->error(null, $result['message'], $result['status']);
@@ -150,20 +151,20 @@ class TripController extends Controller
     /**
      * Delete the specified trip from storage.
      *
-     * This method authorizes the user to delete the trip and calls the trip service to perform the deletion.
+     * This method authorizes the user to delete the trip and calls the service to perform the deletion.
      *
      * @param Trip $trip The trip to be deleted.
      * @return \Illuminate\Http\JsonResponse
      */
     public function destroy(Trip $trip)
     {
-        // Authorize the user to delete the trip
-        $this->authorize('delete', $trip);
+        // Authorize the user to delete this specific trip
+        $this->authorize('deletetrip', $trip);
 
         // Call the trip service to delete the trip
         $result = $this->tripService->delettrip($trip);
 
-        // Return a success or error response based on the result
+        // Return a success or error response based on the deletion result
         return $result['status'] === 200
             ? $this->success(null, $result['message'], $result['status'])
             : $this->error(null, $result['message'], $result['status']);
@@ -172,17 +173,23 @@ class TripController extends Controller
     /**
      * End a trip.
      *
-     * This method marks a trip as ended.
+     * This method marks the trip as ended, authorizing the user before making the change.
      *
-     * @param Trip $trip The trip to be ended.
+     * @param int $id The ID of the trip to be ended.
      * @return \Illuminate\Http\JsonResponse
      */
-    public function endingTrip(Trip $trip)
+    public function endingTrip($id)
     {
-        // Call the trip service to end the trip
-        $result = $this->tripService->endingTrip($trip);
+        // Find the trip by ID, or fail if not found
+        $trip = Trip::findOrFail($id);
 
-        // Return a success or error response based on the result
+        // Authorize the user to end this trip
+        $this->authorize('endedtrip', $trip);
+
+        // Call the trip service to mark the trip as ended
+        $result = $this->tripService->endingTrip($id);
+
+        // Return a success or error response based on the result of ending the trip
         return $result['status'] === 200
             ? $this->success(null, $result['message'], $result['status'])
             : $this->error(null, $result['message'], $result['status']);

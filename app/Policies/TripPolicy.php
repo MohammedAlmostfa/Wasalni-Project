@@ -10,44 +10,20 @@ use Illuminate\Support\Facades\Auth;
 class TripPolicy
 {
     /**
-     * Determine whether the user can view any models.
-     *
-     * @param User $user The authenticated user
-     * @return bool Whether the user can view any trips
-     */
-    public function viewAny(User $user)
-    {
-        // By default, allow all users to view trips
-        return true;
-    }
-
-    /**
-     * Determine whether the user can view the model.
-     *
-     * @param User $user The authenticated user
-     * @param Trip $trip The trip to be viewed
-     * @return bool Whether the user can view the trip
-     */
-    public function view(User $user, Trip $trip)
-    {
-        // By default, allow all users to view a specific trip
-        return true;
-    }
-
-    /**
      * Determine whether the user can create models.
      *
      * @param User $user The authenticated user
      * @return bool Whether the user can create a trip
      */
-    public function create(User $user)
+    public function createtrip(User $user)
     {
-        if(!$user->can('trip.create')) {
-            // By default, allow all authenticated users to create trips
-            return Response::deny('You are not allowed to creat  trip.');
+        // Check if the user has the 'trip.create' permission
+        if (!$user->can('trip.create')) {
+            // Return a custom denial message
+            return Response::deny(__('trip.create_permission_denied'), 403);
         }
-        return true;
 
+        return true;
     }
 
     /**
@@ -57,16 +33,22 @@ class TripPolicy
      * @param Trip $trip The trip to be updated
      * @return \Illuminate\Auth\Access\Response Whether the user can update the trip
      */
-    public function update(User $user, Trip $trip)
+    public function updatetrip(User $user, Trip $trip)
     {
+        // Check if the user has the 'trip.update' permission
+        if (!$user->can('trip.update')) {
+            // Return a custom denial message
+            return Response::deny(__('trip.update_permission_denied'), 403);
+        }
+
         // Deny update if the user is not the owner of the trip
         if ($trip->user_id != $user->id) {
-            return Response::deny('You are not allowed to update this trip.');
+            return Response::deny(__('trip.update_not_owner'));
         }
 
         // Deny update if the trip has associated bookings
-        if ($trip->booking()->exists()) {
-            return Response::deny('You cannot update this trip because it has associated bookings.');
+        if ($trip->bookings()->exists()) {
+            return Response::deny(__('trip.update_has_bookings'));
         }
 
         // Allow update if the user is the owner and there are no bookings
@@ -80,16 +62,22 @@ class TripPolicy
      * @param Trip $trip The trip to be deleted
      * @return \Illuminate\Auth\Access\Response Whether the user can delete the trip
      */
-    public function delete(User $user, Trip $trip)
+    public function deletetrip(User $user, Trip $trip)
     {
+        // Check if the user has the 'trip.delete' permission
+        if (!$user->can('trip.delete')) {
+            // Return a custom denial message
+            return Response::deny(__('trip.delete_permission_denied'), 403);
+        }
+
         // Deny deletion if the user is not the owner of the trip
         if ($trip->user_id != $user->id) {
-            return Response::deny('You are not allowed to delete this trip.');
+            return Response::deny(__('trip.delete_not_owner'));
         }
 
         // Deny deletion if the trip has associated bookings
-        if ($trip->booking()->exists()) {
-            return Response::deny('You cannot delete this trip because it has associated bookings.');
+        if ($trip->bookings()->exists()) {
+            return Response::deny(__('trip.delete_has_bookings'));
         }
 
         // Allow deletion if the user is the owner and there are no bookings
@@ -110,15 +98,22 @@ class TripPolicy
     }
 
     /**
-     * Determine whether the user can permanently delete the model.
+     * Determine whether the user can end the trip.
      *
      * @param User $user The authenticated user
-     * @param Trip $trip The trip to be permanently deleted
-     * @return bool Whether the user can permanently delete the trip
+     * @param Trip $trip The trip to be ended
+     * @return \Illuminate\Auth\Access\Response Whether the user can end the trip
      */
-    public function forceDelete(User $user, Trip $trip)
+    public function endedtrip(User $user, Trip $trip)
     {
-        // By default, allow all users to permanently delete trips
-        return true;
+        if ($trip->user_id != $user->id) {
+            return Response::deny(__('trip.end_not_owner'));
+        }
+
+        if ($trip->status === "Ending") {
+            return Response::deny(__('trip.end_already_ended'), 400);
+        }
+
+        return Response::allow();
     }
 }

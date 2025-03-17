@@ -12,8 +12,6 @@ class RolePermissionSeeder extends Seeder
     public function run()
     {
 
-
-
         $adminRole = Role::create(['name' => 'Admin']);
         $userRole = Role::create(['name' => 'User']);
         $privetuserRole = Role::create(['name' => 'PrivateUser']);
@@ -24,9 +22,22 @@ class RolePermissionSeeder extends Seeder
         $updatPermission = Permission::create(['name' => 'trip.update']);
         $deletPermission = Permission::create(['name' => 'trip.delete']);
 
-
+        $adminRole->givePermissionTo($editPermission, $viewPermission, $updatPermission, $deletPermission);
         $privetuserRole->givePermissionTo($editPermission, $viewPermission, $updatPermission, $deletPermission);
 
 
+        $adminUser = User::create([
+            'email' => 'admin@example.com',
+            'password' => bcrypt('P@ssw0rd123'),
+
+        ]);
+        $adminUser->assignRole($adminRole);
+
+        $privateUser = User::create([
+            'email' => 'private@example.com',
+            'password' => bcrypt('P@ssw0rd123'),
+
+        ]);
+        $privateUser->assignRole($privetuserRole);
     }
 }

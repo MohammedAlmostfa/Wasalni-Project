@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Policies;
 
 use App\Models\FavoritePerson;
@@ -13,11 +12,11 @@ class FavoritePersonPolicy
      */
     public function addfavorite(User $user, $favoriteUser_id)
     {
-        if($user->id =!$favoriteUser_id) {
-            return Response::deny(' You cannot add yourself to your favorite list.');
-        } else {
-            return true;
+        if ($user->id == $favoriteUser_id) {
+            return Response::deny('You cannot add yourself to your favorite list.', 400);
         }
+
+        return Response::allow();
     }
 
     /**
@@ -25,6 +24,10 @@ class FavoritePersonPolicy
      */
     public function delete(User $user, FavoritePerson $favoritePerson)
     {
-        return $user->id == $favoritePerson->user_id;
+        if ($user->id != $favoritePerson->user_id) {
+            return Response::deny('You are not authorized to remove this favorite person.', 403);
+        }
+
+        return Response::allow();
     }
 }
