@@ -76,7 +76,7 @@ Route::middleware('auth:api')->group(function () {
         'update' => 'trip.update', // Update a trip
         'destroy' => 'trip.delete', // Delete a trip
     ]);
-    Route::post('/trip/ending/{id}', [TripController::class, 'endingTrip']);
+    Route::post('/trip/ending/{id}', [TripController::class, 'endingTrip'])->name('trip.ended');
 
     // Additional trip-related routes
     Route::get('/show_his_Trip', [TripController::class, 'showhisTrips']); // Retrieve trips for the authenticated user

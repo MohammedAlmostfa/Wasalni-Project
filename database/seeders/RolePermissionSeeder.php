@@ -21,6 +21,7 @@ class RolePermissionSeeder extends Seeder
         $viewPermission = Permission::create(['name' => 'trip.list']);
         $updatPermission = Permission::create(['name' => 'trip.update']);
         $deletPermission = Permission::create(['name' => 'trip.delete']);
+        $deletPermission = Permission::create(['name' => 'trip.ended']);
 
         $adminRole->givePermissionTo($editPermission, $viewPermission, $updatPermission, $deletPermission);
         $privetuserRole->givePermissionTo($editPermission, $viewPermission, $updatPermission, $deletPermission);

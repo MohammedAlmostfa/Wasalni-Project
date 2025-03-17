@@ -106,6 +106,11 @@ class TripPolicy
      */
     public function endedtrip(User $user, Trip $trip)
     {
+        if (!$user->can('trip.ended')) {
+            // Return a custom denial message
+            return Response::deny(__('trip.ended_permission_denied'), 403);
+        }
+
         if ($trip->user_id != $user->id) {
             return Response::deny(__('trip.end_not_owner'));
         }

@@ -21,15 +21,14 @@ return [
     'end_success' => 'Trip ended successfully.',
     'not_found' => 'Trip not found.',
     'general_error' => 'An unexpected error occurred.',
-
-'create_permission_denied' => 'You are not allowed to create a trip. If you wish to obtain this permission, you can contact the company.',
-    'update_permission_denied' => 'You are not allowed to update a trip.',
+    'create_permission_denied' => 'You are not allowed to create a trip. If you wish to obtain this permission, you can contact the company.',
+    'update_permission_denied' => 'You are not allowed to update trips.',
     'update_not_owner' => 'You are not allowed to update this trip.',
     'update_has_bookings' => 'You cannot update this trip because it has associated bookings.',
-    'delete_permission_denied' => 'You are not allowed to delete a trip.',
+    'delete_permission_denied' => 'You are not allowed to delete trips.',
     'delete_not_owner' => 'You are not allowed to delete this trip.',
     'delete_has_bookings' => 'You cannot delete this trip because it has associated bookings.',
     'end_not_owner' => 'You are not allowed to end this trip.',
-    'end_already_ended' => 'The trip is already marked as ended.',
-
+    'end_already_ended' => 'The trip has already been marked as ended.',
+    'ended_permission_denied' => 'You are not allowed to end trips.',
 ];
