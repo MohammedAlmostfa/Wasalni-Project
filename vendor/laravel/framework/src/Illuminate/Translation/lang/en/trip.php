@@ -22,7 +22,7 @@ return [
     'not_found' => 'Trip not found.',
     'general_error' => 'An unexpected error occurred.',
 
-    'create_permission_denied' => 'You are not allowed to create a trip.',
+'create_permission_denied' => 'You are not allowed to create a trip. If you wish to obtain this permission, you can contact the company.',
     'update_permission_denied' => 'You are not allowed to update a trip.',
     'update_not_owner' => 'You are not allowed to update this trip.',
     'update_has_bookings' => 'You cannot update this trip because it has associated bookings.',
