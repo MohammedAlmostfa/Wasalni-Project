@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\BookingRequest\StoreBookingRequest;
-use App\Http\Requests\BookingRequest\UpdateBookingRequest;
+use App\Models\Booking;
+use Illuminate\Http\Request;
+use App\Services\BookingService;
 use App\Http\Resources\BookingResource;
 use App\Http\Resources\MyBookingResource;
-use App\Models\Booking;
-use App\Services\BookingService;
-use Illuminate\Http\Request;
+use App\Http\Requests\bookingrequest\FilterinBookingData;
+use App\Http\Requests\BookingRequest\StoreBookingRequest;
+use App\Http\Requests\BookingRequest\UpdateBookingRequest;
 
 class BookingController extends Controller
 {
@@ -26,6 +27,9 @@ class BookingController extends Controller
      */
     public function __construct(BookingService $BookingService)
     {
+        $this->authorizeResource(Booking::class);
+
+
         $this->BookingService = $BookingService;
     }
 
@@ -34,10 +38,12 @@ class BookingController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse Paginated list of bookings.
      */
-    public function index()
-    {
+    public function index(FilterinBookingData $request)
+    {// Validate the incoming request data
+        $validateddata = $request->validated();
+
         // Retrieve bookings for the current authenticated user
-        $result = $this->BookingService->showbookingsbybooking();
+        $result = $this->BookingService->showbookingsbybooking($validateddata);
 
         // Return a success or error response based on the result
         return $result['status'] === 200
@@ -53,6 +59,8 @@ class BookingController extends Controller
      */
     public function showbookingsbytrip($id)
     {
+        $this->authorize('showbookingsbytrip', $id);
+
         // Retrieve bookings for the specified trip
         $result = $this->BookingService->showbookingsbytrip($id);
 
@@ -92,7 +100,7 @@ class BookingController extends Controller
     public function update(UpdateBookingRequest $request, Booking $booking)
     {
         // Authorize the update action for the booking
-        $this->authorize('update', $booking);
+        $this->authorize('update', $booking, Booking::class);
 
         // Validate the incoming request data
         $validateddata = $request->validated();
@@ -115,7 +123,7 @@ class BookingController extends Controller
     public function destroy(Booking $booking)
     {
         // Authorize the deletion action for the booking
-        $this->authorize('delete', $booking);
+        $this->authorize('delete', $booking, Booking::class);
 
         // Call the service to delete the booking
         $result = $this->BookingService->deleteBooking($booking);
@@ -135,7 +143,7 @@ class BookingController extends Controller
     public function accept(Booking $booking)
     {
         // Authorize the acceptance action for the booking
-        $this->authorize('accept', $booking);
+        $this->authorize('accept', $booking, Booking::class);
 
         // Call the service to accept the booking
         $result = $this->BookingService->acceptedBooking($booking);
@@ -155,7 +163,7 @@ class BookingController extends Controller
     public function reject(Booking $booking)
     {
         // Authorize the rejection action for the booking
-        $this->authorize('reject', $booking);
+        $this->authorize('reject', $booking, Booking::class);
 
         // Call the service to reject the booking
         $result = $this->BookingService->rejectBooking($booking);

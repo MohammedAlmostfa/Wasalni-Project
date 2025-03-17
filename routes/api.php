@@ -88,13 +88,15 @@ Route::middleware('auth:api')->group(function () {
 
     // API resource routes for bookings (CRUD operations)
     Route::apiResource('booking', BookingController::class); // Handles CRUD for bookings
-    Route::get('trip/bokking/{id}', [BookingController::class,'showbookingsbytrip']); // Retrieve bookings for a specific trip
+    Route::apiResource('booking', BookingController::class);
 
-    // Accept a booking
-    Route::post('/booking/{booking}/accept', [BookingController::class, 'accept']); // Accepts a booking request
+    Route::get('trip/bokking/{id}', [BookingController::class,'showbookingsbytrip'])->name("booking.show"); // Retrieve bookings for a specific trip
+
+
+    Route::post('/booking/{booking}/accept', [BookingController::class, 'accept'])->name("booking.accept");// Accepts a booking request
 
     // Reject a booking
-    Route::post('/booking/{booking}/reject', [BookingController::class, 'reject']); // Rejects a booking request
+    Route::post('/booking/{booking}/reject', [BookingController::class, 'reject'])->name("booking.reject"); // Rejects a booking request
 
     // API resource routes for ratings
     Route::apiResource("rating", RatingController::class); // Handles CRUD operations for ratings

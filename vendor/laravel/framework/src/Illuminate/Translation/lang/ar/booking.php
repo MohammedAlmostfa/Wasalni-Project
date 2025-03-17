@@ -26,4 +26,31 @@ return [
         'booking_already_accepted' => 'الحجز مقبول بالفعل.',
         'booking_already_rejected' => 'الحجز مرفوض بالفعل.',
 
+
+        'update_permission_denied' => 'غير مسموح لك بتحديث هذا الحجز.',
+    'delete_permission_denied' => 'غير مسموح لك بحذف هذا الحجز.',
+    'accept_permission_denied' => 'غير مسموح لك بقبول الحجوزات.',
+    'accept_not_owner' => 'غير مسموح لك بقبول هذا الحجز.',
+    'invalid_status_for_acceptance' => 'الحجز ليس في حالة صالحة للقبول.',
+    'not_enough_seats' => 'لا توجد مقاعد كافية متاحة.',
+    'reject_permission_denied' => 'غير مسموح لك برفض الحجوزات.',
+    'reject_not_owner' => 'غير مسموح لك برفض هذا الحجز.',
+    'invalid_status_for_rejection' => 'الحجز ليس في حالة صالحة للرفض.',
+    'show_permission_denied' => 'غير مسموح لك بعرض حجوزات الرحلات.',
+    'show_not_owner' => 'غير مسموح لك بعرض حجوزات هذه الرحلة.',
+];
+
+// resources/lang/en/booking.php
+return [
+    'update_permission_denied' => 'You are not allowed to update this booking.',
+    'delete_permission_denied' => 'You are not allowed to delete this booking.',
+    'accept_permission_denied' => 'You are not allowed to accept bookings.',
+    'accept_not_owner' => 'You are not allowed to accept this booking.',
+    'invalid_status_for_acceptance' => 'The booking is not in a valid status for acceptance.',
+    'not_enough_seats' => 'There are not enough available seats.',
+    'reject_permission_denied' => 'You are not allowed to reject bookings.',
+    'reject_not_owner' => 'You are not allowed to reject this booking.',
+    'invalid_status_for_rejection' => 'The booking is not in a valid status for rejection.',
+    'show_permission_denied' => 'You are not allowed to show bookings of trips.',
+    'show_not_owner' => 'You are not allowed to show bookings of this trip.',
 ];

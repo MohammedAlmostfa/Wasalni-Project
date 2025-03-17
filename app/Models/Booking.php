@@ -23,6 +23,19 @@ class Booking extends Model
         return $this->belongsTo(Trip::class);
     }
 
+    public function scopeFilterby($model, $filteringData)
+    {
+        if (isset($filteringData['status'])) {
+            $model->where('status', $filteringData['status']);
+        }
+        if (isset($filteringData['seats_number'])) {
+            $model->where('seats_number', $filteringData['seats_number']);
+        }
+
+
+        return $model;
+
+    }
     /**
      * Define the relationship with the Rating model.
      */

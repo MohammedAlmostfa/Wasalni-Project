@@ -15,14 +15,14 @@ class BookingService
      *
      * @return array Response containing status, message, and data
      */
-    public function showbookingsbybooking()
+    public function showbookingsbybooking($filteringData)
     {
         try {
             // Retrieve the authenticated user
             $user = auth()->user();
 
             // Retrieve the user's bookings with pagination
-            $bookings = $user->bookings()->paginate(10);
+            $bookings = $user->bookings()->filterby($filteringData)->paginate(10);
             if (!$bookings) {
                 return [
                     'status' => 404,
