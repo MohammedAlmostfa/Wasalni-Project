@@ -1,6 +1,7 @@
 <?php
 namespace App\Models;
 
+use App\Models\Rating;
 use Spatie\Permission\Traits\HasRoles;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Notifications\Notifiable;
@@ -10,7 +11,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 class User extends Authenticatable implements JWTSubject
 {
     use HasFactory, Notifiable, HasRoles;
-
+    protected $guard_name = 'api';
     protected $fillable = [
         'email',
         'password',
@@ -89,5 +90,10 @@ class User extends Authenticatable implements JWTSubject
     public function bookings()
     {
         return $this->hasMany(Booking::class);
+    }
+
+    public function ratings()
+    {
+        return $this->hasMany(Rating::class);
     }
 }

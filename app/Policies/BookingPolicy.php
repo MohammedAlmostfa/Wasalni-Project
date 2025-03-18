@@ -45,7 +45,7 @@ class BookingPolicy
      */
     public function accept(User $user, Booking $booking): Response
     {
-        if (!$user->can('booking.accept')) {
+        if (!$user->hasPermissionTo('booking.accept')) {
             return Response::deny(__('booking.accept_permission_denied'), 403);
         }
 
@@ -94,7 +94,7 @@ class BookingPolicy
      */
     public function showbookingsbytrip(User $user, $id): Response
     {
-        if (!$user->can('booking.show')) {
+        if (!$user->hasPermissionTo('booking.show')) {
             return Response::deny(__('booking.show_permission_denied'), 403);
         }
 

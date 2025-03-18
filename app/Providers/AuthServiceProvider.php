@@ -5,12 +5,13 @@ namespace App\Providers;
 // use Illuminate\Support\Facades\Gate;
 
 use App\Models\Trip;
-use App\Models\Booking;
-use App\Models\FavoritePerson;
 use App\Models\Rating;
+use App\Models\Booking;
 use App\Policies\TripPolicy;
-use App\Policies\BookingPolicy;
+use App\Models\FavoritePerson;
 use App\Policies\RatingPolicy;
+use App\Policies\BookingPolicy;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 
 class AuthServiceProvider extends ServiceProvider
@@ -32,6 +33,10 @@ class AuthServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        $this->registerPolicies();
+
+        Gate::define('createRating', [RatingPolicy::class, 'createRating']);
+        Gate::define('showbookingsbytrip', [BookingPolicy::class, 'showbookingsbytrip']);
+
     }
 }

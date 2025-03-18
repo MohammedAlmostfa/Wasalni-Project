@@ -18,16 +18,19 @@ class RatingService
     public function createRating($data)
     {
         try {
-            // Create a new rating
-            $rating = Rating::create([
-                'rate' => $data['rate'],
-                'review' => $data['review'],
-                'booking_id' => $data['booking_id'],
-                'user_id' => Auth::user()->id,
-            ]);
+
+            if(auth()) {
+                // Create a new rating
+                $rating = Rating::create([
+                    'rate' => $data['rate'],
+                    'review' => $data['review'],
+                    'booking_id' => $data['booking_id'],
+                    'user_id' => Auth::user()->id,
+                ]);
+            }
 
             return [
-                'message' => 'Rating created successfully',
+                'message' => trans('rating.rating_created_successfully'),
                 'data' => $rating,
                 'status' => 200,
             ];
@@ -39,7 +42,7 @@ class RatingService
             return [
                 'status' => 500,
                 'message' => [
-                    'errorDetails' => ['An error occurred while creating the rating.'],
+                  'errorDetails' => __('rating.general_error'),
                 ],
             ];
         }
@@ -63,7 +66,7 @@ class RatingService
             ]);
 
             return [
-                'message' => 'Rating updated successfully',
+                'message' => trans('rating.rating_updated_successfully'),
                 'data' => $rating,
                 'status' => 200,
             ];
@@ -75,7 +78,7 @@ class RatingService
             return [
                 'status' => 500,
                 'message' => [
-                    'errorDetails' => ['An error occurred while updating the rating.'],
+                   'errorDetails' => __('rating.general_error'),
                 ],
             ];
         }
@@ -94,7 +97,7 @@ class RatingService
             $rating->delete();
 
             return [
-                'message' => 'Rating deleted successfully',
+                'message' => trans('rating.rating_deleted_successfully'),
                 'status' => 200,
             ];
         } catch (Exception $e) {
@@ -105,7 +108,7 @@ class RatingService
             return [
                 'status' => 500,
                 'message' => [
-                    'errorDetails' => ['An error occurred while deleting the rating.'],
+                    'errorDetails' => __('rating.general_error'),
                 ],
             ];
         }

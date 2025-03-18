@@ -59,15 +59,14 @@ return [
     |
     */
 'guards' => [
+     'api' => [
+        'driver' => 'jwt',
+        'provider' => 'users',
+        'hash' => false,
+    ],
     'web' => [
         'driver' => 'session',
         'provider' => 'users',
-    ],
-
-    'api' => [
-        'driver' => 'jwt', // or 'passport' or 'sanctum', depending on your setup
-        'provider' => 'users',
-        'hash' => false,
     ],
 ],
     'providers' => [

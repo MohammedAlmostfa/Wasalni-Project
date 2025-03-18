@@ -24,10 +24,10 @@ class RatingController extends Controller
      */
     public function store(StorRatingRequest $request)
     {
-
         $validationData = $request->validated();
+        $booking = Booking::find($validationData["booking_id"]);
 
-        $this->authorize('createtrip', $validationData["booking_id"]);
+        $this->authorize('createRating', $booking);
 
         $result = $this->ratingService->createRating($validationData);
 
@@ -35,6 +35,8 @@ class RatingController extends Controller
             ? self::success($result['data'], $result['message'], $result['status'])
             : self::error(null, $result['message'], $result['status']);
     }
+
+
 
     /**
      * Update the specified resource in storage.

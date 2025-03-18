@@ -12,21 +12,23 @@ class RolePermissionSeeder extends Seeder
     public function run()
     {
         // Create roles
-        $adminRole = Role::create(['name' => 'Admin']);
-        $userRole = Role::create(['name' => 'User']);
-        $privateUserRole = Role::create(['name' => 'PrivateUser']);
+        $adminRole = Role::create(['name' => 'Admin', 'guard_name' => 'api']);
+        $userRole = Role::create(['name' => 'User', 'guard_name' => 'api']);
+        $privateUserRole = Role::create(['name' => 'PrivateUser', 'guard_name' => 'api']);
 
         // Create permissions for trips
-        $createTripPermission = Permission::create(['name' => 'trip.create']);
-        $viewTripPermission = Permission::create(['name' => 'trip.list']);
-        $updateTripPermission = Permission::create(['name' => 'trip.update']);
-        $deleteTripPermission = Permission::create(['name' => 'trip.delete']);
-        $endTripPermission = Permission::create(['name' => 'trip.ended']);
+        $createTripPermission = Permission::create(['name' => 'trip.create', 'guard_name' => 'api']);
+        $viewTripPermission = Permission::create(['name' => 'trip.list', 'guard_name' => 'api']);
+        $updateTripPermission = Permission::create(['name' => 'trip.update', 'guard_name' => 'api']);
+        $deleteTripPermission = Permission::create(['name' => 'trip.delete', 'guard_name' => 'api']);
+        $endTripPermission = Permission::create(['name' => 'trip.ended', 'guard_name' => 'api']);
 
         // Create permissions for bookings
-        $showBookingPermission = Permission::create(['name' => 'booking.show']);
-        $acceptBookingPermission = Permission::create(['name' => 'booking.accept']);
-        $rejectBookingPermission = Permission::create(['name' => 'booking.reject']);
+        $showBookingPermission = Permission::create(['name' => 'booking.show', 'guard_name' => 'api']);
+        $acceptBookingPermission = Permission::create(['name' => 'booking.accept', 'guard_name' => 'api']);
+        $rejectBookingPermission = Permission::create(['name' => 'booking.reject', 'guard_name' => 'api']);
+
+
 
         // Assign permissions to the PrivateUser role
         $privateUserRole->givePermissionTo([

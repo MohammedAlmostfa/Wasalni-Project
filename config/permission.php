@@ -1,6 +1,7 @@
 <?php
 
 return [
+'default_guard_name' => 'api',
 
     'models' => [
 

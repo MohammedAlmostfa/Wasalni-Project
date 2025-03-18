@@ -27,7 +27,6 @@ class BookingController extends Controller
      */
     public function __construct(BookingService $BookingService)
     {
-        $this->authorizeResource(Booking::class);
 
 
         $this->BookingService = $BookingService;

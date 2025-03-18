@@ -1,15 +1,17 @@
 <?php
 
 return [
-
     /*
-    |----------------------------------------------------------------------
-    | Validation Language Lines
-    |----------------------------------------------------------------------
-    |
-    | الرسائل التي سيتم عرضها للمستخدم عند حدوث خطأ في المدخلات.
-    |
-    */
+|--------------------------------------------------------------------------
+| Authentication Language Lines
+|--------------------------------------------------------------------------
+|
+| The following language lines are used during authentication for various
+| messages that we need to display to the user. You are free to modify
+| these language lines according to your application's requirements.
+|
+*/
+
 
     'accepted' => 'يجب قبول :attribute.',
     'accepted_if' => 'يجب قبول :attribute عندما يكون :other يساوي :value.',
