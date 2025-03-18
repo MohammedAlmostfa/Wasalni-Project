@@ -31,4 +31,5 @@ return [
     'end_not_owner' => 'You are not allowed to end this trip.',
     'end_already_ended' => 'The trip has already been marked as ended.',
     'ended_permission_denied' => 'You are not allowed to end trips.',
+
 ];

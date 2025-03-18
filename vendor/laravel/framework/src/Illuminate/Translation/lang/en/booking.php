@@ -35,4 +35,5 @@ return [
     'invalid_status_for_rejection' => 'The booking is not in a valid status for rejection.',
     'show_permission_denied' => 'You are not allowed to show bookings of trips.',
     'show_not_owner' => 'You are not allowed to show bookings of this trip.',
+       'trip_has_booking' => 'There is a pending booking for this trip. You can modify it instead of adding a new booking.',
 ];

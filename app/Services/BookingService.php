@@ -113,6 +113,22 @@ class BookingService
     public function createBooking($data)
     {
         try {
+            $user = auth()->user(); // Get the authenticated user
+            $pendingBookings = $user->bookings()
+                ->where('trip_id', $data['trip_id'])
+                ->where('status', 'pending')
+
+                ->get();
+            // Retrieve pending bookings
+
+            if (!$pendingBookings->isEmpty()) {
+                return [
+                    'status' => 409,
+                    'message' => [
+                        'errorDetails' => [__('booking.trip_has_booking')],
+                    ],
+                ];
+            }
             // Check if the trip exists
             $trip = Trip::find($data['trip_id']);
             if (!$trip) {
