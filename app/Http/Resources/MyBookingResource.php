@@ -21,7 +21,10 @@ class MyBookingResource extends JsonResource
              'status' => $this->status,
              'seats_number' => $this->seats_number,
              'id' => $this->user->id,
+             'created_at' => $this->created_at->format('Y-m-d H:i'),
+             'nots'=>$this->nots
 
-             'created_at' => $this->created_at,];
+            ];
+
     }
 }

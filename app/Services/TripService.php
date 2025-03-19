@@ -8,6 +8,7 @@ use App\Models\Trip;
 use App\Models\User;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 
 class TripService
 {
@@ -21,13 +22,16 @@ class TripService
     {
         try {
             // Retrieve trips with necessary relationships and apply filters
-            $trips = Trip::select('trips.id', 'trips.description', 'trips.status', 'trips.from', 'trips.to', 'trips.user_id', 'trips.trip_start', 'trips.seat_price', 'trips.available_seats', 'trips.created_at')
-                ->join('profiles', 'trips.user_id', '=', 'profiles.user_id')
-                ->join('cities AS city_from', 'trips.from', '=', 'city_from.id')
-                ->join('cities AS city_to', 'trips.to', '=', 'city_to.id')
-                ->addSelect('profiles.first_name', 'profiles.last_name', 'city_from.city_name AS from_city', 'city_to.city_name AS to_city')
-                ->filterby($filteringData)
-                ->paginate(10);
+            $trips = Cache::remember('trips', 600, function () use ($filteringData) { // 600 seconds = 10 minutes
+                return Trip::select('trips.id', 'trips.description', 'trips.status', 'trips.from', 'trips.to', 'trips.user_id', 'trips.trip_start', 'trips.seat_price', 'trips.available_seats', 'trips.created_at')
+                    ->join('profiles', 'trips.user_id', '=', 'profiles.user_id')
+                    ->join('cities AS city_from', 'trips.from', '=', 'city_from.id')
+                    ->join('cities AS city_to', 'trips.to', '=', 'city_to.id')
+                    ->addSelect('profiles.first_name', 'profiles.last_name', 'city_from.city_name AS from_city', 'city_to.city_name AS to_city')
+                    ->filterby($filteringData)
+                    ->paginate(10);
+            });
+
 
             return [
                 'message' => __('trip.show_trips_success'),
@@ -167,6 +171,9 @@ class TripService
                 'available_seats' => $data['available_seats'],
                 'user_id' => Auth::user()->id,
             ]);
+            //forget  trips chache
+
+            Cache::forget('trips');
 
             // Retrieve city names for 'from' and 'to' fields
             $fromCity = City::find($data['from']);
@@ -212,6 +219,8 @@ class TripService
                 'seat_price' => $data['seat_price'] ?? $trip->seat_price,
                 'available_seats' => $data['available_seats'] ?? $trip->available_seats,
             ]);
+            //forget  trips chache
+            Cache::forget('trips');
 
             // Retrieve city names for 'from' and 'to' fields
             $fromCity = City::find($trip->from);

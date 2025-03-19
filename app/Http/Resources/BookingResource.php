@@ -21,7 +21,8 @@ class BookingResource extends JsonResource
             'seats_number' => $this->seats_number,
             'id' => $this->user->id,
             'name' => $this->user->profile->first_name . ' ' . $this->user->profile->last_name,
-            'created_at' => $this->created_at,
+            'nots'=>$this->nots,
+            'created_at' => $this->created_at->format('Y-m-d H:i'),
 
         ];
     }

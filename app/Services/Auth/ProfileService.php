@@ -10,6 +10,7 @@ use App\Models\Profile;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Cache;
 
 class ProfileService
 {
@@ -117,6 +118,10 @@ class ProfileService
                     'address' => $data['address'] ?? $profile->address,
                     'country_id' => $data['country_id'] ?? $profile->country_id,
                 ]);
+                $key = 'userdata_' . $user->id;
+
+                // Forget the cache entry
+                Cache::forget($key);
 
                 // Find the country by ID
                 $country = Country::find($profile->country_id);
@@ -168,24 +173,27 @@ class ProfileService
     }
 
     /**
-     * Get the authenticated user's data.
-     *
-     * @return array Contains message, status, and user data.
-     *               - 'message': A message describing the result.
-     *               - 'data': The user's profile data.
-     *               - 'status': HTTP status code.
-     */
+ * Get the authenticated user's data.
+ *
+ * @return array Contains message, status, and user data.
+ *               - 'message': A message describing the result.
+ *               - 'data': The user's profile data.
+ *               - 'status': HTTP status code.
+ */
     public function getMe()
     {
         try {
             // Get the authenticated user
             $user = Auth::user();
 
-            // Return user data
-            return [
-                'message' => 'User data retrieved successfully',
-                'status' => 200, // HTTP status code for success
-                'data' => [
+            // Generate a unique cache key
+            $key = 'userdata_' . $user->id;
+
+            // Retrieve or cache the user data
+            $userData = Cache::remember($key, 86400, function () use ($user) {
+                // Load the profile relationship
+                $user->profile();
+                return [
                     'id' => $user->id,
                     'name' => $user->profile->first_name . ' ' . $user->profile->last_name,
                     'email' => $user->email,
@@ -193,16 +201,22 @@ class ProfileService
                     'birthday' => $user->profile->birthday,
                     'phone' => $user->profile->phone,
                     'address' => $user->profile->address,
-                ],
+                ];
+            });
+
+            // Return user data
+            return [
+                'message' => 'User data retrieved successfully',
+                'status' => 200,
+                'data' => $userData,
             ];
         } catch (Exception $e) {
             // Log the error if fetching user data fails
             Log::error('Error in getMe: ' . $e->getMessage());
             return [
                 'status' => 500,
-                'message' => [
-                    'errorDetails' => ['An error occurred while fetching user data.'],
-                ],
+                'message' => 'An error occurred while fetching user data.',
+                'errorDetails' => $e->getMessage(),
             ];
         }
     }

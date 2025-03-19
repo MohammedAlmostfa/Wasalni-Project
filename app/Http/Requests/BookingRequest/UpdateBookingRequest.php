@@ -31,7 +31,9 @@ class UpdateBookingRequest extends FormRequest
                "integer",
                new SeatsAvailable($this->trip_id), // استخدم $this->trip_id
            ],
+              'nots'=> 'nullable|string|max:100',
        ];
+
 
     }
     /**

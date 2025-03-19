@@ -139,10 +139,10 @@ class BookingService
                     ],
                 ];
             }
-
             // Create a new booking
             $booking = Booking::create([
                 'trip_id' => $data['trip_id'],
+                'nots'=>$data['nots']??null,
                 'seats_number' => $data['seats_number'],
                 'user_id' => Auth::user()->id,
             ]);
@@ -181,6 +181,7 @@ class BookingService
             $booking->fill([
                 'trip_id' => $data['trip_id'] ?? $booking->trip_id,
                 'seats_number' => $data['seats_number'] ?? $booking->seats_number,
+                'nots'=>$data['nots']??$booking->nots,
             ]);
 
             // Save the updated booking

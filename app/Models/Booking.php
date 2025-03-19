@@ -13,6 +13,7 @@ class Booking extends Model
         "status",
         "seats_number",
         "user_id",
+        'nots'
     ];
 
     /**

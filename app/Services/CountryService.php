@@ -18,6 +18,7 @@ class CountryService
     public function getCountries()
     {
         try {
+
             // Fetch all countries from the database
             $countries = Country::all();
 

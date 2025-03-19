@@ -131,8 +131,9 @@ class AuthService
                 Cache::forget($userDataKey);
 
                 // Fetch all countries
-                $countries = Country::select('id', 'country_name')->get();
-
+                $countries = Cache::rememberForever('countries_list', function () {
+                    return Country::select('id', 'country_name')->get();
+                });
                 return [
                     'message' => __('auth.email_verified_and_registered'),
                     'status' => 200,

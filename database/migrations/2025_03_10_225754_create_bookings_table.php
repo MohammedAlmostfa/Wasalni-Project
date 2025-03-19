@@ -18,6 +18,7 @@ return new class extends Migration {
             $table->enum('status', ['pending', 'accepted', 'rejected'])->default('pending');
             $table->integer('seats_number');
             $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
+            $table->string("nots")->nullable();
             $table->timestamps();
         });
     }
