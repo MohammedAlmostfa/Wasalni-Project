@@ -14,7 +14,7 @@ return [
     */
 
     'show_trips_success' => 'All trips retrieved successfully.',
-    'show_user_trips_success' => 'Your trips retrieved successfully.',
+    'show_your_trips_success' => 'Your trips retrieved successfully.',
     'create_success' => 'Trip created successfully.',
     'update_success' => 'Trip updated successfully.',
     'delete_success' => 'Trip deleted successfully.',

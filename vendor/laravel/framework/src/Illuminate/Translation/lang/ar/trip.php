@@ -13,8 +13,8 @@ return [
     |
     */
 
-    'show_trips_success' => 'تم استرجاع جميع الرحلات بنجاح.',
-    'show_user_trips_success' => 'تم استرجاع رحلاتك بنجاح.',
+     'show_user_trips_success'    => 'تم استرجاع جميع الرحلات بنجاح.',
+"show_your_trips_success"=> 'تم استرجاع رحلاتك بنجاح.',
     'create_success' => 'تم إنشاء الرحلة بنجاح.',
     'update_success' => 'تم تحديث الرحلة بنجاح.',
     'delete_success' => 'تم حذف الرحلة بنجاح.',
@@ -31,4 +31,5 @@ return [
     'end_not_owner' => 'أنت غير مسموح لك بإنهاء هذه الرحلة.',
     'end_already_ended' => 'الرحلة قد تم وضعها بالفعل كمنتهية.',
     'ended_permission_denied' => 'أنت غير مسموح لك أنهاء الرحل.',
+
 ];

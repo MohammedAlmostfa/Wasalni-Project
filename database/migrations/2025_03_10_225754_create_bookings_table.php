@@ -20,6 +20,8 @@ return new class extends Migration {
             $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
             $table->string("nots")->nullable();
             $table->timestamps();
+            $table->index(['status', 'trip_id']);
+
         });
     }
 
