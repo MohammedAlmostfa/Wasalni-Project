@@ -16,8 +16,8 @@ class MyBookingResource extends JsonResource
     {
         return [
             'booking_id' => $this->id,
-              'trip_start' => date('Y-m-d H:i', strtotime($this->trip_start)),
-            'Total price' => $this->seat_price * $this->seats_number,
+            'trip_start' => date('Y-m-d H:i', strtotime($this->trip_start)),
+            'total price' => $this->seat_price * $this->seats_number,
             'from_city' => $this->from_city,
             'to_city' => $this->to_city,
              'nots'=>$this->nots,
