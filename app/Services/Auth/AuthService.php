@@ -133,7 +133,7 @@ class AuthService
 
                 // Fetch all cities
                 $cities = Cache::rememberForever('cities_list', function () {
-                    return City::select('id', 'cities_list')->get();
+                    return City::select('id', 'city_name')->get();
                 });
                 return [
                     'message' => __('auth.email_verified_and_registered'),
@@ -370,8 +370,9 @@ class AuthService
             if (!$user->profile) {
                 // Fetch all countries for new users
                 $cities = Cache::rememberForever('cities_list', function () {
-                    return City::select('id', 'cities_list')->get();
+                    return City::select('id', 'city_name')->get();
                 });
+
 
 
                 return [
