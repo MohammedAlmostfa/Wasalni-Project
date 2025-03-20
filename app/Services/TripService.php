@@ -21,14 +21,38 @@ class TripService
     public function showTrips($filteringData)
     {
         try {
+            $userCity = Auth::user()->profile->city_id;
+
+
             // Retrieve trips with necessary relationships and apply filters
-            $trips = Cache::remember('trips', 600, function () use ($filteringData) { // 600 seconds = 10 minutes
-                return Trip::select('trips.id', 'trips.description', 'trips.status', 'trips.from', 'trips.to', 'trips.user_id', 'trips.trip_start', 'trips.seat_price', 'trips.available_seats', 'trips.created_at')
+            $trips = Cache::remember('trips', 600, function () use ($filteringData, $userCity) { // 600 seconds = 10 minutes
+                return Trip::select(
+                    'trips.id',
+                    'trips.description',
+                    'trips.status',
+                    'trips.from',
+                    'trips.to',
+                    'trips.user_id',
+                    'trips.trip_start',
+                    'trips.seat_price',
+                    'trips.available_seats',
+                    'trips.created_at'
+                )
                     ->join('profiles', 'trips.user_id', '=', 'profiles.user_id')
                     ->join('cities AS city_from', 'trips.from', '=', 'city_from.id')
                     ->join('cities AS city_to', 'trips.to', '=', 'city_to.id')
-                    ->addSelect('profiles.first_name', 'profiles.last_name', 'city_from.city_name AS from_city', 'city_to.city_name AS to_city')
-                    ->filterby($filteringData)
+                    ->addSelect(
+                        'profiles.first_name',
+                        'profiles.last_name',
+                        'city_from.city_name AS from_city',
+                        'city_to.city_name AS to_city'
+                    )
+                    ->when($filteringData, function ($query, $filteringData) {
+                        return $query->filterby($filteringData);
+                    })
+                    ->when($userCity, function ($query, $userCity) {
+                        return $query->orderBy('trips.from', $userCity);
+                    })
                     ->paginate(10);
             });
 

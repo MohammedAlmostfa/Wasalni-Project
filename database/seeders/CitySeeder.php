@@ -3,20 +3,33 @@
 namespace Database\Seeders;
 
 use App\Models\City;
-use Illuminate\Database\Seeder;
 use Faker\Factory as Faker;
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Http;
 
 class CitySeeder extends Seeder
 {
     public function run()
     {
-        $faker = Faker::create();
+        $countryName = 'Iraq';
+        // Make API call to fetch cities for the selected country
+        $response = Http::post('https://countriesnow.space/api/v0.1/countries/cities', [
+             'country' => $countryName,
+         ]);
 
-        for ($i = 0; $i < 2; $i++) {
-            City::create([
-                'city_name' => $faker->city, // اسم مدينة عشوائي
-                "country_id"=>1,
-            ]);
+
+        // If the API call is successful, save the cities to the database
+        if ($response->successful()) {
+            $cities = $response->json()['data']; // Extract cities from the response
+            {
+                // Create cities in the database
+                foreach ($cities as $cityName) {
+                    City::create([
+                        'city_name' => $cityName,
+                     //   'country_id' => $country->id,
+                    ]);
+                }
+            }
         }
 
     }

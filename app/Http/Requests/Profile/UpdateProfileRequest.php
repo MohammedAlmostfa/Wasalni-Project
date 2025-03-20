@@ -30,7 +30,7 @@ class UpdateProfileRequest extends FormRequest
             'birthday' => 'nullable|date|before:-13 years',
             'phone' => 'nullable|regex:/\+963\d{9}/',
             'address' => 'nullable|regex:/(^[-0-9A-Za-z.,\/ ]+$)/',
-            'country_id'=>'nullable|exists:countries,id',
+           'city_id'=>'nullable|exists:cities,id',
         ];
 
     }

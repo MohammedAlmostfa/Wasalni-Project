@@ -12,19 +12,17 @@ class MyBookingResource extends JsonResource
      *
      * @return array<string, mixed>
      */
-    public function toArray(Request $request)
+    public function toArray(Request $request): array
     {
         return [
-
-             'id' => $this->id,
-             'user_id' => $this->user_id,
-             'status' => $this->status,
-             'seats_number' => $this->seats_number,
-             'id' => $this->user->id,
-             'created_at' => $this->created_at->format('Y-m-d H:i'),
-             'nots'=>$this->nots
-
-            ];
-
+            'booking_id' => $this->id,
+              'trip_start' => date('Y-m-d H:i', strtotime($this->trip_start)),
+            'Total price' => $this->seat_price * $this->seats_number,
+            'from_city' => $this->from_city,
+            'to_city' => $this->to_city,
+             'nots'=>$this->nots,
+             'seats_number'=>$this->seats_number,
+            'driver_name' => $this->first_name . ' ' . $this->last_name,
+        ];
     }
 }

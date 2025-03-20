@@ -39,32 +39,33 @@ class ProfileService
                     'phone' => $data['phone'],
                     'address' => $data['address'],
                     'user_id' => $user->id, // Link profile to the user
-                    'country_id' => $data['country_id'],
+                    //'country_id' => $data['country_id'],
+                    'city_id' => $data['city_id'],
                 ]);
 
                 // Find the country by ID
-                $country = Country::find($data['country_id']);
+                //  $country = Country::find($data['country_id']);
 
                 // Check if cities for the selected country already exist
-                if (!City::where('country_id', $data['country_id'])->exists()) {
-                    // Make API call to fetch cities for the selected country
-                    $response = Http::post('https://countriesnow.space/api/v0.1/countries/cities', [
-                        'country' => $country->country_name,
-                    ]);
+                //    if (!City::where('country_id', $data['country_id'])->exists()) {
+                // Make API call to fetch cities for the selected country
+                //       $response = Http::post('https://countriesnow.space/api/v0.1/countries/cities', [
+                //           'country' => $country->country_name,
+                //       ]);
 
-                    // If the API call is successful, save the cities to the database
-                    if ($response->successful()) {
-                        $cities = $response->json()['data']; // Extract cities from the response
+                // If the API call is successful, save the cities to the database
+                //       if ($response->successful()) {
+                //          $cities = $response->json()['data']; // Extract cities from the response
 
-                        // Create cities in the database
-                        foreach ($cities as $cityName) {
-                            City::create([
-                                'city_name' => $cityName,
-                                'country_id' => $country->id,
-                            ]);
-                        }
-                    }
-                }
+                // Create cities in the database
+                //       foreach ($cities as $cityName) {
+                //          City::create([
+                ///                'city_name' => $cityName,
+                //              'country_id' => $country->id,
+                //        ]);
+                //    }
+                //   }
+                //}
 
                 return [
                     'message' => 'Profile created successfully',
@@ -116,7 +117,8 @@ class ProfileService
                     'birthday' => $data['birthday'] ?? $profile->birthday,
                     'phone' => $data['phone'] ?? $profile->phone,
                     'address' => $data['address'] ?? $profile->address,
-                    'country_id' => $data['country_id'] ?? $profile->country_id,
+                    //  'country_id' => $data['country_id'] ?? $profile->country_id,
+                    'city_id' => $data['city_id'] ?? $profile->city_id,
                 ]);
                 $key = 'userdata_' . $user->id;
 
@@ -127,25 +129,25 @@ class ProfileService
                 $country = Country::find($profile->country_id);
 
                 // Check if cities for the selected country already exist
-                if (!City::where('country_id', $profile->country_id)->exists()) {
-                    // Make API call to fetch cities for the selected country
-                    $response = Http::post('https://countriesnow.space/api/v0.1/countries/cities', [
-                        'country' => $country->country_name,
-                    ]);
+                // if (!City::where('country_id', $profile->country_id)->exists()) {
+                // Make API call to fetch cities for the selected country
+                //     $response = Http::post('https://countriesnow.space/api/v0.1/countries/cities', [
+                //          'country' => $country->country_name,
+                //     ]);
 
-                    // If the API call is successful, save the cities to the database
-                    if ($response->successful()) {
-                        $cities = $response->json()['data']; // Extract cities from the response
+                // If the API call is successful, save the cities to the database
+                //    if ($response->successful()) {
+                //      $cities = $response->json()['data']; // Extract cities from the response
 
-                        // Create cities in the database
-                        foreach ($cities as $cityName) {
-                            City::create([
-                                'city_name' => $cityName,
-                                'country_id' => $country->id,
-                            ]);
-                        }
-                    }
-                }
+                // Create cities in the database
+                //      foreach ($cities as $cityName) {
+                //       City::create([
+                //             'city_name' => $cityName,
+                //          'country_id' => $country->id,
+                //       ]);
+                //   }
+                // }
+                // }
 
                 return [
                     'message' => 'Profile updated successfully',
@@ -173,13 +175,13 @@ class ProfileService
     }
 
     /**
- * Get the authenticated user's data.
- *
- * @return array Contains message, status, and user data.
- *               - 'message': A message describing the result.
- *               - 'data': The user's profile data.
- *               - 'status': HTTP status code.
- */
+     * Get the authenticated user's data.
+     *
+     * @return array Contains message, status, and user data.
+     *               - 'message': A message describing the result.
+     *               - 'data': The user's profile data.
+     *               - 'status': HTTP status code.
+     */
     public function getMe()
     {
         try {

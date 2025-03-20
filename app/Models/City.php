@@ -16,7 +16,7 @@ class City extends Model
      */
     protected $fillable = [
         'city_name',
-        'country_id',
+        //'country_id',
     ];
 
     /**
@@ -24,10 +24,10 @@ class City extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function country()
-    {
-        return $this->belongsTo(Country::class);
-    }
+    //  public function country()
+    // {
+    //     return $this->belongsTo(Country::class);
+    // }
     public function tripsFrom()
     {
         return $this->hasMany(Trip::class, 'from');

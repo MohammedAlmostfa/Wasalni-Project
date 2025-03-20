@@ -25,7 +25,7 @@ class ProfileSeeder extends Seeder
                 'birthday' => $faker->date,
                 'phone' => $faker->phoneNumber,
                 'address' => $faker->address,
-                'country_id' => $faker->numberBetween(1, 10),
+                'city_id' => $faker->numberBetween(1, 10),
             ]);
         }
     }

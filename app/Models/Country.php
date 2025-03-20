@@ -43,8 +43,8 @@ class Country extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function cities()
-    {
-        return $this->hasMany(City::class);
-    }
+    // public function cities()
+    //  {
+    //     return $this->hasMany(City::class);
+    // }
 }

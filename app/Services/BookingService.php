@@ -3,8 +3,9 @@
 namespace App\Services;
 
 use Exception;
-use App\Models\Booking;
 use App\Models\Trip;
+use App\Models\Booking;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 
@@ -21,8 +22,29 @@ class BookingService
             // Retrieve the authenticated user
             $user = auth()->user();
 
+
             // Retrieve the user's bookings with pagination
-            $bookings = $user->bookings()->filterby($filteringData)->paginate(10);
+            $bookings = DB::table('bookings')
+    ->join('trips', 'bookings.trip_id', '=', 'trips.id')
+    ->join('cities as cityFrom', 'trips.from', '=', 'cityFrom.id')
+    ->join('cities as cityTo', 'trips.to', '=', 'cityTo.id')
+    ->join('users', 'trips.user_id', '=', 'users.id')
+    ->join('profiles', 'users.id', '=', 'profiles.user_id')
+    ->select(
+        'bookings.id as id',
+        'bookings.seats_number',
+        'bookings.nots',
+        'trips.trip_start',
+        'trips.seat_price',
+        'cityFrom.city_name as from_city',
+        'cityTo.city_name as to_city',
+        'profiles.first_name',
+        'profiles.last_name'
+    )
+    ->where('bookings.user_id', $user->id)
+    ->paginate(10);
+
+
             if (!$bookings) {
                 return [
                     'status' => 404,

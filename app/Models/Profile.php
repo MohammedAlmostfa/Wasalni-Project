@@ -22,7 +22,8 @@ class Profile extends Model
         'birthday',
         'phone',
         'address',
-        'country_id'
+        //  'country_id'
+        "city_id"
     ];
 
     /**
@@ -40,8 +41,16 @@ class Profile extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
-    public function country()
+
+
+    //  public function country()
+    // {
+    //    return $this->hasOne(Country::class);
+    //}
+
+
+    public function city()
     {
-        return $this->hasOne(Country::class);
+        return $this->hasOne(City::class);
     }
 }

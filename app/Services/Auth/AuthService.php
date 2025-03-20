@@ -3,6 +3,7 @@
 namespace App\Services\Auth;
 
 use Exception;
+use App\Models\City;
 use App\Models\User;
 use App\Models\Country;
 use App\Events\Registered;
@@ -84,14 +85,14 @@ class AuthService
     }
 
     /**
-         * Verify user account using the verification code.
-         *
-         * This method verifies the user's account using the verification code sent to their email.
-         * If the code is correct, it creates the user in the database and returns a JWT token.
-         *
-         * @param array $data Contains email and verification code.
-         * @return array Contains message, status, and additional data.
-         */
+     * Verify user account using the verification code.
+     *
+     * This method verifies the user's account using the verification code sent to their email.
+     * If the code is correct, it creates the user in the database and returns a JWT token.
+     *
+     * @param array $data Contains email and verification code.
+     * @return array Contains message, status, and additional data.
+     */
     public function verficationacount($data)
     {
         try {
@@ -130,16 +131,16 @@ class AuthService
                 Cache::forget($verifkey);
                 Cache::forget($userDataKey);
 
-                // Fetch all countries
-                $countries = Cache::rememberForever('countries_list', function () {
-                    return Country::select('id', 'country_name')->get();
+                // Fetch all cities
+                $cities = Cache::rememberForever('cities_list', function () {
+                    return City::select('id', 'cities_list')->get();
                 });
                 return [
                     'message' => __('auth.email_verified_and_registered'),
                     'status' => 200,
                     'data' => [
                         'token' => $token, // Return the generated token
-                        'countries' => $countries, // Return countries for new users
+                        'cities' => $cities, // Return cities for new users
                     ],
                 ];
             } else {
@@ -164,13 +165,13 @@ class AuthService
     }
 
     /**
- * Resend the verification code.
- *
- * This method resends the verification code to the user's email if the previous code has expired or the user requests a new one.
- *
- * @param array $data Contains the user's email.
- * @return array Contains message, status, and additional data.
- */
+     * Resend the verification code.
+     *
+     * This method resends the verification code to the user's email if the previous code has expired or the user requests a new one.
+     *
+     * @param array $data Contains the user's email.
+     * @return array Contains message, status, and additional data.
+     */
     public function resendCode($data)
     {
         try {
@@ -368,7 +369,10 @@ class AuthService
             // Check if the user has profile
             if (!$user->profile) {
                 // Fetch all countries for new users
-                $countries = Country::select('id', 'country_name')->get();
+                $cities = Cache::rememberForever('cities_list', function () {
+                    return City::select('id', 'cities_list')->get();
+                });
+
 
                 return [
                     'message' => __('auth.google_login_success'),
@@ -376,7 +380,7 @@ class AuthService
                     'data' => [
                         'token' => $token,
                         'type' => 'bearer', // Token type
-                        'countries' => $countries, // Return countries for new users
+                        'cities' => $cities, // Return countries for new users
                     ],
                 ];
             } else {
@@ -403,6 +407,4 @@ class AuthService
             ];
         }
     }
-
-
 }

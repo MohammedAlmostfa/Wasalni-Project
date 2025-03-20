@@ -56,7 +56,6 @@ class User extends Authenticatable implements JWTSubject
             'user_id',    // Foreign key on profiles table
             'country_id', // Foreign key on cities table
             'id',         // Local key on users table
-            'country_id'  // Local key on profiles table
         );
     }
 

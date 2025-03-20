@@ -20,8 +20,7 @@ return new class extends Migration {
             $table->string('phone')->nullable();
             $table->string('address')->nullable();
             $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
-            $table->foreignId('country_id')->constrained('countries')->cascadeOnDelete();
-
+            $table->foreignId('city_id')->constrained('cities')->cascadeOnDelete();
             $table->timestamps();
         });
     }

@@ -30,7 +30,7 @@ class StorProfileRequest extends FormRequest
             'birthday' => 'nullable|date|before:-13 years',
             'phone' => 'required',
             'address' => 'required|regex:/(^[-0-9A-Za-z.,\/ ]+$)/',
-            'country_id'=>'required|exists:countries,id',
+            'city_id'=>'required|exists:cities,id',
         ];
     }
 

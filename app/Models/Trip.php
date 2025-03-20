@@ -19,6 +19,9 @@ class Trip extends Model
         'available_seats',
         'user_id',
     ];
+    protected $casts = [
+        'trip_start' => 'datetime',
+    ];
 
     /**
      * Define a relationship with the City model for the "from" city.
