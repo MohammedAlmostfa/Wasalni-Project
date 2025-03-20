@@ -37,4 +37,10 @@ class City extends Model
     {
         return $this->hasMany(Trip::class, 'to');
     }
+
+
+    public function profile()
+    {
+        return $this->hasOne(Profile::class);
+    }
 }

@@ -193,8 +193,8 @@ class ProfileService
 
             // Retrieve or cache the user data
             $userData = Cache::remember($key, 86400, function () use ($user) {
-                // Load the profile relationship
-                $user->profile();
+                // Ensure profile and city relationships are loaded
+                $user->load(['profile.city']);
                 return [
                     'id' => $user->id,
                     'name' => $user->profile->first_name . ' ' . $user->profile->last_name,
@@ -203,6 +203,7 @@ class ProfileService
                     'birthday' => $user->profile->birthday,
                     'phone' => $user->profile->phone,
                     'address' => $user->profile->address,
+                    "city_name" => $user->profile->city->city_name,
                 ];
             });
 

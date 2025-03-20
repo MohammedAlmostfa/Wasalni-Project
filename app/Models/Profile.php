@@ -51,6 +51,6 @@ class Profile extends Model
 
     public function city()
     {
-        return $this->hasOne(City::class);
+        return $this->belongsTo(City::class);
     }
 }

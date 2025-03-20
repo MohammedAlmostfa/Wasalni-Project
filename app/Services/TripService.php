@@ -21,11 +21,13 @@ class TripService
     public function showTrips($filteringData)
     {
         try {
-            $userCity = Auth::user()->profile->city_id;
+            $userCityid = Auth::user()->profile->city_id;
 
+
+            $userCityid = Auth::user()->profile->city->id; // مدينة المستخدم الحالي
 
             // Retrieve trips with necessary relationships and apply filters
-            $trips = Cache::remember('trips', 600, function () use ($filteringData, $userCity) { // 600 seconds = 10 minutes
+            $trips = Cache::remember('trips_' . md5(json_encode([$filteringData, $userCityid])), 600, function () use ($filteringData, $userCityid) {
                 return Trip::select(
                     'trips.id',
                     'trips.description',
@@ -48,13 +50,15 @@ class TripService
                         'city_to.city_name AS to_city'
                     )
                     ->when($filteringData, function ($query, $filteringData) {
-                        return $query->filterby($filteringData);
+                        return $query->filterBy($filteringData);
                     })
-                    ->when($userCity, function ($query, $userCity) {
-                        return $query->orderBy('trips.from', $userCity);
+                    ->when($userCityid, function ($query, $userCityid) {
+                        return $query->orderByRaw("CASE WHEN trips.from = ? THEN 1 ELSE 2 END", [$userCityid]);
                     })
+                    ->orderBy('trips.trip_start', 'asc')
                     ->paginate(10);
             });
+
 
 
             return [
@@ -97,8 +101,8 @@ class TripService
                     'city_from.city_name as from_city',
                     'city_to.city_name as to_city'
                 )
-                ->leftJoin('cities AS city_from', 'trips.from', '=', 'city_from.id')
-                ->leftJoin('cities AS city_to', 'trips.to', '=', 'city_to.id')
+                ->join('cities AS city_from', 'trips.from', '=', 'city_from.id')
+                ->join('cities AS city_to', 'trips.to', '=', 'city_to.id')
                 ->filterby($filteringData)
                 ->paginate(10);
 
@@ -152,8 +156,8 @@ class TripService
                     'city_from.city_name as from_city',
                     'city_to.city_name as to_city'
                 )
-                ->leftJoin('cities AS city_from', 'trips.from', '=', 'city_from.id')
-                ->leftJoin('cities AS city_to', 'trips.to', '=', 'city_to.id')
+                ->join('cities AS city_from', 'trips.from', '=', 'city_from.id')
+                ->join('cities AS city_to', 'trips.to', '=', 'city_to.id')
                 ->filterby($filteringData)
                 ->paginate(10);
 
