@@ -16,7 +16,7 @@ return new class extends Migration {
             $table->dateTime('trip_start');
             $table->foreignId('from')->constrained('cities')->cascadeOnDelete();
             $table->foreignId('to')->constrained('cities')->cascadeOnDelete();
-            $table->enum('status', ['Pending', 'Ending', 'Complete'])->default('Pending');
+            $table->tinyInteger('status')->default(0);
             $table->integer('seat_price');
             $table->integer('available_seats')->unsigned();
             $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();

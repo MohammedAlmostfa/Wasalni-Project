@@ -22,6 +22,32 @@ class Trip extends Model
     protected $casts = [
         'trip_start' => 'datetime',
     ];
+    public function getStatusAttribute($value)
+    {
+        $statuses = [
+
+
+            0=>'Pending',
+            1=>'on the way',
+            2=>'Complete' ,
+            3=>'Ending' ,
+            4=>'cancel'
+        ];
+
+        return $statuses[$value];
+    }
+    public function setStatusAttribute($value)
+    {
+        $statuses = [
+            'Pending' => 0,
+            'on the way'=>1,
+            'Complete' => 2,
+            'Ending' => 3,
+            'cancel'=>4
+        ];
+
+        $this->attributes['status'] = $statuses[$value];
+    }
 
     /**
      * Define a relationship with the City model for the "from" city.

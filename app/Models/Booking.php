@@ -15,7 +15,30 @@ class Booking extends Model
         "user_id",
         'nots'
     ];
+    public function getStatusAttribute($value)
+    {
+        $statuses = [
 
+
+            0=>'pending',
+            1=>'accepted',
+            2=>'rejected' ,
+
+        ];
+
+        return $statuses[$value];
+    }
+    public function setStatusAttribute($value)
+    {
+
+        $statuses = [
+            'pending' => 0,
+            'accepted'=>1,
+            'rejected' => 2,
+        ];
+
+        $this->attributes['status'] = $statuses[$value];
+    }
     /**
      * Define the relationship with the Trip model.
      */
