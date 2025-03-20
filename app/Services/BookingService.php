@@ -16,7 +16,7 @@ class BookingService
      *
      * @return array Response containing status, message, and data
      */
-    public function showbookingsbybooking($filteringData)
+    public function showmybooking($filteringData)
     {
         try {
             // Retrieve the authenticated user
@@ -36,6 +36,7 @@ class BookingService
                     'bookings.nots',
                     'trips.trip_start',
                     'trips.seat_price',
+                    'trips.user_id as driver_id',
                     'cityFrom.city_name as from_city',
                     'cityTo.city_name as to_city',
                     'profiles.first_name',

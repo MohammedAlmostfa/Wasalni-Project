@@ -42,7 +42,7 @@ class BookingController extends Controller
         $validateddata = $request->validated();
 
         // Retrieve bookings for the current authenticated user
-        $result = $this->BookingService->showbookingsbybooking($validateddata);
+        $result = $this->BookingService->showmybooking($validateddata);
 
         // Return a success or error response based on the result
         return $result['status'] === 200

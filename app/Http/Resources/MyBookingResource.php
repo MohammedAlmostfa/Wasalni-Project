@@ -23,6 +23,7 @@ class MyBookingResource extends JsonResource
              'nots'=>$this->nots,
              'seats_number'=>$this->seats_number,
             'driver_name' => $this->first_name . ' ' . $this->last_name,
+            'driver_id'=>$this->driver_id,
         ];
     }
 }
