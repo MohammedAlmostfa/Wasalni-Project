@@ -32,6 +32,8 @@ return [
     'end_already_ended' => 'الرحلة قد تم وضعها بالفعل كمنتهية.',
     'ended_permission_denied' => 'أنت غير مسموح لك أنهاء الرحل.',
     "Resource_not_found"=>"السجل غير موجود",
-      'trip_saved_before' => 'You have already saved this trip before.',
-    'authorization_remove' => 'أنت غير مصرح لك بإزالة هذه الرحلة.',
+   'trip_saved_before' => 'لقد قمت بحفظ هذه الرحلة من قبل.',
+    'authorization_remove' => 'غير مسموح لك بإزالة الرحلة.',
+    'trip_saved_successfully' => 'تم حفظ الرحلة بنجاح.',
+    'trip_removed_successfully' => 'تمت إزالة الرحلة بنجاح.',
 ];

@@ -23,8 +23,6 @@ class SavedTripService
             $user = Auth::user();
 
             // Fetch the user's saved trips
-
-
             $savedTrips = $user->savedTrips()
             ->select(
                 'trips.id As trip_id',
@@ -97,7 +95,7 @@ class SavedTripService
             // Return success response
             return [
                 'status' => 200,
-                'message' => 'Trip saved successfully',
+                'message' => __("trip.trip_saved_successfully")
             ];
         } catch (Exception $e) {
             // Log the error if an exception occurs
@@ -128,7 +126,7 @@ class SavedTripService
             // Return success response
             return [
                 'status' => 200,
-                'message' => 'Trip removed successfully',
+                'message' =>  __("trip.trip_removed_successfully")
             ];
         } catch (Exception $e) {
             // Log the error if an exception occurs
