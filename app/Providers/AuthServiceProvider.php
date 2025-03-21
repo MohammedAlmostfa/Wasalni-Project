@@ -11,6 +11,7 @@ use App\Policies\TripPolicy;
 use App\Models\FavoritePerson;
 use App\Policies\RatingPolicy;
 use App\Policies\BookingPolicy;
+use App\Policies\SavedTripPolicy;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 
@@ -37,6 +38,7 @@ class AuthServiceProvider extends ServiceProvider
 
         Gate::define('createRating', [RatingPolicy::class, 'createRating']);
         Gate::define('showbookingsbytrip', [BookingPolicy::class, 'showbookingsbytrip']);
+        Gate::define('removeFromSavedTrip', [SavedTripPolicy::class, 'removeTripFromSaved']);
 
     }
 }

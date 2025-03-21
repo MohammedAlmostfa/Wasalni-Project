@@ -24,7 +24,7 @@ class TripService
             $userCityid = Auth::user()->profile->city_id;
 
 
-            $userCityid = Auth::user()->profile->city->id; // مدينة المستخدم الحالي
+            $userCityid = Auth::user()->profile->city->id;
 
             // Retrieve trips with necessary relationships and apply filters
             $trips = Cache::remember('trips_' . md5(json_encode([$filteringData, $userCityid])), 600, function () use ($filteringData, $userCityid) {
@@ -134,16 +134,7 @@ class TripService
     public function showuserTrips($filteringData, $id)
     {
         try {
-            $user = User::find($id);
-            if (!$user) {
-                return [
-                    'status' => 404,
-                    'message' => [
-                        'errorDetails' => [__('auth.not_found')],
-                    ],
-                ];
-            }
-
+            $user = User::findorfail($id);
             $trips = $user->trips()
                 ->select(
                     'trips.id',
@@ -204,8 +195,8 @@ class TripService
             Cache::forget('trips');
 
             // Retrieve city names for 'from' and 'to' fields
-            $fromCity = City::find($data['from']);
-            $toCity = City::find($data['to']);
+            $fromCity = City::findorfail($data['from']);
+            $toCity = City::findorfail($data['to']);
             $trip->from = $fromCity->city_name;
             $trip->to = $toCity->city_name;
 
@@ -251,8 +242,8 @@ class TripService
             Cache::forget('trips');
 
             // Retrieve city names for 'from' and 'to' fields
-            $fromCity = City::find($trip->from);
-            $toCity = City::find($trip->to);
+            $fromCity = City::findorfail($trip->from);
+            $toCity = City::findorfail($trip->to);
             $trip->from = $fromCity->city_name;
             $trip->to = $toCity->city_name;
 
@@ -314,15 +305,6 @@ class TripService
         try {
             // Find the trip by ID
             $trip = Trip::find($id);
-
-            // Check if the trip exists
-            if (!$trip) {
-                return [
-                    'message' => __('trip.not_found'),
-                    'status' => 404,
-                ];
-            }
-
             // Update the trip status to "Ending"
             $trip->update([
                 'status' => 'Ending',

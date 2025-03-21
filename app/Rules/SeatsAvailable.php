@@ -1,13 +1,14 @@
 <?php
+
 namespace App\Rules;
 
 use App\Models\Trip;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Contracts\Validation\Rule;
 
 class SeatsAvailable implements Rule
 {
     protected $tripId;
+    protected $availableSeats;
 
     public function __construct($tripId)
     {
@@ -16,13 +17,16 @@ class SeatsAvailable implements Rule
 
     public function passes($attribute, $value)
     {
-        $availableSeats =Trip::find($this->tripId)->available_seats;
 
-        return $value <= $availableSeats;
+        $trip = Trip::findorfail($this->tripId);
+        $this->availableSeats = $trip->available_seats;
+
+        return $value <= $this->availableSeats;
     }
 
     public function message()
     {
-        return 'The number of seats requested exceeds the available seats.';
+
+        return __('validation.seats_available', ['available_seats' => $this->availableSeats]);
     }
 }

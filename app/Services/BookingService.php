@@ -34,6 +34,7 @@ class BookingService
                     'bookings.id as id',
                     'bookings.seats_number',
                     'bookings.nots',
+                    'booking.status',
                     'trips.trip_start',
                     'trips.seat_price',
                     'trips.user_id as driver_id',
@@ -85,18 +86,7 @@ class BookingService
     {
         try {
             // Retrieve the trip by ID
-            $trip = Trip::find($id);
-
-            // Check if the trip exists
-            if (!$trip) {
-                return [
-                    'status' => 404,
-                    'message' => [
-                        'errorDetails' => [__('booking.trip_not_found')],
-                    ],
-                ];
-            }
-
+            $trip = Trip::findorfail($id);
             // Retrieve the trip's bookings with related user and profile data
             $bookings = $trip->bookings()->with([
                 'user' => function ($query) {
@@ -153,15 +143,8 @@ class BookingService
                 ];
             }
             // Check if the trip exists
-            $trip = Trip::find($data['trip_id']);
-            if (!$trip) {
-                return [
-                    'status' => 404,
-                    'message' => [
-                        'errorDetails' => [__('booking.trip_not_found')],
-                    ],
-                ];
-            }
+            $trip = Trip::findorfail($data['trip_id']);
+
             // Create a new booking
             $booking = Booking::create([
                 'trip_id' => $data['trip_id'],
@@ -201,14 +184,11 @@ class BookingService
     {
         try {
             // Update the booking with new data
-            $booking->fill([
+            $booking->update([
                 'trip_id' => $data['trip_id'] ?? $booking->trip_id,
                 'seats_number' => $data['seats_number'] ?? $booking->seats_number,
                 'nots' => $data['nots'] ?? $booking->nots,
             ]);
-
-            // Save the updated booking
-            $booking->save();
 
             // Return success response
             return [

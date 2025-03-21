@@ -17,12 +17,13 @@ class MyBookingResource extends JsonResource
         return [
             'booking_id' => $this->id,
             'trip_start' => date('Y-m-d H:i', strtotime($this->trip_start)),
-            'total price' => $this->seat_price * $this->seats_number,
+            'total_price' => $this->seat_price * $this->seats_number,
             'from_city' => $this->from_city,
             'to_city' => $this->to_city,
-             'nots'=>$this->nots,
+            'nots'=>$this->nots,
              'seats_number'=>$this->seats_number,
             'driver_name' => $this->first_name . ' ' . $this->last_name,
+            'status'=>$this->status,
             'driver_id'=>$this->driver_id,
         ];
     }

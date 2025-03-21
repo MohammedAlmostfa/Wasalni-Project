@@ -23,7 +23,7 @@ class CityService
             $id = Auth::user()->id;
 
             // Find the user by ID
-            $user = User::find($id);
+            $user = User::findorfail($id);
 
             // Check if the user exists
             if (!$user) {

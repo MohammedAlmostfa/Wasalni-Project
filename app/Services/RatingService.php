@@ -19,18 +19,15 @@ class RatingService
     {
         try {
 
-            if(auth()) {
-                // Create a new rating
-                $rating = Rating::create([
-                    'rate' => $data['rate'],
-                    'review' => $data['review'],
-                    'booking_id' => $data['booking_id'],
-                    'user_id' => Auth::user()->id,
-                ]);
-            }
+            // Create a new rating
+            $rating = Rating::create([
+                'rate' => $data['rate'],
+                'review' => $data['review'],
+                'booking_id' => $data['booking_id'],
+                'user_id' => Auth::user()->id,]);
 
             return [
-                'message' => trans('rating.rating_created_successfully'),
+                'message' => __('rating.rating_created_successfully'),
                 'data' => $rating,
                 'status' => 200,
             ];
@@ -66,7 +63,7 @@ class RatingService
             ]);
 
             return [
-                'message' => trans('rating.rating_updated_successfully'),
+                'message' => __('rating.rating_updated_successfully'),
                 'data' => $rating,
                 'status' => 200,
             ];
@@ -97,7 +94,7 @@ class RatingService
             $rating->delete();
 
             return [
-                'message' => trans('rating.rating_deleted_successfully'),
+                'message' => __('rating.rating_deleted_successfully'),
                 'status' => 200,
             ];
         } catch (Exception $e) {

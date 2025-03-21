@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Trip extends Model
 {
@@ -119,5 +120,9 @@ class Trip extends Model
         }
 
         return $model;
+    }
+    public function savedByUsers()
+    {
+        return $this->belongsToMany(User::class, 'trip_user', 'trip_id', 'user_id');
     }
 }

@@ -13,6 +13,7 @@ use App\Http\Controllers\Auth\VerificationController;
 use App\Http\Controllers\Auth\ForgetPasswordController;
 use App\Http\Controllers\FavoritePersonController;
 use App\Http\Controllers\RatingController;
+use App\Http\Controllers\SavedTripController;
 use App\Http\Controllers\UserController;
 use App\Models\FavoritePerson;
 
@@ -81,6 +82,10 @@ Route::middleware('auth:api')->group(function () {
     // Additional trip-related routes
     Route::get('/show_his_Trip', [TripController::class, 'showhisTrips']); // Retrieve trips for the authenticated user
     Route::get('/show_user_Trip/{id}', [TripController::class, 'showuserTrips']); // Retrieve trips for a specific user
+
+    Route::get('trips/saved', [SavedTripController::class,'index']);
+    Route::post('trips/saved', [SavedTripController::class,'AddToSavedTrip']);
+    Route::post('trips/remove', [SavedTripController::class,'Removefromsavedtrip']);
 
     // API resource routes for user profile
     Route::put('profile', [ProfileController::class, 'update']); // Updates user profile

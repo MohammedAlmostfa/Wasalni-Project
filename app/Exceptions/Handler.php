@@ -4,6 +4,7 @@ namespace App\Exceptions;
 
 use Throwable;
 use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 
 class Handler extends ExceptionHandler
@@ -38,8 +39,17 @@ class Handler extends ExceptionHandler
                 ]
             ], $exception->status ?? 403); // Use status code from exception or default to 403
         }
+        // Handle ModelNotFoundException
+        if ($exception instanceof ModelNotFoundException) {
+            return response()->json([
+                'errors' => [
+                    'errorDetails' => __("trip.Resource_not_found"),
+                ]
+            ], 404);
+        }
 
         // Handle other exceptions
         return parent::render($request, $exception);
+
     }
 }

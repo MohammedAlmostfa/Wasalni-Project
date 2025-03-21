@@ -31,5 +31,7 @@ return [
     'end_not_owner' => 'أنت غير مسموح لك بإنهاء هذه الرحلة.',
     'end_already_ended' => 'الرحلة قد تم وضعها بالفعل كمنتهية.',
     'ended_permission_denied' => 'أنت غير مسموح لك أنهاء الرحل.',
-
+    "Resource_not_found"=>"السجل غير موجود",
+      'trip_saved_before' => 'You have already saved this trip before.',
+    'authorization_remove' => 'أنت غير مصرح لك بإزالة هذه الرحلة.',
 ];

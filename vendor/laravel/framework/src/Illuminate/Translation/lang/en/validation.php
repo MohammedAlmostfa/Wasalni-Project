@@ -158,7 +158,7 @@ return [
     'url' => ':attribute must be a valid URL.',
     'ulid' => ':attribute must be a valid ULID.',
     'uuid' => ':attribute must be a valid UUID.',
-
+ 'seats_available' => 'The number of seats requested exceeds the available seats. There are only :available_seats seats available.',
     /*
     |----------------------------------------------------------------------
     | Custom Validation Language Lines
@@ -212,6 +212,8 @@ return [
         'available_seats' => 'Available Seats',
         'code' => 'Verification Code',
         'googleToken' => 'Google Access Token',
+        "recordId"=>'Recourd',
+
     ],
 
 ];

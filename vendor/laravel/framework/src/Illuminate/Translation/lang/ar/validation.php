@@ -157,7 +157,7 @@ return [
     'url' => ':attribute يجب أن يكون رابط صالح.',
     'ulid' => ':attribute يجب أن يكون ULID صحيح.',
     'uuid' => ':attribute يجب أن يكون UUID صحيح.',
-
+'seats_available' => 'عدد المقاعد المطلوبة يتجاوز المقاعد المتاحة يوجد فقط :available_seats مقاعد متاحة.',
     /*
     |----------------------------------------------------------------------
     | Custom Validation Language Lines
@@ -209,7 +209,8 @@ return [
         'seat_price' => 'سعر المقعد',
         'available_seats' => 'المقاعد المتاحة',
         'code' => 'رمز التحقق',
-        'googleToken' => 'رمز الوصول من غوغل'
+        'googleToken' => 'رمز الوصول من غوغل',
+        'recordId'=>'السجل',
     ],
 
 ];
