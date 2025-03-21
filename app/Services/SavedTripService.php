@@ -27,11 +27,9 @@ class SavedTripService
 
             $savedTrips = $user->savedTrips()
             ->select(
-                'trips.id',
+                'trips.id As trip_id',
                 'trips.description',
                 'trips.status',
-                'trips.from',
-                'trips.to',
                 'trips.user_id',
                 'trips.trip_start',
                 'trips.seat_price',

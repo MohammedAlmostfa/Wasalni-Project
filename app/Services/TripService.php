@@ -32,8 +32,6 @@ class TripService
                     'trips.id',
                     'trips.description',
                     'trips.status',
-                    'trips.from',
-                    'trips.to',
                     'trips.user_id',
                     'trips.trip_start',
                     'trips.seat_price',
@@ -58,9 +56,6 @@ class TripService
                     ->orderBy('trips.trip_start', 'asc')
                     ->paginate(10);
             });
-
-
-
             return [
                 'message' => __('trip.show_trips_success'),
                 'data' => $trips,

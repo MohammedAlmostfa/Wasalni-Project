@@ -7,6 +7,7 @@ use App\Services\SavedTripService;
 use App\Http\Requests\TripRequest\FilteringTripsData;
 use App\Http\Requests\SavedTripRequst\AddToSavedTripRequest;
 use App\Http\Requests\SavedTripRequst\DeletfromSavedTripRequest;
+use App\Http\Resources\SavedTripResource;
 
 class SavedTripController extends Controller
 {
@@ -35,9 +36,9 @@ class SavedTripController extends Controller
         // Call the service to fetch saved trips
         $result = $this->savedTripService->showsavedtrip($validateddata);
 
-        // Return success or error response based on the service result
+        // Return paginated response if status is 200, or return an error message
         return $result['status'] === 200
-            ? self::success($result['data'], $result['message'], $result['status'])
+            ? $this->paginated($result['data'], SavedTripResource::class, $result['message'], $result['status'])
             : self::error(null, $result['message'], $result['status']);
     }
 
