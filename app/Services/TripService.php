@@ -21,9 +21,6 @@ class TripService
     public function showTrips($filteringData)
     {
         try {
-            $userCityid = Auth::user()->profile->city_id;
-
-
             $userCityid = Auth::user()->profile->city->id;
 
             // Retrieve trips with necessary relationships and apply filters
@@ -47,9 +44,8 @@ class TripService
                         'city_from.city_name AS from_city',
                         'city_to.city_name AS to_city'
                     )
-                    ->when($filteringData, function ($query, $filteringData) {
-                        return $query->filterBy($filteringData);
-                    })
+                    ->filterBy($filteringData)
+
                     ->when($userCityid, function ($query, $userCityid) {
                         return $query->orderByRaw("CASE WHEN trips.from = ? THEN 1 ELSE 2 END", [$userCityid]);
                     })
@@ -299,7 +295,7 @@ class TripService
     {
         try {
             // Find the trip by ID
-            $trip = Trip::find($id);
+            $trip = Trip::findorfail($id);
             // Update the trip status to "Ending"
             $trip->update([
                 'status' => 'Ending',
@@ -307,6 +303,39 @@ class TripService
 
             return [
                 'message' => __('trip.end_success'),
+                'status' => 200,
+            ];
+        } catch (Exception $e) {
+            // Log the exception for debugging
+            Log::error('Error in endingTrip: ' . $e->getMessage());
+
+            // Return a generic error response
+            return [
+                'status' => 500,
+                'message' => [
+                    'errorDetails' => [__('trip.general_error')],
+                ],
+            ];
+        }
+    }
+    /**
+     * Mark a trip as "on the way".
+     *
+     * @param int $id The ID of the trip to be marked as ending.
+     * @return array Contains the status and message.
+     */
+    public function Onthethewaytrip($id)
+    {
+        try {
+            // Find the trip by ID
+            $trip = Trip::findorfail($id);
+            // Update the trip status to "Ending"
+            $trip->update([
+                'status' => 'on_the_way',
+            ]);
+
+            return [
+                'message' => __('trip.on_the_way_success'),
                 'status' => 200,
             ];
         } catch (Exception $e) {

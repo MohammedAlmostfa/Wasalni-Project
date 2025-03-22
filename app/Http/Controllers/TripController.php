@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Trip;
 use App\Services\TripService;
+use App\Http\Resources\UserTrips;
 use App\Http\Resources\TripResource;
 use App\Http\Requests\TripRequest\StoreTripRequest;
 use App\Http\Requests\TripRequest\UpdateTripRequest;
@@ -70,7 +71,7 @@ class TripController extends Controller
 
         // Return paginated response if status is 200, or return an error message
         return $result['status'] === 200
-            ? $this->paginated($result['data'], TripResource::class, $result['message'], $result['status'])
+            ? $this->paginated($result['data'], UserTrips::class, $result['message'], $result['status'])
             : self::error(null, $result['message'], $result['status']);
     }
 
@@ -93,7 +94,7 @@ class TripController extends Controller
 
         // Return paginated response if the status is 200; otherwise, return an error message
         return $result['status'] === 200
-            ? $this->paginated($result['data'], TripResource::class, $result['message'], $result['status'])
+            ? $this->paginated($result['data'], UserTrips::class, $result['message'], $result['status'])
             : self::error(null, $result['message'], $result['status']);
     }
 

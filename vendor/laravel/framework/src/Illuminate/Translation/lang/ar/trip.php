@@ -36,4 +36,5 @@ return [
     'authorization_remove' => 'غير مسموح لك بإزالة الرحلة.',
     'trip_saved_successfully' => 'تم حفظ الرحلة بنجاح.',
     'trip_removed_successfully' => 'تمت إزالة الرحلة بنجاح.',
+    'on_the_way_successfully'=>'تم انطلاق الرحلة'
 ];

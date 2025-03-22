@@ -29,7 +29,7 @@ return [
     'accept_permission_denied' => 'You are not allowed to accept bookings.',
     'accept_not_owner' => 'You are not allowed to accept this booking.',
     'invalid_status_for_acceptance' => 'The booking is not in a valid status for acceptance.',
-    'not_enough_seats' => 'There are not enough available seats.',
+'not_enough_seats' => 'Not enough seats available Currently available: :available_seats seats.',
     'reject_permission_denied' => 'You are not allowed to reject bookings.',
     'reject_not_owner' => 'You are not allowed to reject this booking.',
     'invalid_status_for_rejection' => 'The booking is not in a valid status for rejection.',

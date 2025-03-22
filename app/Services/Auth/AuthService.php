@@ -3,6 +3,7 @@
 namespace App\Services\Auth;
 
 use Exception;
+use Carbon\Carbon;
 use App\Models\City;
 use App\Models\User;
 use App\Models\Country;
@@ -12,6 +13,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Redis;
 
 class AuthService
 {
@@ -96,6 +98,18 @@ class AuthService
     public function verficationacount($data)
     {
         try {
+
+            $userDataKey = 'user_data_' . $data['email'];
+            $userData = Cache::get($userDataKey);
+
+            if (!$userData) {
+                return [
+                    'status' => 404,
+                    'message' => [
+                        'errorDetails' => [__('auth.not_registered_yet')],
+                    ],
+                ];
+            }
             // Generate the cache key for the verification code
             $verifkey = 'verification_code_' . $data['email'];
 
@@ -105,17 +119,6 @@ class AuthService
             // Check if the provided code matches the cached code
             if ($cachedCode == $data['code']) {
                 // Retrieve the user data from cache
-                $userDataKey = 'user_data_' . $data['email'];
-                $userData = Cache::get($userDataKey);
-
-                if (!$userData) {
-                    return [
-                        'status' => 404,
-                        'message' => [
-                            'errorDetails' => [__('auth.not_registered_yet')],
-                        ],
-                    ];
-                }
 
                 // Create the user in the database
                 $user = User::create([
@@ -180,8 +183,27 @@ class AuthService
 
             // Check if a verification code already exists in the cache
             if (Cache::has($verifkey)) {
-                // Delete the existing code from the cache
+
+                // Get the timestamp when the code was stored
+                $updatedAt = Cache::get($verifkey . '_timestamp');
+                $requestedAt = now();
+                // Calculate the difference in minutes
+                $diffInMinutes = $requestedAt->diffInMinutes($updatedAt);
+
+                //     if ($diffInMinutes <= 600) {
+                // Calculate the time in minutes (optional: round it)
+                //      $minutes = ceil($diffInMinutes / 60);
+                //      return [
+                //         'status' => 400,
+                //        'message' => [
+                //           'errorDetails' => [__('auth.verification_code_error', ['minutes' => $minutes])],
+                //       ],
+                //   ];
+                //  } else {
                 Cache::forget($verifkey);
+
+                //  }
+
 
                 // Generate a new 6-digit random code and store it in the cache for 1 hour
                 $code = Cache::remember($verifkey, 3600, function () {
@@ -196,7 +218,7 @@ class AuthService
                     'message' => __('auth.verification_success'),
                     'status' => 200,
                     'data' => [
-                        'email' => $data['email'],
+                        'email' => $updatedAt,
                     ],
                 ];
             } else {
@@ -204,7 +226,7 @@ class AuthService
                 return [
                     'status' => 400,
                     'message' => [
-                        'errorDetails' => [__('auth.no_code_found')],
+                        'errorDetails' => [__('auth.not_registered_yet')],
                     ],
                 ];
             }
@@ -372,9 +394,6 @@ class AuthService
                 $cities = Cache::rememberForever('cities_list', function () {
                     return City::select('id', 'city_name')->get();
                 });
-
-
-
                 return [
                     'message' => __('auth.google_login_success'),
                     'status' => 200,

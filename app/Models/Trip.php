@@ -29,7 +29,7 @@ class Trip extends Model
 
 
             0=>'Pending',
-            1=>'on the way',
+            1=>'on_the_way',
             2=>'Complete' ,
             3=>'Ending' ,
             4=>'cancel'
@@ -41,7 +41,7 @@ class Trip extends Model
     {
         $statuses = [
             'Pending' => 0,
-            'on the way'=>1,
+            'on_the_way'=>1,
             'Complete' => 2,
             'Ending' => 3,
             'cancel'=>4
@@ -110,7 +110,7 @@ class Trip extends Model
             $model->where('to', $filteringData['to']);
         }
         if (isset($filteringData['status'])) {
-            $model->where('status', $filteringData['status']);
+            $model->where('trips.status', $filteringData['status']);
         }
         if (isset($filteringData['seat_price'])) {
             $model->where('seat_price', '<=', $filteringData['seat_price']);

@@ -36,4 +36,5 @@ return [
     'authorization_remove' => 'You are not authorized to remove the trip.',
     'trip_saved_successfully' => 'Trip saved successfully.',
     'trip_removed_successfully' => 'Trip removed successfully.',
+    'on_the_way_successfully'=>'Trip has started'
 ];

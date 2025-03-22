@@ -32,7 +32,7 @@ return [
     'accept_permission_denied' => 'غير مسموح لك بقبول الحجوزات.',
     'accept_not_owner' => 'غير مسموح لك بقبول هذا الحجز.',
     'invalid_status_for_acceptance' => 'الحجز ليس في حالة صالحة للقبول.',
-    'not_enough_seats' => 'لا توجد مقاعد كافية متاحة.',
+   'not_enough_seats' => 'لا توجد مقاعد كافية متاحة المتوفر حالياً: :available_seats مقعد',
     'reject_permission_denied' => 'غير مسموح لك برفض الحجوزات.',
     'reject_not_owner' => 'غير مسموح لك برفض هذا الحجز.',
     'invalid_status_for_rejection' => 'الحجز ليس في حالة صالحة للرفض.',

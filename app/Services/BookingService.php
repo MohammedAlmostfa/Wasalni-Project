@@ -12,9 +12,10 @@ use Illuminate\Support\Facades\Auth;
 class BookingService
 {
     /**
-     * Retrieve all bookings for the authenticated user.
+     * Retrieve all bookings for the authenticated user with optional filtering.
      *
-     * @return array Response containing status, message, and data
+     * @param array $filteringData An associative array of filtering criteria (e.g., ['status' => 1, 'seats_number' => 2]).
+     * @return array Response containing status, message, and data.
      */
     public function showmybooking($filteringData)
     {
@@ -22,10 +23,8 @@ class BookingService
             // Retrieve the authenticated user
             $user = auth()->user();
 
-
-            // Retrieve the user's bookings with pagination
-            $bookings = DB::table('bookings')
-                ->join('trips', 'bookings.trip_id', '=', 'trips.id')
+            // Retrieve the user's bookings with pagination and optional filtering
+            $bookings = Booking::join('trips', 'bookings.trip_id', '=', 'trips.id')
                 ->join('cities as cityFrom', 'trips.from', '=', 'cityFrom.id')
                 ->join('cities as cityTo', 'trips.to', '=', 'cityTo.id')
                 ->join('users', 'trips.user_id', '=', 'users.id')
@@ -34,7 +33,7 @@ class BookingService
                     'bookings.id as id',
                     'bookings.seats_number',
                     'bookings.nots',
-                    'booking.status',
+                    'bookings.status',
                     'trips.trip_start',
                     'trips.seat_price',
                     'trips.user_id as driver_id',
@@ -44,9 +43,11 @@ class BookingService
                     'profiles.last_name'
                 )
                 ->where('bookings.user_id', $user->id)
+                ->orderBy('trips.trip_start', 'asc')
+                ->filterby($filteringData) // Apply filtering if provided
                 ->paginate(10);
 
-
+            // If no bookings are found, return a 404 error
             if (!$bookings) {
                 return [
                     'status' => 404,
@@ -79,21 +80,22 @@ class BookingService
     /**
      * Retrieve all bookings for a specific trip.
      *
-     * @param int $id The ID of the trip
-     * @return array Response containing status, message, and data
+     * @param int $id The ID of the trip.
+     * @return array Response containing status, message, and data.
      */
     public function showbookingsbytrip($id)
     {
         try {
-            // Retrieve the trip by ID
-            $trip = Trip::findorfail($id);
+            // Retrieve the trip by ID or fail if not found
+            $trip = Trip::findOrFail($id);
+
             // Retrieve the trip's bookings with related user and profile data
             $bookings = $trip->bookings()->with([
                 'user' => function ($query) {
                     $query->select('id'); // Select only the user ID
                 },
                 'user.profile' => function ($query) {
-                    $query->select('user_id', 'first_name', 'last_name');
+                    $query->select('user_id', 'first_name', 'last_name'); // Select profile details
                 }
             ])->paginate(10);
 
@@ -120,20 +122,21 @@ class BookingService
     /**
      * Create a new booking.
      *
-     * @param array $data Booking data (trip_id, seats_number, etc.)
-     * @return array Response containing status, message, and data
+     * @param array $data Booking data (e.g., ['trip_id' => 1, 'seats_number' => 2, 'nots' => 'Some notes']).
+     * @return array Response containing status, message, and data.
      */
     public function createBooking($data)
     {
         try {
             $user = auth()->user(); // Get the authenticated user
+
+            // Check if the user has any pending bookings for the same trip
             $pendingBookings = $user->bookings()
                 ->where('trip_id', $data['trip_id'])
                 ->where('status', 'pending')
-
                 ->get();
-            // Retrieve pending bookings
 
+            // If pending bookings exist, return a conflict response
             if (!$pendingBookings->isEmpty()) {
                 return [
                     'status' => 409,
@@ -142,15 +145,16 @@ class BookingService
                     ],
                 ];
             }
-            // Check if the trip exists
-            $trip = Trip::findorfail($data['trip_id']);
+
+            // Retrieve the trip by ID or fail if not found
+            $trip = Trip::findOrFail($data['trip_id']);
 
             // Create a new booking
             $booking = Booking::create([
                 'trip_id' => $data['trip_id'],
                 'nots' => $data['nots'] ?? null,
                 'seats_number' => $data['seats_number'],
-                'user_id' => Auth::user()->id,
+                'user_id' => $user->id,
             ]);
 
             // Return success response
@@ -176,9 +180,9 @@ class BookingService
     /**
      * Update an existing booking.
      *
-     * @param array $data Updated booking data
-     * @param Booking $booking The booking to update
-     * @return array Response containing status, message, and data
+     * @param array $data Updated booking data (e.g., ['trip_id' => 1, 'seats_number' => 3, 'nots' => 'Updated notes']).
+     * @param Booking $booking The booking to update.
+     * @return array Response containing status, message, and data.
      */
     public function updateBooking($data, Booking $booking)
     {
@@ -213,8 +217,8 @@ class BookingService
     /**
      * Delete a booking.
      *
-     * @param Booking $booking The booking to delete
-     * @return array Response containing status and message
+     * @param Booking $booking The booking to delete.
+     * @return array Response containing status and message.
      */
     public function deleteBooking(Booking $booking)
     {
@@ -244,8 +248,8 @@ class BookingService
     /**
      * Accept a booking.
      *
-     * @param Booking $booking The booking to accept
-     * @return array Response containing status, message, and data
+     * @param Booking $booking The booking to accept.
+     * @return array Response containing status, message, and data.
      */
     public function acceptedBooking(Booking $booking)
     {
@@ -288,8 +292,8 @@ class BookingService
     /**
      * Reject a booking.
      *
-     * @param Booking $booking The booking to reject
-     * @return array Response containing status, message, and data
+     * @param Booking $booking The booking to reject.
+     * @return array Response containing status, message, and data.
      */
     public function rejectBooking(Booking $booking)
     {
