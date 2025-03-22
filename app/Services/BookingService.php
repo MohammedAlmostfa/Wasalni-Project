@@ -189,7 +189,6 @@ class BookingService
         try {
             // Update the booking with new data
             $booking->update([
-                'trip_id' => $data['trip_id'] ?? $booking->trip_id,
                 'seats_number' => $data['seats_number'] ?? $booking->seats_number,
                 'nots' => $data['nots'] ?? $booking->nots,
             ]);

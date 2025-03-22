@@ -25,7 +25,7 @@ class UpdateBookingRequest extends FormRequest
     public function rules(): array
     {
         return [
-           "trip_id" => "nullable|integer|exists:trips,id",
+           "trip_id" => "required|integer|exists:trips,id",
            "seats_number" => [
                "required",
                "integer",
