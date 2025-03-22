@@ -4,6 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Country extends Model
 {
@@ -15,7 +18,7 @@ class Country extends Model
      * @var array<string>
      */
     protected $fillable = [
-        'country_name'
+        'country_name', // Name of the country
     ];
 
     /**
@@ -23,7 +26,7 @@ class Country extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
-    public function user()
+    public function user(): HasOne
     {
         return $this->hasOne(Profile::class);
     }
@@ -33,7 +36,7 @@ class Country extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function profile()
+    public function profile(): BelongsTo
     {
         return $this->belongsTo(Profile::class);
     }
@@ -43,8 +46,8 @@ class Country extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    // public function cities()
-    //  {
+    // public function cities(): HasMany
+    // {
     //     return $this->hasMany(City::class);
     // }
 }

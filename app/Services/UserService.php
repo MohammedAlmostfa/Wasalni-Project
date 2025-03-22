@@ -10,17 +10,17 @@ use Illuminate\Support\Facades\Auth;
 class UserService
 {
     /**
-     * Retrieve users based on the logged-in user's country and role.
-     *
-     * This method fetches users who:
-     * - Have a profile with the same `country_id` as the logged-in user.
-     * - Have the role `PrivateUser`.
-     *
-     * @return array
-     *   - If successful: Returns a success message, status code 200, and the list of users.
-     *   - If the logged-in user or their profile is not found: Returns a 404 error.
-     *   - If an exception occurs: Returns a 500 error with a generic error message.
-     */
+ * Retrieve users based on the logged-in user's city and role.
+ *
+ * This method fetches users who:
+ * - Have a profile with the same `city_id` as the logged-in user.
+ * - Have the role `PrivateUser`.
+ *
+ * @return array
+ *   - If successful: Returns a success message, status code 200, and the list of users.
+ *   - If the logged-in user or their profile is not found: Returns a 404 error.
+ *   - If an exception occurs: Returns a 500 error with a generic error message.
+ */
     public function showUsers()
     {
         try {
@@ -37,12 +37,12 @@ class UserService
                 ];
             }
 
-            // Retrieve the country_id of the logged-in user
-            $country_id = $user->profile->country_id;
+            // Retrieve the city of the logged-in user
+            $city_id = $user->profile->city_id;
 
-            // Fetch users based on the country_id and role
-            $users = User::whereHas('profile', function ($query) use ($country_id) {
-                $query->where('country_id', $country_id); // Filter by country_id in the profile
+            // Fetch users based on the city and role
+            $users = User::whereHas('profile', function ($query) use ($city_id) {
+                $query->where('city_id', $city_id); // Filter by city_id in the profile
             })->whereHas('roles', function ($query) {
                 $query->where('name', 'PrivateUser'); // Filter by role name
             })->with('profile:id,user_id,first_name,last_name') // Eager load profile with specific fields

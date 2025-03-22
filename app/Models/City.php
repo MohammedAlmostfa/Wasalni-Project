@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class City extends Model
 {
@@ -15,31 +17,36 @@ class City extends Model
      * @var array<string>
      */
     protected $fillable = [
-        'city_name',
-        //'country_id',
+        'city_name', // Name of the city
+        // 'country_id', // Foreign key for the Country model (commented out)
     ];
 
     /**
-     * Define an inverse one-to-many relationship with the Country model.
+     * Define a one-to-many relationship with the Trip model for trips starting from this city.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    //  public function country()
-    // {
-    //     return $this->belongsTo(Country::class);
-    // }
-    public function tripsFrom()
+    public function tripsFrom(): HasMany
     {
         return $this->hasMany(Trip::class, 'from');
     }
 
-    public function tripsTo()
+    /**
+     * Define a one-to-many relationship with the Trip model for trips ending in this city.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function tripsTo(): HasMany
     {
         return $this->hasMany(Trip::class, 'to');
     }
 
-
-    public function profile()
+    /**
+     * Define a one-to-one relationship with the Profile model.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function profile(): HasOne
     {
         return $this->hasOne(Profile::class);
     }

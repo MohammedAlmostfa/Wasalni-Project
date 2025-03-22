@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Profile extends Model
 {
@@ -22,8 +23,7 @@ class Profile extends Model
         'birthday',
         'phone',
         'address',
-        //  'country_id'
-        "city_id"
+        'city_id', // Foreign key for the City model
     ];
 
     /**
@@ -31,26 +31,23 @@ class Profile extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
     /**
-     * Define a one-to-one relationship with the Country model.
+     * Define a one-to-one relationship with the City model.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-
-
+    public function city(): BelongsTo
+    {
+        return $this->belongsTo(City::class);
+    }
     //  public function country()
     // {
     //    return $this->hasOne(Country::class);
     //}
 
-
-    public function city()
-    {
-        return $this->belongsTo(City::class);
-    }
 }

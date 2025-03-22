@@ -18,7 +18,6 @@ class RatingService
     public function createRating($data)
     {
         try {
-
             // Create a new rating
             $rating = Rating::create([
                 'rate' => $data['rate'],
