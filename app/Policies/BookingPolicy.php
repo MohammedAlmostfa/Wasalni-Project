@@ -46,6 +46,39 @@ class BookingPolicy
     }
 
     /**
+     * Determine whether the user can cancel the booking.
+     *
+     * @param User $user The authenticated user.
+     * @param Booking $booking The booking to cancel.
+     * @return Response Allow if the user has permission and the booking is in a valid status; otherwise, deny.
+     */
+    public function cancel(User $user, Booking $booking): Response
+    {
+        // Check if the user has permission to cancel bookings
+        if (!$user->hasPermissionTo('booking.cancel')) {
+            return Response::deny(__('booking.cancel_permission_denied'), 403);
+        }
+
+        // Allow if the user owns the trip and the booking is "accepted"
+        if ($booking->trip->user_id == $user->id && $booking->status === 'accepted') {
+            return Response::allow();
+        }
+
+        // Deny if the booking is already "rejected" or "pending"
+        if ($booking->status == "rejected" || $booking->status == "pending") {
+            return Response::deny(__('booking.cancel_permission_rejected', ['status' => $booking->status]), 403);
+        }
+
+        // Deny if the user does not own the trip
+        if ($booking->trip->user_id != $user->id) {
+            return Response::deny(__('booking.cancel_not_owner'), 403);
+        }
+
+        // Allow if none of the above conditions are met
+        return Response::allow();
+    }
+
+    /**
      * Determine whether the user can restore the booking.
      *
      * @param User $user The authenticated user.

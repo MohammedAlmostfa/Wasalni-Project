@@ -246,6 +246,49 @@ class BookingService
     }
 
     /**
+     * Cancel a booking.
+     *
+     * @param Booking $booking The booking to cancel.
+     * @return array Response containing status and message.
+     */
+    public function cancelbooking(Booking $booking)
+    {
+        try {
+            // Check if the booking is already canceled
+            if ($booking->status === 'cancel') {
+                return [
+                    'status' => 400,
+                    'message' => [
+                        'errorDetails' => [__('booking.booking_already_cancel')],
+                    ],
+                ];
+            }
+
+            // Update the booking status to "cancel"
+            $booking->update([
+                'status' => 'cancel',
+            ]);
+
+            // Return success response
+            return [
+                'message' => __('booking.booking_cancel'),
+                'status' => 200,
+            ];
+        } catch (Exception $e) {
+            // Log the error
+            Log::error('Error in cancelbooking: ' . $e->getMessage());
+
+            // Return error response
+            return [
+                'status' => 500,
+                'message' => [
+                    'errorDetails' => [__('booking.general_error')],
+                ],
+            ];
+        }
+    }
+
+    /**
      * Accept a booking.
      *
      * @param Booking $booking The booking to accept.

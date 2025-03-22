@@ -23,7 +23,7 @@ return [
     'mybookings_retrieved' => 'Your bookings retrieved successfully.',
     'booking_already_accepted' => 'Booking is already accepted.',
     'booking_already_rejected' => 'Booking is already rejected.',
-
+  'booking_already_cancel' => 'Booking is already canceled.',
     'update_permission_denied' => 'You are not allowed to update this booking.',
     'delete_permission_denied' => 'You are not allowed to delete this booking.',
     'accept_permission_denied' => 'You are not allowed to accept bookings.',
@@ -35,5 +35,10 @@ return [
     'invalid_status_for_rejection' => 'The booking is not in a valid status for rejection.',
     'show_permission_denied' => 'You are not allowed to show bookings of trips.',
     'show_not_owner' => 'You are not allowed to show bookings of this trip.',
-       'trip_has_booking' => 'There is a pending booking for this trip. You can modify it instead of adding a new booking.',
+
+    'trip_has_booking' => 'There is a pending booking for this trip. You can modify it instead of adding a new booking.',
+"booking_cancel" => 'Booking canceled successfully',
+"cancel_permission_denied" => 'You are not allowed to cancel  booking.',
+"cancel_permission_rejected" => 'You cannot cancel the booking as it is already :status',
+"cancel_not_owner"=> 'You are not allowed to cancel this booking.',
 ];

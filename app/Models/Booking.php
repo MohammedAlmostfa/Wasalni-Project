@@ -34,6 +34,7 @@ class Booking extends Model
             0 => 'pending',
             1 => 'accepted',
             2 => 'rejected',
+             3=>'cancel' ,
         ];
 
         return $statuses[$value];
@@ -51,6 +52,7 @@ class Booking extends Model
             'pending' => 0,
             'accepted' => 1,
             'rejected' => 2,
+            'cancel' => 3,
         ];
 
         $this->attributes['status'] = $statuses[$value];

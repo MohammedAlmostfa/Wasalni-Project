@@ -98,6 +98,7 @@ Route::middleware('auth:api')->group(function () {
     Route::get('trip/bokking/{id}', [BookingController::class,'showbookingsbytrip'])->name('booking.show');
     Route::post('/booking/{booking}/accept', [BookingController::class, 'accept'])->name('booking.accept');
     Route::post('/booking/{booking}/reject', [BookingController::class, 'reject'])->name('booking.reject');
+    Route::post('/booking/{booking}/cancel', [BookingController::class, 'cancel'])->name('booking.cancel');
 
 
     // API resource routes for ratings

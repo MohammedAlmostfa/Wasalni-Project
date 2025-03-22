@@ -27,18 +27,18 @@ class BookingController extends Controller
      */
     public function __construct(BookingService $BookingService)
     {
-
-
         $this->BookingService = $BookingService;
     }
 
     /**
      * Display a list of all bookings for the authenticated user.
      *
+     * @param FilterinBookingData $request The request containing filtering data.
      * @return \Illuminate\Http\JsonResponse Paginated list of bookings.
      */
     public function index(FilterinBookingData $request)
-    {// Validate the incoming request data
+    {
+        // Validate the incoming request data
         $validateddata = $request->validated();
 
         // Retrieve bookings for the current authenticated user
@@ -58,6 +58,7 @@ class BookingController extends Controller
      */
     public function showbookingsbytrip($id)
     {
+        // Authorize the action to view bookings for the trip
         $this->authorize('showbookingsbytrip', $id);
 
         // Retrieve bookings for the specified trip
@@ -126,6 +127,26 @@ class BookingController extends Controller
 
         // Call the service to delete the booking
         $result = $this->BookingService->deleteBooking($booking);
+
+        // Return a success or error response based on the result
+        return $result['status'] === 200
+            ? self::success(null, $result['message'], $result['status'])
+            : self::error(null, $result['message'], $result['status']);
+    }
+
+    /**
+     * Cancel a specific booking.
+     *
+     * @param Booking $booking The booking to be canceled.
+     * @return \Illuminate\Http\JsonResponse JSON response with the result of the cancellation.
+     */
+    public function cancel(Booking $booking)
+    {
+        // Authorize the cancellation action for the booking
+        $this->authorize('cancel', $booking, Booking::class);
+
+        // Call the service to cancel the booking
+        $result = $this->BookingService->cancelbooking($booking);
 
         // Return a success or error response based on the result
         return $result['status'] === 200

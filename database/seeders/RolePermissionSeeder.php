@@ -27,7 +27,7 @@ class RolePermissionSeeder extends Seeder
         $showBookingPermission = Permission::create(['name' => 'booking.show', 'guard_name' => 'api']);
         $acceptBookingPermission = Permission::create(['name' => 'booking.accept', 'guard_name' => 'api']);
         $rejectBookingPermission = Permission::create(['name' => 'booking.reject', 'guard_name' => 'api']);
-
+        $cancelBookingPermission = Permission::create(['name' => 'booking.cancel', 'guard_name' => 'api']);
 
 
         // Assign permissions to the PrivateUser role
@@ -40,6 +40,7 @@ class RolePermissionSeeder extends Seeder
             $showBookingPermission,
             $acceptBookingPermission,
             $rejectBookingPermission,
+            $cancelBookingPermission,
         ]);
 
         // Create an admin user

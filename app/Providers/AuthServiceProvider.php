@@ -39,6 +39,7 @@ class AuthServiceProvider extends ServiceProvider
         Gate::define('createRating', [RatingPolicy::class, 'createRating']);
         Gate::define('showbookingsbytrip', [BookingPolicy::class, 'showbookingsbytrip']);
         Gate::define('removeFromSavedTrip', [SavedTripPolicy::class, 'removeTripFromSaved']);
+        Gate::define('cancel', [BookingPolicy::class, 'cancel']);
 
     }
 }
