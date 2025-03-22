@@ -37,6 +37,7 @@ class BookingService
                     'trips.trip_start',
                     'trips.seat_price',
                     'trips.user_id as driver_id',
+                    'trips.id As trip_id',
                     'cityFrom.city_name as from_city',
                     'cityTo.city_name as to_city',
                     'profiles.first_name',
