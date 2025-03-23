@@ -26,6 +26,7 @@ class TripResource extends JsonResource
             'trip_start' => date('Y-m-d H:i', strtotime($this->trip_start)),
             'seat_price' => $this->seat_price,
              'available_seats' => $this->available_seats,
+             'is_saved'=>$this->is_saved,
         ];
     }
 }

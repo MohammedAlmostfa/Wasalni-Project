@@ -77,16 +77,16 @@ Route::middleware('auth:api')->group(function () {
         'update' => 'trip.update', // Update a trip
         'destroy' => 'trip.delete', // Delete a trip
     ]);
-    Route::post('/trip/ending/{id}', [TripController::class, 'endingTrip'])->name('trip.ended');
-    // Route::post('/trip/on_the_way/{id}', [TripController::class, 'endingTrip'])->name('trip.on_the_way');
+    Route::post('/trip/ending/{id}', [TripController::class, 'endingTrip'])->name('trip.ended'); // Marks a trip as ended
 
     // Additional trip-related routes
     Route::get('/show_his_Trip', [TripController::class, 'showhisTrips']); // Retrieve trips for the authenticated user
     Route::get('/show_user_Trip/{id}', [TripController::class, 'showuserTrips']); // Retrieve trips for a specific user
 
-    Route::get('trips/saved', [SavedTripController::class,'index']);
-    Route::post('trips/saved', [SavedTripController::class,'AddToSavedTrip']);
-    Route::post('trips/remove', [SavedTripController::class,'Removefromsavedtrip']);
+    // Saved trips routes
+    Route::get('trips/saved', [SavedTripController::class, 'index']); // Retrieve all saved trips for the authenticated user
+    Route::post('trips/saved', [SavedTripController::class, 'AddToSavedTrip']); // Add a trip to the saved trips list
+    Route::post('trips/remove', [SavedTripController::class, 'Removefromsavedtrip']); // Remove a trip from the saved trips list
 
     // API resource routes for user profile
     Route::put('profile', [ProfileController::class, 'update']); // Updates user profile
@@ -94,12 +94,10 @@ Route::middleware('auth:api')->group(function () {
 
     // API resource routes for bookings (CRUD operations)
     Route::apiResource('booking', BookingController::class); // Handles CRUD for bookings
-    Route::apiResource('booking', BookingController::class);
-    Route::get('trip/bokking/{id}', [BookingController::class,'showbookingsbytrip'])->name('booking.show');
-    Route::post('/booking/{booking}/accept', [BookingController::class, 'accept'])->name('booking.accept');
-    Route::post('/booking/{booking}/reject', [BookingController::class, 'reject'])->name('booking.reject');
-    Route::post('/booking/{booking}/cancel', [BookingController::class, 'cancel'])->name('booking.cancel');
-
+    Route::get('trip/bokking/{id}', [BookingController::class, 'showbookingsbytrip'])->name('booking.show'); // Retrieve bookings for a specific trip
+    Route::post('/booking/{booking}/accept', [BookingController::class, 'accept'])->name('booking.accept'); // Accept a booking
+    Route::post('/booking/{booking}/reject', [BookingController::class, 'reject'])->name('booking.reject'); // Reject a booking
+    Route::post('/booking/{booking}/cancel', [BookingController::class, 'cancel'])->name('booking.cancel'); // Cancel a booking
 
     // API resource routes for ratings
     Route::apiResource("rating", RatingController::class); // Handles CRUD operations for ratings

@@ -68,6 +68,7 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasMany(Trip::class);
     }
 
+
     /**
      * Get the favorite people added by this user.
      */

@@ -6,6 +6,7 @@ use Exception;
 use App\Models\City;
 use App\Models\Trip;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
@@ -24,34 +25,37 @@ class TripService
             $userCityid = Auth::user()->profile->city->id;
 
             // Retrieve trips with necessary relationships and apply filters
-            $trips = Cache::remember('trips_' . md5(json_encode([$filteringData, $userCityid])), 600, function () use ($filteringData, $userCityid) {
-                return Trip::select(
-                    'trips.id',
-                    'trips.description',
-                    'trips.status',
-                    'trips.user_id',
-                    'trips.trip_start',
-                    'trips.seat_price',
-                    'trips.available_seats',
-                    'trips.created_at'
-                )
-                    ->join('profiles', 'trips.user_id', '=', 'profiles.user_id')
-                    ->join('cities AS city_from', 'trips.from', '=', 'city_from.id')
-                    ->join('cities AS city_to', 'trips.to', '=', 'city_to.id')
-                    ->addSelect(
-                        'profiles.first_name',
-                        'profiles.last_name',
-                        'city_from.city_name AS from_city',
-                        'city_to.city_name AS to_city'
-                    )
-                    ->filterBy($filteringData)
+            $trips = Trip::select(
+                'trips.id',
+                'trips.description',
+                'trips.status',
+                'trips.user_id',
+                'trips.trip_start',
+                'trips.seat_price',
+                'trips.available_seats',
+                'trips.created_at'
+            )
+    ->join('profiles', 'trips.user_id', '=', 'profiles.user_id')
+    ->join('cities AS city_from', 'trips.from', '=', 'city_from.id')
+    ->join('cities AS city_to', 'trips.to', '=', 'city_to.id')
+    ->leftJoin('trip_user', function ($join) {
+        $join->on('trips.id', '=', 'trip_user.trip_id')
+             ->where('trip_user.user_id', '=', Auth::user()->id); // التحقق من المستخدم الحالي
+    })
+    ->addSelect(
+        'profiles.first_name',
+        'profiles.last_name',
+        'city_from.city_name AS from_city',
+        'city_to.city_name AS to_city',
+        DB::raw('CASE WHEN trip_user.user_id IS NOT NULL THEN 1 ELSE 0 END AS is_saved') // إضافة حقل is_saved
+    )
+    ->filterBy($filteringData)
+    ->when($userCityid, function ($query, $userCityid) {
+        return $query->orderByRaw("CASE WHEN trips.from = ? THEN 1 ELSE 2 END", [$userCityid]);
+    })
+    ->orderBy('trips.trip_start', 'asc')
+    ->paginate(10);
 
-                    ->when($userCityid, function ($query, $userCityid) {
-                        return $query->orderByRaw("CASE WHEN trips.from = ? THEN 1 ELSE 2 END", [$userCityid]);
-                    })
-                    ->orderBy('trips.trip_start', 'asc')
-                    ->paginate(10);
-            });
             return [
                 'message' => __('trip.show_trips_success'),
                 'data' => $trips,
@@ -64,7 +68,7 @@ class TripService
             return [
                 'status' => 500,
                 'message' => [
-                   'errorDetails' => [__('trip.general_error')],
+                    'errorDetails' => [__('trip.general_error')],
                 ],
             ];
         }
