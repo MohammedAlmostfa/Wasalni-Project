@@ -37,7 +37,6 @@ class deletfromSavedTripRequest extends FormRequest
     }
 
 
-
     /**
      * Handle a failed validation attempt.
      * This method is called when validation fails.
