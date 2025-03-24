@@ -83,6 +83,7 @@ class TripService
     public function showhisTrips($filteringData)
     {
         try {
+            /** @var \App\Models\User $user */
             $user = Auth::user();
             $trips = $user->trips()
                 ->select(

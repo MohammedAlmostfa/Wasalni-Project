@@ -23,7 +23,7 @@ class SavedTripService
     public function showsavedtrip($filteringData)
     {
         try {
-            // Get the authenticated user
+            /** @var \App\Models\User $user */
             $user = Auth::user();
 
             // Fetch the user's saved trips
@@ -84,6 +84,7 @@ class SavedTripService
     public function addToSavedTrip($data)
     {
         try {
+            /** @var \App\Models\User $user */
             $user = Auth::user();
             $tripId = $data["tripId"];
             // Attach the trip (with timestamp)
@@ -117,6 +118,8 @@ class SavedTripService
     public function removeFromSavedTrip($data)
     {
         try {
+            /** @var \App\Models\User $user */
+
             // Delete the record from the trip_user table
             $user = Auth::user();
             $tripId = $data["tripId"];

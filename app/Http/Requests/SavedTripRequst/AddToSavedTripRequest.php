@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests\SavedTripRequst;
 
-use App\Rules\CheckTripSaved;
+use App\Rules\CheckTripUnsaved;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -29,7 +29,7 @@ class AddToSavedTripRequest extends FormRequest
                 'required',
                 'exists:trips,id',
                 'integer',
-                new CheckTripSaved($this->tripId),
+                new CheckTripUnsaved($this->tripId),
             ],
         ];
     }

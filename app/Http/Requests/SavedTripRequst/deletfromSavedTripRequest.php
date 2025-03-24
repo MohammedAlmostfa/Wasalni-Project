@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\SavedTripRequst;
 
+use App\Rules\CheckTripSaved;
 use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
@@ -28,20 +29,23 @@ class deletfromSavedTripRequest extends FormRequest
             'tripId' => [
                 'required',
                 'integer',
-                Rule::exists('trip_user', 'trip_id')->where('user_id', auth()->id()),
+                'exists:trips,id',
+                'integer',
+                new CheckTripSaved($this->tripId),
             ],
         ];
     }
 
 
+
     /**
-    * Handle a failed validation attempt.
-    * This method is called when validation fails.
-    * Logs failed attempts and throws validation exception.
-    * @param \Illuminate\Validation\Validator $validator
-    * @return void
-    *
-    */
+     * Handle a failed validation attempt.
+     * This method is called when validation fails.
+     * Logs failed attempts and throws validation exception.
+     * @param \Illuminate\Validation\Validator $validator
+     * @return void
+     *
+     */
     protected function failedValidation(Validator $validator): void
     {
         throw new HttpResponseException(response()->json([

@@ -33,6 +33,7 @@ return [
     'ended_permission_denied' => 'You are not allowed to end trips.',
     "Resource_not_found"=>"Resource not found",
    'trip_saved_before' => 'You have already saved this trip before.',
+    'trip_unsaved_before'=>'You have not saved this trip before',
     'authorization_remove' => 'You are not authorized to remove the trip.',
     'trip_saved_successfully' => 'Trip saved successfully.',
     'trip_removed_successfully' => 'Trip removed successfully.',
