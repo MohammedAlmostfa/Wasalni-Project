@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\SavedTripRequst;
 
+use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -24,9 +25,12 @@ class deletfromSavedTripRequest extends FormRequest
     public function rules(): array
     {
         return [
-           "recordId"=>'required|exists:trip_user,id|integer',
-         ];
-
+            'tripId' => [
+                'required',
+                'integer',
+                Rule::exists('trip_user', 'trip_id')->where('user_id', auth()->id()),
+            ],
+        ];
     }
 
 

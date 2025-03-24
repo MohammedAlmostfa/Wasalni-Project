@@ -18,16 +18,13 @@ class SavedTripPolicy
      * @param int $recordId The ID of the record in the `trip_user` pivot table.
      * @return Response Allow if the user is authorized; otherwise, deny with a message.
      */
-    public function removeTripFromSaved(User $user, $recordId): Response
+    public function removeTripFromSaved(User $user, $tripId): Response
     {
-        // Retrieve the record from the `trip_user` pivot table
-        $record = DB::table('trip_user')->where('id', $recordId)->first();
+        $isSaved = $user->savedTrips()->where('trip_id', $tripId)->exists();
 
-        // Check if the record exists and belongs to the authenticated user
-        if (!$record || $record->user_id !== $user->id) {
-            return Response::deny(__('trip.authorization_remove'), 403); // 403 Forbidden
+        if (!$isSaved) {
+            return Response::deny(__('trip.authorization_remove'), 403);
         }
-
         // Allow the user to remove the trip if all conditions are met
         return Response::allow();
     }

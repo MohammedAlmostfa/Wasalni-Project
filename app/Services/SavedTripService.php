@@ -9,12 +9,16 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 
+/**
+ * Service class for managing user saved trips operations.
+ */
 class SavedTripService
 {
     /**
-     * Display the saved trips for the authenticated user.
+     * Retrieve a paginated list of saved trips with filtering options.
      *
-     * @return array
+     * @param array|null $filteringData An array of filtering criteria (optional).
+     * @return array Contains the status, message, and paginated trip data.
      */
     public function showsavedtrip($filteringData)
     {
@@ -42,8 +46,7 @@ class SavedTripService
                 'profiles.last_name',
                 'city_from.city_name AS from_city',
                 'city_to.city_name AS to_city',
-                'trip_user.id AS record_id',
-                'trip_user.created_at AS saved_at'
+                'trip_user.created_at AS saved_at',
             )
             ->when($filteringData, function ($query, $filteringData) {
                 // Apply filtering logic here
@@ -51,8 +54,6 @@ class SavedTripService
             })
             ->orderBy('saved_at', 'asc')
             ->paginate(10);
-
-
 
             // Return success response with saved trips data
             return [
@@ -77,26 +78,22 @@ class SavedTripService
     /**
      * Add a trip to the user's saved trips list.
      *
-     * @param array $data
-     * @return array
+     * @param array $data Contains the trip ID to be saved.
+     * @return array Contains the status and operation message.
      */
     public function addToSavedTrip($data)
     {
         try {
-            // Get the authenticated user
             $user = Auth::user();
+            $tripId = $data["tripId"];
+            // Attach the trip (with timestamp)
+            $user->savedTrips()->attach($tripId, ['created_at' => Carbon::now()]);
 
-            // Find the trip by ID
-            $trip = Trip::findOrFail($data["tripId"]);
-
-            // Attach the trip to the user's saved trips
-            $user->savedTrips()->attach($data["tripId"], array('created_at' => Carbon::now()));
-
-            // Return success response
             return [
                 'status' => 200,
-                'message' => __("trip.trip_saved_successfully")
+                'message' => __("trip.trip_saved_successfully"),
             ];
+
         } catch (Exception $e) {
             // Log the error if an exception occurs
             Log::error('Error in addToSavedTrip: ' . $e->getMessage());
@@ -114,14 +111,17 @@ class SavedTripService
     /**
      * Remove a trip from the user's saved trips list.
      *
-     * @param array $data
-     * @return array
+     * @param array $data Contains the trip ID to be removed.
+     * @return array Contains the status and operation message.
      */
     public function removeFromSavedTrip($data)
     {
         try {
             // Delete the record from the trip_user table
-            DB::table('trip_user')->where('id', $data["recordId"])->delete();
+            $user = Auth::user();
+            $tripId = $data["tripId"];
+            // Detach the trip from the user's saved trips
+            $user->savedTrips()->detach($tripId);
 
             // Return success response
             return [

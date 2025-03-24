@@ -26,7 +26,7 @@ class TripService
 
             // Retrieve trips with necessary relationships and apply filters
             $trips = Trip::select(
-                'trips.id',
+                'trips.id As trip_id',
                 'trips.description',
                 'trips.status',
                 'trips.user_id',

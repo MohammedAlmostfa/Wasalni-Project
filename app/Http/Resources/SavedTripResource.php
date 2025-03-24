@@ -25,7 +25,6 @@ class SavedTripResource extends JsonResource
             'trip_start' => date('Y-m-d H:i', strtotime($this->trip_start)),
             'seat_price' => $this->seat_price,
             'available_seats' => $this->available_seats,
-            'record_id'=>$this->record_id,
             'saved_at' => date('Y-m-d H:i', strtotime($this->saved_at)),
             ];
     }

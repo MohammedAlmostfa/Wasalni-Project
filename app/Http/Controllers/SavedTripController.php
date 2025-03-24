@@ -74,10 +74,10 @@ class SavedTripController extends Controller
         $validatedData = $request->validated();
 
         // Extract the record ID from the validated data
-        $recordId = $validatedData['recordId'];
+        $tripId = $validatedData['tripId'];
 
         // Check authorization using policy
-        $this->authorize('removeFromSavedTrip', $recordId);
+        $this->authorize('removeFromSavedTrip', $tripId);
 
         // Call the service to remove the trip from saved trips
         $result = $this->savedTripService->removeFromSavedTrip($validatedData);

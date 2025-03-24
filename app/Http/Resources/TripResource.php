@@ -16,7 +16,7 @@ class TripResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'id' => $this->id,
+            'trip_id' => $this->trip_id,
             'description' => $this->description,
             'status' => $this->status,
             'name' => $this->first_name ." ". $this->last_name ??null,
@@ -27,6 +27,7 @@ class TripResource extends JsonResource
             'seat_price' => $this->seat_price,
              'available_seats' => $this->available_seats,
              'is_saved'=>$this->is_saved,
+
         ];
     }
 }
