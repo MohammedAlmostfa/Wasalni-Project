@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\City;
 use Exception;
 use App\Models\User;
 use Illuminate\Support\Facades\Log;
@@ -19,24 +20,10 @@ class CityService
     public function getCities()
     {
         try {
-            // Get the authenticated user's ID
-            $id = Auth::user()->id;
 
-            // Find the user by ID
-            $user = User::findorfail($id);
 
-            // Check if the user exists
-            if (!$user) {
-                return [
-                    'status' => 404,
-                    'message' => [
-                        'errorDetails' => ['User not found.'],
-                    ],
-                ];
-            }
-
-            // Access cities through the user's profile and country
-            $cities = $user->cities;
+            //get cities from database
+            $cities = City::select('city_name', 'id')->get();
 
             // Return the list of cities with a success message
             return [
