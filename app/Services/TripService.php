@@ -53,7 +53,7 @@ class TripService
                 ->when($userCityid, function ($query, $userCityid) {
                     return $query->orderByRaw("CASE WHEN trips.from = ? THEN 1 ELSE 2 END", [$userCityid]);
                 })
-                ->orderBy('trips.trip_start', 'asc')
+->orderBy('trips.trip_start', 'asc')
                 ->paginate(10);
 
             return [

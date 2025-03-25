@@ -28,6 +28,7 @@ class Trip extends Model
         'user_id',
     ];
 
+
     /**
      * The attributes that should be cast.
      *
@@ -132,8 +133,11 @@ class Trip extends Model
      * @param array $filteringData An associative array of filtering criteria.
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeFilterby($model, $filteringData)
+    public function scopeFilterBy($model, $filteringData)
     {
+        $filteringData['status'] = $filteringData['status'] ?? "0";
+
+        // تطبيق الفلاتر بناءً على المدخلات
         if (isset($filteringData['trip_start'])) {
             $model->where('trip_start', '>', $filteringData['trip_start']);
         }
@@ -147,13 +151,14 @@ class Trip extends Model
             $model->where('trips.status', $filteringData['status']);
         }
         if (isset($filteringData['seat_price'])) {
-            $model->where('seat_price', '<=', $filteringData['seat_price']);
+            $model->where('seat_price', '>=', $filteringData['seat_price']);
+            $model->orderBy('seat_price', 'asc');
         }
         if (isset($filteringData['available_seats'])) {
             $model->where('available_seats', '>=', $filteringData['available_seats']);
         }
-
         return $model;
     }
+
 
 }

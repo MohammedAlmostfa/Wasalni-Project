@@ -22,7 +22,7 @@ class BookingResource extends JsonResource
             'id' => $this->user->id,
             'name' => $this->user->profile->first_name . ' ' . $this->user->profile->last_name,
             'nots'=>$this->nots,
-            'created_at' => $this->created_at->format('Y-m-d H:i'),
+           'created_at' =>$this->created_at->format('d/m/Y h:i A'),
 
         ];
     }
