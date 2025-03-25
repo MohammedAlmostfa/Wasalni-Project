@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\TripRequest;
 
+use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -16,6 +17,24 @@ class FilteringTripsData extends FormRequest
         return true;
     }
 
+    protected function prepareForValidation()
+    {
+
+        if ($this->has('startTime')) {
+            $this->merge([
+                'startTime' => $this->convertTimeFormat($this->input('startTime'))
+            ]);
+        }
+    }
+    private function convertTimeFormat($time)
+    {
+        try {
+            return Carbon::createFromFormat('g:ia', $time)->format('H:i:s');
+        } catch (\Exception $e) {
+            return $time;
+        }
+    }
+
     /**
      * Get the validation rules that apply to the request.
      *
@@ -25,7 +44,8 @@ class FilteringTripsData extends FormRequest
     {
         return [
 
-            'trip_start' => 'nullable|date_format:Y-m-d H:i:s|after:now',
+           'startDate' => 'nullable|date',
+            'startTime' => 'nullable|date_format:H:i:s',
             'from' => 'nullable|exists:cities,id',
             'to' => 'nullable|exists:cities,id|different:from',
             'status' => 'nullable|string',

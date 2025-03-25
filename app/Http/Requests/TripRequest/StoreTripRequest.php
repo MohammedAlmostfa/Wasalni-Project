@@ -26,7 +26,7 @@ class StoreTripRequest extends FormRequest
         return [
 
             'description' => 'required|string|max:100',
-            'trip_start' => 'required|date_format:Y-m-d H:i:s|after:now',
+            'trip_start' => 'required|date_format:d/m/Y h:i A|after:now',
             'from' => 'required|exists:cities,id',
             'to' => 'required|exists:cities,id|different:from',
             'status' => 'required|string',

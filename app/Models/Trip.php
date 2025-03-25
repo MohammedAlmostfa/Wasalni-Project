@@ -137,10 +137,13 @@ class Trip extends Model
     {
         $filteringData['status'] = $filteringData['status'] ?? "0";
 
-        // تطبيق الفلاتر بناءً على المدخلات
-        if (isset($filteringData['trip_start'])) {
-            $model->where('trip_start', '>', $filteringData['trip_start']);
+        if (isset($filteringData['startDate'])) {
+            $model->whereDate('trip_start', '>=', $filteringData['startDate']);
         }
+        if (isset($filteringData['startTime'])) {
+            $model->whereTime('trip_start', '>=', $filteringData['startTime']);
+        }
+
         if (isset($filteringData['from'])) {
             $model->where('from', $filteringData['from']);
         }

@@ -20,7 +20,7 @@ class TripSeeder extends Seeder
         for ($i = 0; $i < 100; $i++) {
             Trip::create([
                   'description' => $faker->sentence,
-                  'trip_start' => $faker->dateTimeBetween('now', '+1 year')->format('Y-m-d H:i:s'),
+                  'trip_start' => $faker->dateTimeBetween('now', '+1 year')->format('Y-m-d H:00'),
                   'from' => $faker->numberBetween(1, 16), // Assuming city IDs are between 1 and 100
                   'to' => $faker->numberBetween(1, 16), // Assuming city IDs are between 1 and 100
                   'status' => $faker->randomElement(['Pending', 'Ending', 'Complete']),
