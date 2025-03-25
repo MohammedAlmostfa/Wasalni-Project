@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Support\Facades\Auth;
 
 class Trip extends Model
 {
@@ -136,6 +137,7 @@ class Trip extends Model
     public function scopeFilterBy($model, $filteringData)
     {
         $filteringData['status'] = $filteringData['status'] ?? "0";
+        $filteringData['from']=$filteringData['from'] ?? Auth::user()->city_id;
 
         if (isset($filteringData['startDate'])) {
             $model->whereDate('trip_start', '>=', $filteringData['startDate']);
