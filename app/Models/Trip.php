@@ -156,12 +156,15 @@ class Trip extends Model
             $model->where('trips.status', $filteringData['status']);
         }
         if (isset($filteringData['seat_price'])) {
-            $model->where('seat_price', '>=', $filteringData['seat_price']);
+            $model->where('seat_price', '<=', $filteringData['seat_price']);
             $model->orderBy('seat_price', 'asc');
         }
         if (isset($filteringData['available_seats'])) {
             $model->where('available_seats', '>=', $filteringData['available_seats']);
+            $model->orderBy('available_seats', 'asc');
+
         }
+
         return $model;
     }
 
