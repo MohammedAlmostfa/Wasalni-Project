@@ -20,6 +20,7 @@ class TripResource extends JsonResource
             'description' => $this->description,
             'status' => $this->status,
             'name' => $this->first_name ." ". $this->last_name ??null,
+            'driver_id'=> $this->driver_id,
             'from_city' => $this->from_city,
             'to_city' => $this->to_city,
             'created_at' =>$this->created_at->format('Y-m-d  h:i A'),

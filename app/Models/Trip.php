@@ -29,7 +29,6 @@ class Trip extends Model
         'user_id',
     ];
 
-
     /**
      * The attributes that should be cast.
      *
@@ -40,47 +39,42 @@ class Trip extends Model
     ];
 
     /**
-     * Get the status attribute as a human-readable string.
-     *
-     * @param int $value The status value stored in the database.
-     * @return string The human-readable status.
+     * Status mapping for human-readable conversion
      */
-    public function getStatusAttribute($value)
-    {
-        $statuses = [
-            0 => 'Pending',
-            1 => 'on_the_way',
-            2 => 'Complete',
-            3 => 'Ending',
-            4 => 'cancel',
-        ];
+    const STATUS_MAP = [
+        0 => 'Pending',
+        1 => 'On The Way',
+        2 => 'Complete',
+        3 => 'Ending',
+        4 => 'Cancelled',
+    ];
 
-        return $statuses[$value];
+    /**
+     * Get human-readable status from stored integer value
+     *
+     * @param int $value The stored status value
+     * @return string Human-readable status
+     */
+    public function getStatusAttribute($value): string
+    {
+        return self::STATUS_MAP[$value] ?? 'Unknown';
     }
 
     /**
-     * Set the status attribute from a human-readable string to a database value.
+     * Set status by converting human-readable string to stored integer value
      *
-     * @param string $value The human-readable status.
-     * @return void
+     * @param string $value Human-readable status
      */
-    public function setStatusAttribute($value)
+    public function setStatusAttribute($value): void
     {
-        $statuses = [
-            'Pending' => 0,
-            'on_the_way' => 1,
-            'Complete' => 2,
-            'Ending' => 3,
-            'cancel' => 4,
-        ];
-
-        $this->attributes['status'] = $statuses[$value];
+        $flippedMap = array_flip(self::STATUS_MAP);
+        $this->attributes['status'] = $flippedMap[$value] ?? 0;
     }
 
     /**
-     * Define a relationship with the City model for the "from" city.
+     * Relationship: City where the trip starts
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return BelongsTo
      */
     public function cityFrom(): BelongsTo
     {
@@ -88,9 +82,9 @@ class Trip extends Model
     }
 
     /**
-     * Define a relationship with the City model for the "to" city.
+     * Relationship: City where the trip ends
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return BelongsTo
      */
     public function cityTo(): BelongsTo
     {
@@ -98,9 +92,9 @@ class Trip extends Model
     }
 
     /**
-     * Define a relationship with the User model.
+     * Relationship: User who created the trip
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return BelongsTo
      */
     public function user(): BelongsTo
     {
@@ -108,40 +102,87 @@ class Trip extends Model
     }
 
     /**
-     * Define a relationship with the Booking model.
+     * Relationship: All bookings for this trip
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return HasMany
      */
     public function bookings(): HasMany
     {
         return $this->hasMany(Booking::class);
     }
 
-
     /**
-     * Define a relationship with the User model for users who saved the trip.
+     * Relationship: Users who saved this trip
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     * @return BelongsToMany
      */
     public function savedByUsers(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'trip_user', 'trip_id', 'user_id');
     }
+
     /**
-     * Define a scope to filter trips based on provided criteria.
+     * Accessor: Get localized 'from' city name
      *
-     * @param \Illuminate\Database\Eloquent\Builder $model The query builder instance.
-     * @param array $filteringData An associative array of filtering criteria.
+     * @param mixed $cityData The stored city data (array or JSON string)
+     * @return string|null Localized city name or null if not available
+     */
+    public function getFromCityAttribute($cityData): ?string
+    {
+        return $this->getLocalizedCityName($cityData);
+    }
+
+    /**
+     * Accessor: Get localized 'to' city name
+     *
+     * @param mixed $cityData The stored city data (array or JSON string)
+     * @return string|null Localized city name or null if not available
+     */
+    public function getToCityAttribute($cityData): ?string
+    {
+        return $this->getLocalizedCityName($cityData);
+    }
+
+    /**
+     * Helper method to get localized city name from raw data
+     *
+     * @param mixed $cityData The city data (array or JSON string)
+     * @return string|null Localized name or null
+     */
+    protected function getLocalizedCityName($cityData): ?string
+    {
+        $locale = app()->getLocale();
+        $cityArray = is_array($cityData) ? $cityData : json_decode($cityData, true);
+
+        return $cityArray[$locale] ?? $cityArray['en'] ?? null;
+    }
+
+    /**
+     * Scope to filter trips based on various criteria
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $model
+     * @param array $filteringData {
+     *     @type string $startDate   Filter trips starting after this date (Y-m-d)
+     *     @type string $startTime   Filter trips starting after this time (H:i:s)
+     *     @type int    $from        Filter by departure city ID
+     *     @type int    $to          Filter by destination city ID
+     *     @type int    $status      Filter by status (0-4)
+     *     @type float  $seat_price  Filter by maximum seat price
+     *     @type int    $available_seats Filter by minimum available seats
+     * }
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeFilterBy($model, $filteringData)
+    public function scopeFilterBy($model, array $filteringData)
     {
+        // Set default values
         $filteringData['status'] = $filteringData['status'] ?? "0";
-        $filteringData['from']=$filteringData['from'] ?? Auth::user()->city_id;
+        $filteringData['from'] = $filteringData['from'] ?? Auth::user()->city_id;
 
+        // Apply filters based on provided criteria
         if (isset($filteringData['startDate'])) {
             $model->whereDate('trip_start', '>=', $filteringData['startDate']);
         }
+
         if (isset($filteringData['startTime'])) {
             $model->whereTime('trip_start', '>=', $filteringData['startTime']);
         }
@@ -149,24 +190,25 @@ class Trip extends Model
         if (isset($filteringData['from'])) {
             $model->where('from', $filteringData['from']);
         }
+
         if (isset($filteringData['to'])) {
             $model->where('to', $filteringData['to']);
         }
+
         if (isset($filteringData['status'])) {
             $model->where('trips.status', $filteringData['status']);
         }
-        if (isset($filteringData['seat_price'])) {
-            $model->where('seat_price', '<=', $filteringData['seat_price']);
-            $model->orderBy('seat_price', 'asc');
-        }
-        if (isset($filteringData['available_seats'])) {
-            $model->where('available_seats', '>=', $filteringData['available_seats']);
-            $model->orderBy('available_seats', 'asc');
 
+        if (isset($filteringData['seat_price'])) {
+            $model->where('seat_price', '<=', $filteringData['seat_price'])
+                 ->orderBy('seat_price', 'asc');
+        }
+
+        if (isset($filteringData['available_seats'])) {
+            $model->where('available_seats', '>=', $filteringData['available_seats'])
+                 ->orderBy('available_seats', 'asc');
         }
 
         return $model;
     }
-
-
 }

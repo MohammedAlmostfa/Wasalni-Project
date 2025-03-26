@@ -44,6 +44,7 @@ class TripService
                 })
                 ->addSelect(
                     'profiles.first_name',
+                    'profiles.id AS driver_id',
                     'profiles.last_name',
                     'city_from.city_name AS from_city',
                     'city_to.city_name AS to_city',

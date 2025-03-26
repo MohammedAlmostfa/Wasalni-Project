@@ -10,101 +10,143 @@ class Booking extends Model
     use HasFactory;
 
     /**
-     * The attributes that are mass assignable.
+     * The attributes that are mass assignable for security protection.
      *
-     * @var array<int, string>
+     * @var array<int, string> List of fields that can be mass assigned
      */
     protected $fillable = [
-        "trip_id",
-        "status",
-        "seats_number",
-        "user_id",
-        'nots'
+        "trip_id",       // ID of the associated trip
+        "status",        // Booking status (0=pending, 1=accepted, 2=rejected, 3=cancel)
+        "seats_number",  // Number of seats booked
+        "user_id",       // ID of the user who made the booking
+        'nots'           // Notes or additional information about the booking
     ];
 
     /**
-     * Get the status attribute as a human-readable string.
+     * Convert numeric status to human-readable string.
      *
-     * @param int $value The status value stored in the database.
-     * @return string The human-readable status.
+     * @param int $value Numeric status value from database
+     * @return string Human-readable status text
      */
-    public function getStatusAttribute($value)
+    public function getStatusAttribute($value): string
     {
         $statuses = [
-            0 => 'pending',
-            1 => 'accepted',
-            2 => 'rejected',
-             3=>'cancel' ,
+            0 => 'pending',   // Booking is awaiting confirmation
+            1 => 'accepted',  // Booking has been approved
+            2 => 'rejected',  // Booking has been declined
+            3 => 'cancel',    // Booking was cancelled
         ];
 
-        return $statuses[$value];
+        return $statuses[$value] ?? 'unknown'; // Fallback for undefined statuses
     }
 
     /**
-     * Set the status attribute from a human-readable string to a database value.
+     * Convert human-readable status to database numeric value.
      *
-     * @param string $value The human-readable status.
+     * @param string $value Human-readable status text
      * @return void
      */
-    public function setStatusAttribute($value)
+    public function setStatusAttribute($value): void
     {
         $statuses = [
-            'pending' => 0,
-            'accepted' => 1,
-            'rejected' => 2,
-            'cancel' => 3,
+            'pending' => 0,   // Map 'pending' to 0
+            'accepted' => 1,   // Map 'accepted' to 1
+            'rejected' => 2,   // Map 'rejected' to 2
+            'cancel' => 3,     // Map 'cancel' to 3
         ];
 
-        $this->attributes['status'] = $statuses[$value];
+        // Set the numeric value based on the string input
+        $this->attributes['status'] = $statuses[strtolower($value)] ?? 0;
     }
 
     /**
-     * Define the relationship with the Trip model.
+     * Get localized name of departure city.
+     *
+     * @param mixed $cityData City data (array or JSON string)
+     * @return string|null Localized city name or null if not available
+     */
+    public function getFromCityAttribute($cityData): ?string
+    {
+        // Handle array input (from model casting)
+        if (is_array($cityData)) {
+            return $cityData[app()->getLocale()] ?? $cityData['en'] ?? null;
+        }
+
+        // Handle JSON string input (fallback)
+        $decoded = json_decode($cityData, true);
+        return $decoded[app()->getLocale()] ?? $decoded['en'] ?? null;
+    }
+
+    /**
+     * Get localized name of destination city.
+     *
+     * @param mixed $cityData City data (array or JSON string)
+     * @return string|null Localized city name or null if not available
+     */
+    public function getToCityAttribute($cityData): ?string
+    {
+        // Same implementation as getFromCityAttribute for consistency
+        if (is_array($cityData)) {
+            return $cityData[app()->getLocale()] ?? $cityData['en'] ?? null;
+        }
+
+        $decoded = json_decode($cityData, true);
+        return $decoded[app()->getLocale()] ?? $decoded['en'] ?? null;
+    }
+
+    /**
+     * Relationship: Booking belongs to a Trip.
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function trip()
+    public function trip(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Trip::class);
     }
 
     /**
-     * Define the relationship with the Rating model.
+     * Relationship: Booking has one Rating.
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
-    public function rating()
+    public function rating(): \Illuminate\Database\Eloquent\Relations\HasOne
     {
         return $this->hasOne(Rating::class);
     }
 
     /**
-     * Define the relationship with the User model.
+     * Relationship: Booking belongs to a User.
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function user()
+    public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
     /**
-     * Apply filtering conditions to the query.
+     * Scope to filter bookings by various criteria.
      *
-     * @param \Illuminate\Database\Eloquent\Builder $model The query builder instance.
-     * @param array $filteringData An associative array of filtering criteria (e.g., ['status' => 1, 'seats_number' => 2]).
+     * @param \Illuminate\Database\Eloquent\Builder $model Query builder instance
+     * @param array $filteringData Filter criteria:
+     *   - status: Filter by booking status
+     *   - seats_number: Filter by number of seats
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeFilterby($model, $filteringData)
-    {
+    public function scopeFilterBy(
+        \Illuminate\Database\Eloquent\Builder $model,
+        array $filteringData
+    ): \Illuminate\Database\Eloquent\Builder {
+        // Filter by status if provided
         if (isset($filteringData['status'])) {
             $model->where('bookings.status', $filteringData['status']);
         }
+
+        // Filter by seats number if provided
         if (isset($filteringData['seats_number'])) {
             $model->where('seats_number', $filteringData['seats_number']);
         }
 
         return $model;
     }
-
 }
