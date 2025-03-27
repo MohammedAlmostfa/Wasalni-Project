@@ -59,40 +59,6 @@ class Booking extends Model
         $this->attributes['status'] = $statuses[strtolower($value)] ?? 0;
     }
 
-    /**
-     * Get localized name of departure city.
-     *
-     * @param mixed $cityData City data (array or JSON string)
-     * @return string|null Localized city name or null if not available
-     */
-    public function getFromCityAttribute($cityData): ?string
-    {
-        // Handle array input (from model casting)
-        if (is_array($cityData)) {
-            return $cityData[app()->getLocale()] ?? $cityData['en'] ?? null;
-        }
-
-        // Handle JSON string input (fallback)
-        $decoded = json_decode($cityData, true);
-        return $decoded[app()->getLocale()] ?? $decoded['en'] ?? null;
-    }
-
-    /**
-     * Get localized name of destination city.
-     *
-     * @param mixed $cityData City data (array or JSON string)
-     * @return string|null Localized city name or null if not available
-     */
-    public function getToCityAttribute($cityData): ?string
-    {
-        // Same implementation as getFromCityAttribute for consistency
-        if (is_array($cityData)) {
-            return $cityData[app()->getLocale()] ?? $cityData['en'] ?? null;
-        }
-
-        $decoded = json_decode($cityData, true);
-        return $decoded[app()->getLocale()] ?? $decoded['en'] ?? null;
-    }
 
     /**
      * Relationship: Booking belongs to a Trip.

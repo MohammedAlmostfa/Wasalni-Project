@@ -24,8 +24,8 @@ class TripSeeder extends Seeder
             Trip::create([
                 'description' => $faker->sentence,
                 'trip_start' => $faker->dateTimeBetween('now', '+2 months')->format('Y-m-d H:00'),
-                'from' => $faker->numberBetween(1, 16),
-                'to' => $faker->numberBetween(1, 16),
+                'from' => $faker->numberBetween(1, 9),
+                'to' => $faker->numberBetween(1, 9),
                 'status' => $faker->randomElement(['Pending', 'Ending', 'Complete']),
                 'seat_price' => $seatPrice,
                 'available_seats' => $faker->numberBetween(1, 20),

@@ -22,8 +22,6 @@ class CityService
         try {
 
             $cities = City::select('city_name', 'id')->get();
-
-
             // Return the list of cities with a success message
             return [
                 'message' => 'Cities retrieved successfully',

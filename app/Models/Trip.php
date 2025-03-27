@@ -121,41 +121,6 @@ class Trip extends Model
         return $this->belongsToMany(User::class, 'trip_user', 'trip_id', 'user_id');
     }
 
-    /**
-     * Accessor: Get localized 'from' city name
-     *
-     * @param mixed $cityData The stored city data (array or JSON string)
-     * @return string|null Localized city name or null if not available
-     */
-    public function getFromCityAttribute($cityData): ?string
-    {
-        return $this->getLocalizedCityName($cityData);
-    }
-
-    /**
-     * Accessor: Get localized 'to' city name
-     *
-     * @param mixed $cityData The stored city data (array or JSON string)
-     * @return string|null Localized city name or null if not available
-     */
-    public function getToCityAttribute($cityData): ?string
-    {
-        return $this->getLocalizedCityName($cityData);
-    }
-
-    /**
-     * Helper method to get localized city name from raw data
-     *
-     * @param mixed $cityData The city data (array or JSON string)
-     * @return string|null Localized name or null
-     */
-    protected function getLocalizedCityName($cityData): ?string
-    {
-        $locale = app()->getLocale();
-        $cityArray = is_array($cityData) ? $cityData : json_decode($cityData, true);
-
-        return $cityArray[$locale] ?? $cityArray['en'] ?? null;
-    }
 
     /**
      * Scope to filter trips based on various criteria
