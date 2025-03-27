@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Services\UserService;
+use App\Http\Resources\UserProfileResource;
 
 class UserController extends Controller
 {
@@ -70,7 +71,7 @@ class UserController extends Controller
 
         // Return a JSON response based on the result status
         return $result['status'] === 200
-            ? $this->success($result['data'], $result['message'], $result['status'])
+            ? $this->success(new UserProfileResource($result['data']), $result['message'], $result['status'])
             : $this->error(null, $result['message'], $result['status']);
     }
 }

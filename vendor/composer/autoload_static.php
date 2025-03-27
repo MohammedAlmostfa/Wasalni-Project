@@ -86,6 +86,8 @@ class ComposerStaticInit9c491b8531eec05ba41a11d9276a5749
             'Symfony\\Component\\ErrorHandler\\' => 31,
             'Symfony\\Component\\CssSelector\\' => 30,
             'Symfony\\Component\\Console\\' => 26,
+            'Staudenmeir\\EloquentHasManyDeep\\' => 32,
+            'Staudenmeir\\EloquentHasManyDeepContracts\\' => 41,
             'Spatie\\Permission\\' => 18,
             'Spatie\\LaravelIgnition\\' => 23,
             'Spatie\\Ignition\\' => 16,
@@ -319,6 +321,14 @@ class ComposerStaticInit9c491b8531eec05ba41a11d9276a5749
         'Symfony\\Component\\Console\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/console',
+        ),
+        'Staudenmeir\\EloquentHasManyDeep\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/staudenmeir/eloquent-has-many-deep/src',
+        ),
+        'Staudenmeir\\EloquentHasManyDeepContracts\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/staudenmeir/eloquent-has-many-deep-contracts/src',
         ),
         'Spatie\\Permission\\' => 
         array (
@@ -5827,6 +5837,27 @@ class ComposerStaticInit9c491b8531eec05ba41a11d9276a5749
         'Spatie\\Permission\\Traits\\HasRoles' => __DIR__ . '/..' . '/spatie/laravel-permission/src/Traits/HasRoles.php',
         'Spatie\\Permission\\Traits\\RefreshesPermissionCache' => __DIR__ . '/..' . '/spatie/laravel-permission/src/Traits/RefreshesPermissionCache.php',
         'Spatie\\Permission\\WildcardPermission' => __DIR__ . '/..' . '/spatie/laravel-permission/src/WildcardPermission.php',
+        'Staudenmeir\\EloquentHasManyDeepContracts\\Interfaces\\ConcatenableRelation' => __DIR__ . '/..' . '/staudenmeir/eloquent-has-many-deep-contracts/src/Interfaces/ConcatenableRelation.php',
+        'Staudenmeir\\EloquentHasManyDeep\\Eloquent\\CompositeKey' => __DIR__ . '/..' . '/staudenmeir/eloquent-has-many-deep/src/Eloquent/CompositeKey.php',
+        'Staudenmeir\\EloquentHasManyDeep\\Eloquent\\Relations\\ThirdParty\\LaravelHasManyMerged\\HasManyMerged' => __DIR__ . '/..' . '/staudenmeir/eloquent-has-many-deep/src/Eloquent/Relations/ThirdParty/LaravelHasManyMerged/HasManyMerged.php',
+        'Staudenmeir\\EloquentHasManyDeep\\Eloquent\\Relations\\Traits\\ExecutesQueries' => __DIR__ . '/..' . '/staudenmeir/eloquent-has-many-deep/src/Eloquent/Relations/Traits/ExecutesQueries.php',
+        'Staudenmeir\\EloquentHasManyDeep\\Eloquent\\Relations\\Traits\\HasEagerLimit' => __DIR__ . '/..' . '/staudenmeir/eloquent-has-many-deep/src/Eloquent/Relations/Traits/HasEagerLimit.php',
+        'Staudenmeir\\EloquentHasManyDeep\\Eloquent\\Relations\\Traits\\HasEagerLoading' => __DIR__ . '/..' . '/staudenmeir/eloquent-has-many-deep/src/Eloquent/Relations/Traits/HasEagerLoading.php',
+        'Staudenmeir\\EloquentHasManyDeep\\Eloquent\\Relations\\Traits\\HasExistenceQueries' => __DIR__ . '/..' . '/staudenmeir/eloquent-has-many-deep/src/Eloquent/Relations/Traits/HasExistenceQueries.php',
+        'Staudenmeir\\EloquentHasManyDeep\\Eloquent\\Relations\\Traits\\IsConcatenable' => __DIR__ . '/..' . '/staudenmeir/eloquent-has-many-deep/src/Eloquent/Relations/Traits/IsConcatenable.php',
+        'Staudenmeir\\EloquentHasManyDeep\\Eloquent\\Relations\\Traits\\IsCustomizable' => __DIR__ . '/..' . '/staudenmeir/eloquent-has-many-deep/src/Eloquent/Relations/Traits/IsCustomizable.php',
+        'Staudenmeir\\EloquentHasManyDeep\\Eloquent\\Relations\\Traits\\JoinsThroughParents' => __DIR__ . '/..' . '/staudenmeir/eloquent-has-many-deep/src/Eloquent/Relations/Traits/JoinsThroughParents.php',
+        'Staudenmeir\\EloquentHasManyDeep\\Eloquent\\Relations\\Traits\\RetrievesIntermediateTables' => __DIR__ . '/..' . '/staudenmeir/eloquent-has-many-deep/src/Eloquent/Relations/Traits/RetrievesIntermediateTables.php',
+        'Staudenmeir\\EloquentHasManyDeep\\Eloquent\\Relations\\Traits\\SupportsCompositeKeys' => __DIR__ . '/..' . '/staudenmeir/eloquent-has-many-deep/src/Eloquent/Relations/Traits/SupportsCompositeKeys.php',
+        'Staudenmeir\\EloquentHasManyDeep\\Eloquent\\Traits\\ConcatenatesNativeRelationships' => __DIR__ . '/..' . '/staudenmeir/eloquent-has-many-deep/src/Eloquent/Traits/ConcatenatesNativeRelationships.php',
+        'Staudenmeir\\EloquentHasManyDeep\\Eloquent\\Traits\\ConcatenatesRelationships' => __DIR__ . '/..' . '/staudenmeir/eloquent-has-many-deep/src/Eloquent/Traits/ConcatenatesRelationships.php',
+        'Staudenmeir\\EloquentHasManyDeep\\Eloquent\\Traits\\ReversesRelationships' => __DIR__ . '/..' . '/staudenmeir/eloquent-has-many-deep/src/Eloquent/Traits/ReversesRelationships.php',
+        'Staudenmeir\\EloquentHasManyDeep\\HasManyDeep' => __DIR__ . '/..' . '/staudenmeir/eloquent-has-many-deep/src/HasManyDeep.php',
+        'Staudenmeir\\EloquentHasManyDeep\\HasOneDeep' => __DIR__ . '/..' . '/staudenmeir/eloquent-has-many-deep/src/HasOneDeep.php',
+        'Staudenmeir\\EloquentHasManyDeep\\HasRelationships' => __DIR__ . '/..' . '/staudenmeir/eloquent-has-many-deep/src/HasRelationships.php',
+        'Staudenmeir\\EloquentHasManyDeep\\HasTableAlias' => __DIR__ . '/..' . '/staudenmeir/eloquent-has-many-deep/src/HasTableAlias.php',
+        'Staudenmeir\\EloquentHasManyDeep\\IdeHelperServiceProvider' => __DIR__ . '/..' . '/staudenmeir/eloquent-has-many-deep/src/IdeHelperServiceProvider.php',
+        'Staudenmeir\\EloquentHasManyDeep\\IdeHelper\\DeepRelationsHook' => __DIR__ . '/..' . '/staudenmeir/eloquent-has-many-deep/src/IdeHelper/DeepRelationsHook.php',
         'Stringable' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/Stringable.php',
         'Symfony\\Component\\Console\\Application' => __DIR__ . '/..' . '/symfony/console/Application.php',
         'Symfony\\Component\\Console\\Attribute\\AsCommand' => __DIR__ . '/..' . '/symfony/console/Attribute/AsCommand.php',

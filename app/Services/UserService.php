@@ -4,30 +4,32 @@ namespace App\Services;
 
 use Exception;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 
 class UserService
 {
     /**
- * Retrieve users based on the logged-in user's city and role.
- *
- * This method fetches users who:
- * - Have a profile with the same `city_id` as the logged-in user.
- * - Have the role `PrivateUser`.
- *
- * @return array
- *   - If successful: Returns a success message, status code 200, and the list of users.
- *   - If the logged-in user or their profile is not found: Returns a 404 error.
- *   - If an exception occurs: Returns a 500 error with a generic error message.
- */
+     * Retrieve private users based on the authenticated user's city.
+     *
+     * This method fetches users who:
+     * - Have a profile with the same city_id as the authenticated user
+     * - Have the 'PrivateUser' role assigned
+     *
+     * @return array [
+     *   'status' => int,    // HTTP status code
+     *   'message' => mixed, // Response message or error details
+     *   'data' => mixed     // Retrieved data or null on error
+     * ]
+     */
     public function showUsers()
     {
         try {
-            // Retrieve the logged-in user
+            // Get the currently authenticated user
             $user = Auth::user();
 
-            // Check if the user has a profile
+            // Validate user and profile existence
             if (!$user || !$user->profile) {
                 return [
                     'status' => 404,
@@ -37,29 +39,30 @@ class UserService
                 ];
             }
 
-            // Retrieve the city of the logged-in user
+            // Get the city_id from the user's profile
             $city_id = $user->profile->city_id;
 
-            // Fetch users based on the city and role
+            // Query users with:
+            // - Matching city_id in their profile
+            // - 'PrivateUser' role
             $users = User::whereHas('profile', function ($query) use ($city_id) {
-                $query->where('city_id', $city_id); // Filter by city_id in the profile
-            })->whereHas('roles', function ($query) {
-                $query->where('name', 'PrivateUser'); // Filter by role name
-            })->with('profile:id,user_id,first_name,last_name') // Eager load profile with specific fields
-              ->select('id') // Select only the user ID
-              ->get();
+                $query->where('city_id', $city_id);
+            })
+                ->whereHas('roles', function ($query) {
+                    $query->where('name', 'PrivateUser');
+                })
+                ->with('profile:id,user_id,first_name,last_name')
+                ->select('id')
+                ->get();
 
-            // Return success response with the retrieved users
             return [
                 "message" => 'PrivateUser retrieved successfully',
                 'status' => 200,
                 'data' => $users,
             ];
         } catch (Exception $e) {
-            // Log the error for debugging purposes
             Log::error('Error in showUsers: ' . $e->getMessage());
 
-            // Return a generic error response
             return [
                 'status' => 500,
                 'message' => [
@@ -70,41 +73,45 @@ class UserService
     }
 
     /**
-     * Retrieve profile details of a specific user.
+     * Retrieve detailed profile information for a specific user.
      *
-     * This method fetches the profile details of a user, including:
-     * - First name
-     * - Last name
-     * - Gender
-     * - Phone number
-     * - Address
-     * - Country name
+     * Includes:
+     * - Basic profile information
+     * - Trip ratings with associated user details
      *
-     * @param User $user The user whose profile details are to be retrieved.
-     * @return array
-     *   - If successful: Returns a success message, status code 200, and the profile details.
-     *   - If the profile is not found: Returns a 404 error.
-     *   - If an exception occurs: Returns a 500 error with a generic error message.
+     * @param User $user The user model to retrieve details for
+     * @return array [
+     *   'status' => int,    // HTTP status code
+     *   'message' => mixed, // Response message or error details
+     *   'data' => mixed     // User data or null on error
+     * ]
      */
     public function showUser(User $user)
     {
         try {
-            // Fetch profile details of the user
-            $usedata = User::select(
-                'profiles.first_name',
-                'profiles.last_name',
-                'profiles.gender',
-                'profiles.phone',
-                'profiles.address',
-                'countries.country_name as country_name'
-            )
-            ->join('profiles', 'users.id', '=', 'profiles.user_id')
-            ->join('countries', 'profiles.country_id', '=', 'countries.id')
-            ->where('users.id', $user->id)
-            ->first();
+            // Eager load relationships with specific columns to optimize query
+            $ratings = User::with([
+                // Load profile with selected columns
+                'profile' => function ($query) {
+                    $query->select('user_id', 'first_name', 'last_name', 'birthday');
+                },
+                // Load trip ratings with selected columns and nested relationships
+                'tripRatings' => function ($query) {
+                    $query->select(
+                        'ratings.id',
+                        'ratings.rate',
+                        'ratings.review',
+                        'ratings.user_id',
+                        'ratings.created_at'
+                    )
+                    ->with(['user.profile' => function ($query) {
+                        $query->select('id', 'user_id', 'first_name', 'last_name', 'phone');
+                    }]);
+                }
+            ])->find($user->id);
 
-            // Check if the profile exists
-            if (!$usedata) {
+            // Validate data existence
+            if (!$ratings) {
                 return [
                     "message" => 'User profile not found for the specified user.',
                     'status' => 404,
@@ -112,17 +119,14 @@ class UserService
                 ];
             }
 
-            // Return success response with the retrieved profile details
             return [
                 "message" => 'User profile retrieved successfully',
                 'status' => 200,
-                'data' => $usedata,
+                'data' => $ratings,
             ];
         } catch (Exception $e) {
-            // Log the error for debugging purposes
             Log::error('Error in showUser: ' . $e->getMessage());
 
-            // Return a generic error response
             return [
                 'status' => 500,
                 'message' => [

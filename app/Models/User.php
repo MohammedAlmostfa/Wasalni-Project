@@ -5,13 +5,14 @@ use App\Models\Rating;
 use Spatie\Permission\Traits\HasRoles;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Staudenmeir\EloquentHasManyDeep\HasRelationships;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable implements JWTSubject
 {
-    use HasFactory, Notifiable, HasRoles;
+    use HasFactory, Notifiable, HasRoles , HasRelationships;
     protected $guard_name = 'api';
     protected $fillable = [
         'email',
@@ -102,5 +103,29 @@ class User extends Authenticatable implements JWTSubject
         return $this->belongsToMany(Trip::class, 'trip_user', 'user_id', 'trip_id');
     }
 
-
+    /**
+     * Get the ratings for trips through bookings (deep relationship).
+     *
+     * This establishes a many-to-many-to-many relationship between:
+     * Users -> Trips -> Bookings -> Ratings
+     *
+     * @return \Staudenmeir\EloquentHasManyDeep\HasManyDeep
+     */
+    public function tripRatings()
+    {
+        return $this->hasManyDeep(
+            Rating::class,
+            [Trip::class, Booking::class], // Intermediate models
+            [
+                'user_id',    // Foreign key on trips table (references users)
+                'trip_id',    // Foreign key on bookings table (references trips)
+                'booking_id'  // Foreign key on ratings table (references bookings)
+            ],
+            [
+                'id',        // Local key on users table
+                'id',        // Local key on trips table
+                'id'         // Local key on bookings table
+            ]
+        );
+    }
 }
