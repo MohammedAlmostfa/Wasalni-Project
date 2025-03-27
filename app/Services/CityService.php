@@ -21,12 +21,8 @@ class CityService
     {
         try {
 
-            $cities = City::select('city_name', 'id')->get()->map(function ($city) {
-                return [
-                    'id' => $city->id,
-                    'name' => $city->name
-                ];
-            });
+            $cities = City::select('city_name', 'id')->get();
+
 
             // Return the list of cities with a success message
             return [

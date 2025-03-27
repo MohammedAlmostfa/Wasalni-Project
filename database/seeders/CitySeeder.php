@@ -11,7 +11,11 @@ class CitySeeder extends Seeder
     {
 
         $cities = [
-            // Baghdad Governorate
+
+
+
+
+
             ['en' => 'Baghdad (Baghdad)', 'ar' => 'بغداد (بغداد)'],
             ['en' => 'Baghdad (Al-Karkh)', 'ar' => 'بغداد (الكرخ)'],
             ['en' => 'Baghdad (Al-Rusafa)', 'ar' => 'بغداد (الرصافة)'],
@@ -37,7 +41,10 @@ class CitySeeder extends Seeder
             ['en' => 'Baghdad (Al-Taji)', 'ar' => 'بغداد (التاجي)'],
             ['en' => 'Baghdad (Al-Tarmiyah)', 'ar' => 'بغداد (الطارمية)'],
             ['en' => 'Baghdad (Al-Mahmoudiya)', 'ar' => 'بغداد (المحمودية)'],
-            // Additional Baghdad cities
+
+
+
+
             ['en' => 'Baghdad (Al-Karradah)', 'ar' => 'بغداد (الكرادة)'],
             ['en' => 'Baghdad (Al-Saydiya)', 'ar' => 'بغداد (السيدية)'],
             ['en' => 'Baghdad (Al-Yarmouk)', 'ar' => 'بغداد (اليرموك)'],
@@ -77,7 +84,7 @@ class CitySeeder extends Seeder
             ['en' => 'Baghdad (Al-Maamoun)', 'ar' => 'بغداد (المأمون)'],
             ['en' => 'Baghdad (Al-Jamia)', 'ar' => 'بغداد (الجامعة)'],
 
-            // Basra Governorate
+
             ['en' => 'Basra (Basra)', 'ar' => 'البصرة (البصرة)'],
             ['en' => 'Basra (Shatt Al-Arab)', 'ar' => 'البصرة (شط العرب)'],
             ['en' => 'Basra (Abu Al-Khasib)', 'ar' => 'البصرة (أبو الخصيب)'],
@@ -89,8 +96,6 @@ class CitySeeder extends Seeder
             ['en' => 'Basra (Al-Hartha)', 'ar' => 'البصرة (الهارثة)'],
             ['en' => 'Basra (Al-Tanuma)', 'ar' => 'البصرة (التنومة)'],
             ['en' => 'Basra (Al-Siba)', 'ar' => 'البصرة (السيبة)'],
-
-
             ['en' => 'Basra (Al-Ashar)', 'ar' => 'البصرة (العشار)'],
             ['en' => 'Basra (Al-Maqal)', 'ar' => 'البصرة (المقلاع)'],
             ['en' => 'Basra (Al-Baradiyah)', 'ar' => 'البصرة (البراضعية)'],
@@ -150,6 +155,9 @@ class CitySeeder extends Seeder
             ['en' => 'Basra (Sankar)', 'ar' => 'الصنكر'],
             ['en' => 'Basra (Nahr Khuz)', 'ar' => 'نهرخوز'],
             ['en' => 'Basra (Jaikur)', 'ar' => 'جيكور'],
+
+
+
 
 
             ['en' => 'Nineveh (Mosul)', 'ar' => 'نينوى (الموصل)'],
@@ -215,7 +223,6 @@ class CitySeeder extends Seeder
             ['en' => 'Erbil (Shaqlawa)', 'ar' => 'أربيل (شقلاوة)'],
             ['en' => 'Erbil (Soran)', 'ar' => 'أربيل (سوران)'],
             ['en' => 'Erbil (Rawanduz)', 'ar' => 'أربيل (رواندوز)'],
-            // المناطق الجديدة المطلوبة
             ['en' => 'Erbil (Rayat)', 'ar' => 'أربيل (رايات)'],
             ['en' => 'Erbil (Kasanazan Subdistrict)', 'ar' => 'أربيل (ناحية كسنزان)'],
             ['en' => 'Erbil (Al-Kalk Subdistrict)', 'ar' => 'أربيل (ناحية الكلك)'],
@@ -267,8 +274,6 @@ class CitySeeder extends Seeder
 
 
 
-
-
             ['en' => 'Najaf (Najaf)', 'ar' => 'النجف (النجف)'],
             ['en' => 'Najaf (Kufa)', 'ar' => 'النجف (الكوفة)'],
             ['en' => 'Najaf (Al-Manathera)', 'ar' => 'النجف (المناذرة)'],
@@ -282,6 +287,9 @@ class CitySeeder extends Seeder
             ['en' => 'Najaf (Al-Muhanawiya)', 'ar' => 'النجف (المهناوية)'],
             ['en' => 'Najaf (Al-Rahba)', 'ar' => 'النجف (الرحبة)'],
             ['en' => 'Najaf (Al-Radhawiya)', 'ar' => 'النجف (الرضوية)'],
+
+
+
 
 
 
@@ -329,7 +337,11 @@ class CitySeeder extends Seeder
             ['en' => 'Kirkuk (Arsa)', 'ar' => 'كركوك (عرصة)'],
             ['en' => 'Kirkuk (Al-Basil)', 'ar' => 'كركوك (البسل)'],
 
-            // محافظة الأنبار
+
+
+
+
+
             ['en' => 'Anbar (Ramadi)', 'ar' => 'الأنبار (الرمادي)'],
             ['en' => 'Anbar (Fallujah)', 'ar' => 'الأنبار (الفلوجة)'],
             ['en' => 'Anbar (Al-Qaim)', 'ar' => 'الأنبار (القائم)'],
@@ -373,7 +385,10 @@ class CitySeeder extends Seeder
             ['en' => 'Anbar (Al-Khayrat Subdistrict)', 'ar' => 'الأنبار (ناحية الخيرات)'],
             ['en' => 'Anbar (Al-Dughaima)', 'ar' => 'الأنبار (الدغيمة)'],
 
-            // محافظة ديالى
+
+
+
+
             ['en' => 'Diyala (Baqubah)', 'ar' => 'ديالى (بعقوبة)'],
             ['en' => 'Diyala (Khanaqin)', 'ar' => 'ديالى (خانقين)'],
             ['en' => 'Diyala (Jalawla)', 'ar' => 'ديالى (جلولاء)'],
@@ -413,7 +428,8 @@ class CitySeeder extends Seeder
             ['en' => 'Diyala (Takiya Jabbari Subdistrict)', 'ar' => 'ديالى (ناحية تكية جباري)'],
             ['en' => 'Diyala (Al-Hashimiya)', 'ar' => 'ديالى (الهاشمية)'],
 
-            // محافظة المثنى
+
+
             ['en' => 'Muthanna (Samawah)', 'ar' => 'المثنى (السماوة)'],
             ['en' => 'Muthanna (Al-Rumaitha)', 'ar' => 'المثنى (الرميثة)'],
             ['en' => 'Muthanna (Al-Khidhir)', 'ar' => 'المثنى (الخضر)'],
@@ -427,7 +443,10 @@ class CitySeeder extends Seeder
             ['en' => 'Muthanna (Al-Warka District)', 'ar' => 'المثنى (قضاء الوركاء)'],
             ['en' => 'Muthanna (Al-Suwayr District)', 'ar' => 'المثنى (قضاء السوير)'],
 
-            // محافظة القادسية
+
+
+
+
             ['en' => 'Qadisiyyah (Al-Diwaniyah)', 'ar' => 'القادسية (الديوانية)'],
             ['en' => 'Qadisiyyah (Al-Shamiya District)', 'ar' => 'القادسية (قضاء الشامية)'],
             ['en' => 'Qadisiyyah (Afak District)', 'ar' => 'القادسية (قضاء عفك)'],
@@ -450,7 +469,10 @@ class CitySeeder extends Seeder
             ['en' => 'Qadisiyyah (Sumer District)', 'ar' => 'القادسية (قضاء سومر)'],
             ['en' => 'Qadisiyyah (Qal\'at Abu Skhair)', 'ar' => 'القادسية (قلعة أبو صخير)'],
 
-            // محافظة ميسان
+
+
+
+
             ['en' => 'Maysan (Amarah)', 'ar' => 'ميسان (العمارة)'],
             ['en' => 'Maysan (Ali Al-Gharbi)', 'ar' => 'ميسان (علي الغربي)'],
             ['en' => 'Maysan (Al-Maimouna)', 'ar' => 'ميسان (الميمونة)'],
@@ -477,7 +499,11 @@ class CitySeeder extends Seeder
             ['en' => 'Maysan (Abu Ghurab)', 'ar' => 'ميسان (أبو غراب)'],
             ['en' => 'Maysan (Umm Obaida Subdistrict)', 'ar' => 'ميسان (ناحية أم عبيدة)'],
 
-            // محافظة واسط
+
+
+
+
+
             ['en' => 'Wasit (Al-Kut)', 'ar' => 'واسط (الكوت)'],
             ['en' => 'Wasit (Al-Suwaira)', 'ar' => 'واسط (الصويرة)'],
             ['en' => 'Wasit (Al-Aziziyah)', 'ar' => 'واسط (العزيزية)'],
@@ -492,7 +518,12 @@ class CitySeeder extends Seeder
             ['en' => 'Wasit (Mazra\'at Al-Suwaira)', 'ar' => 'واسط (مزرعة الصويرة)'],
             ['en' => 'Wasit (Al-Dabouni)', 'ar' => 'واسط (الدبوني)'],
 
-            // محافظة صلاح الدين
+
+
+
+
+
+
             ['en' => 'Salah ad-Din (Tikrit)', 'ar' => 'صلاح الدين (تكريت)'],
             ['en' => 'Salah ad-Din (Al-Awja)', 'ar' => 'صلاح الدين (العوجة)'],
             ['en' => 'Salah ad-Din (Al-Alam District)', 'ar' => 'صلاح الدين (قضاء العلم)'],
@@ -534,6 +565,9 @@ class CitySeeder extends Seeder
             ['en' => 'Salah ad-Din (Al-Bu Atma)', 'ar' => 'صلاح الدين (البوطعمه)'],
 
 
+
+
+
             ['en' => 'Duhok (Duhok)', 'ar' => 'دهوك (دهوك)'],
             ['en' => 'Duhok (Zakho)', 'ar' => 'دهوك (زاخو)'],
             ['en' => 'Duhok (Darkar)', 'ar' => 'دهوك (دركار)'],
@@ -553,7 +587,11 @@ class CitySeeder extends Seeder
             ['en' => 'Duhok (Mankishik)', 'ar' => 'دهوك (مانكيشك)'],
             ['en' => 'Duhok (Hezawa)', 'ar' => 'دهوك (هيزاوا)'],
 
-            // محافظة السليمانية
+
+
+
+
+
             ['en' => 'Sulaymaniyah (Sulaymaniyah)', 'ar' => 'السليمانية (السليمانية)'],
             ['en' => 'Sulaymaniyah (Bakrajo)', 'ar' => 'السليمانية (بكره جو)'],
             ['en' => 'Sulaymaniyah (Bazyan)', 'ar' => 'السليمانية (بازيان)'],
@@ -573,7 +611,11 @@ class CitySeeder extends Seeder
             ['en' => 'Sulaymaniyah (Qalat Diza Subdistrict)', 'ar' => 'السليمانية (ناحية قلعة دزا)'],
             ['en' => 'Sulaymaniyah (Hero Subdistrict)', 'ar' => 'السليمانية (ناحية هيرو)'],
             ['en' => 'Sulaymaniyah (Halabja)', 'ar' => 'السليمانية (حلبجة)'],
-            // ... (يتم إضافة باقي المناطق بنفس الطريقة)
+
+
+
+
+
 
             // محافظة بابل
             ['en' => 'Babil (Hilla)', 'ar' => 'بابل (الحلة)'],
