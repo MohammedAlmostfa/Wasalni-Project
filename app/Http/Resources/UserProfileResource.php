@@ -28,7 +28,10 @@ class UserProfileResource extends JsonResource
                     'created_at' => $rating->created_at,
                     'user_name' => $rating->user->profile->first_name.' '.$rating->user->profile->last_name
                 ];
-            })
+            }),
+
+            'is_favorite' =>$this->is_favorite,
+            "User_trips_count"=>$this->User_trips_count,
         ];
     }
 }

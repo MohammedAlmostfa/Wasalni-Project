@@ -17,10 +17,12 @@ class UserService
      * - Have a profile with the same city_id as the authenticated user
      * - Have the 'PrivateUser' role assigned
      *
+     * The response includes minimal user data (id) with associated profile names.
+     *
      * @return array [
-     *   'status' => int,    // HTTP status code
-     *   'message' => mixed, // Response message or error details
-     *   'data' => mixed     // Retrieved data or null on error
+     *   'status' => int,    // HTTP status code (200, 404, or 500)
+     *   'message' => mixed, // Success message or error details
+     *   'data' => mixed     // Collection of users or null on error
      * ]
      */
     public function showUsers()
@@ -76,25 +78,30 @@ class UserService
      * Retrieve detailed profile information for a specific user.
      *
      * Includes:
-     * - Basic profile information
+     * - Basic profile information (first_name, last_name, birthday)
      * - Trip ratings with associated user details
+     * - User roles with pivot data (about_User, car_Type)
+     * - Favorite status relative to the authenticated user
      *
      * @param User $user The user model to retrieve details for
      * @return array [
-     *   'status' => int,    // HTTP status code
-     *   'message' => mixed, // Response message or error details
-     *   'data' => mixed     // User data or null on error
+     *   'status' => int,    // HTTP status code (200, 404, or 500)
+     *   'message' => mixed, // Success message or error details
+     *   'data' => mixed     // User data with relationships or null on error
      * ]
      */
     public function showUser(User $user)
     {
         try {
-            $ratings = User::with([
-                // Load profile with selected columns
+
+            // Load user data with relationships:
+            // - Profile with selected columns
+            // - Trip ratings with nested user profiles
+            // - Roles with pivot data
+            $UserData = User::with([
                 'profile' => function ($query) {
                     $query->select('user_id', 'first_name', 'last_name', 'birthday');
                 },
-                // Load trip ratings with selected columns and nested relationships
                 'tripRatings' => function ($query) {
                     $query->select(
                         'ratings.id',
@@ -107,26 +114,35 @@ class UserService
                         $query->select('id', 'user_id', 'first_name', 'last_name', 'phone');
                     }]);
                 },
-                // Load roles with aboutuser and cartype from the pivot table
                 'roles' => function ($query) {
-                    $query->select('roles.id', 'roles.name') // تحديد الأعمدة المطلوبة من جدول الأدوار
-                          ->withPivot('about_User', 'car_Type'); // إضافة الأعمدة من جدول الـ pivot
+                    $query->select('roles.id', 'roles.name')
+                          ->withPivot('about_User', 'car_Type');
                 }
             ])->find($user->id);
 
-            // Validate data existence
-            if (!$ratings) {
+            // Check if user data was found
+            if (!$UserData) {
                 return [
                     "message" => 'User profile not found for the specified user.',
                     'status' => 404,
                     'data' => null,
                 ];
             }
+            // Get the authenticated user
+            $authenticatedUser = Auth::user();
+
+            // Check if the authenticated user has this user in their favorites
+            $isFavorite = $authenticatedUser->favoritePeople()->where('favorite_user_id', $user->id)->exists();
+
+            $Usertrips=$user->trips()->count();
+            // Add favorite status to the user data
+            $UserData->is_favorite = $isFavorite;
+            $UserData->User_trips_count=$Usertrips;
 
             return [
                 "message" => 'User profile retrieved successfully',
                 'status' => 200,
-                'data' => $ratings,
+                'data' => $UserData,
             ];
         } catch (Exception $e) {
             Log::error('Error in showUser: ' . $e->getMessage());
