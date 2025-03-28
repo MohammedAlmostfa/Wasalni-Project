@@ -3,6 +3,8 @@
 namespace App\Observers;
 
 use App\Models\Trip;
+use App\Models\User;
+use App\Notifications\NewNotification;
 
 class TripObserver
 {
@@ -28,8 +30,33 @@ class TripObserver
         if ($trip->wasChanged('available_seats') && $trip->available_seats > 0) {
             $this->markTripAsPending($trip);
         }
+        if ($trip->wasChanged('status') && $trip->status == 3) {
+            $this->sendNotifiction($trip);
+        }
+
     }
 
+
+    public function sendNotifiction($trip)
+    {
+
+        if ($trip->status === 'Ending') {
+
+            $users = User::whereHas('bookings', function ($query) use ($trip) {
+                $query->where('trip_id', $trip->id);
+            })->get();
+
+
+            foreach ($users as $user) {
+
+                $user->notify(new NewNotification(
+                    'Your Trip is Ending',
+                    'The trip you booked is now ending. Please make necessary arrangements.'
+                ));
+            }
+        }
+
+    }
     /**
      * Mark the trip as "Complete".
      *

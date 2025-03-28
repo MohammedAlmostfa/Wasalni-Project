@@ -103,6 +103,10 @@ class User extends Authenticatable implements JWTSubject
         return $this->belongsToMany(Trip::class, 'trip_user', 'user_id', 'trip_id');
     }
 
+    public function devices()
+    {
+        return $this->hasMany(UserDevice::class);
+    }
     /**
      * Get the ratings for trips through bookings (deep relationship).
      *

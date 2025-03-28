@@ -1,21 +1,23 @@
 <?php
 
+use App\Models\UserDevice;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
 
+use App\Models\FavoritePerson;
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CityController;
 use App\Http\Controllers\TripController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\RatingController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\CountryController;
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\SavedTripController;
+use App\Http\Controllers\UserDeviceController;
 use App\Http\Controllers\Auth\ProfileController;
+use App\Http\Controllers\FavoritePersonController;
 use App\Http\Controllers\Auth\VerificationController;
 use App\Http\Controllers\Auth\ForgetPasswordController;
-use App\Http\Controllers\FavoritePersonController;
-use App\Http\Controllers\RatingController;
-use App\Http\Controllers\SavedTripController;
-use App\Http\Controllers\UserController;
-use App\Models\FavoritePerson;
 
 /*
 |--------------------------------------------------------------------------
@@ -68,6 +70,8 @@ Route::middleware('auth:api')->group(function () {
 
     // API resource routes for cities (CRUD operations)
     Route::apiResource('cities', CityController::class); // Handles CRUD for cities
+    // API resource routes for cities (CRUD operations)
+    Route::apiResource('userdevice', UserDeviceController::class); // Handles CRUD for cities
 
     // API resource routes for trips (CRUD operations)
     Route::apiResource('trip', TripController::class)->names([
