@@ -12,38 +12,44 @@ class CitySeeder extends Seeder
 
         $cities = [
 
-            ['en' => 'Basra ', 'ar' => 'البصرة'],
+   [
 
-            ['en' => 'Baghdad ', 'ar' => 'بغداد'],
+    ['en' => 'Muthanna', 'ar' => 'المثنى'],
+    ['en' => 'Al-Qadisiyyah', 'ar' => 'القادسية'],
+    ['en' => 'Sulaymaniyah', 'ar' => 'السليمانية'],
+    ['en' => 'Erbil', 'ar' => 'أربيل'],
+    ['en' => 'Anbar', 'ar' => 'الأنبار'],
+    ['en' => 'Babil', 'ar' => 'بابل'],
+    ['en' => 'Baghdad', 'ar' => 'بغداد'],
+    ['en' => 'Basra', 'ar' => 'البصرة'],
+    ['en' => 'Duhok', 'ar' => 'دهوك'],
+    ['en' => 'Dhi Qar', 'ar' => 'ذي قار'],
+    ['en' => 'Diyala', 'ar' => 'ديالى'],
+    ['en' => 'Salah ad-Din', 'ar' => 'صلاح الدين'],
+    ['en' => 'Halabja', 'ar' => 'حلبجة'],
+    ['en' => 'Karbala', 'ar' => 'كربلاء'],
+    ['en' => 'Kirkuk', 'ar' => 'كركوك'],
+    ['en' => 'Maysan', 'ar' => 'ميسان'],
+    ['en' => 'Najaf', 'ar' => 'النجف'],
+    ['en' => 'Nineveh', 'ar' => 'نينوى'],
+    ['en' => 'Wasit', 'ar' => 'واسط']
+]
 
-            ['en' => 'Nineveh ', 'ar' => 'نينوى'],
+    // ['en' => 'Aleppo', 'ar' => 'حلب'],
+    // ['en' => 'Raqqa', 'ar' => 'الرقة'],
+    // ['en' => 'As-Suwayda', 'ar' => 'السويداء'],
+    // ['en' => 'Damascus', 'ar' => 'دمشق'],
+    // ['en' => 'Daraa', 'ar' => 'درعا'],
+    // ['en' => 'Deir ez-Zor', 'ar' => 'دير الزور'],
+    // ['en' => 'Hama', 'ar' => 'حماة'],
+    // ['en' => 'Al-Hasakah', 'ar' => 'الحسكة'],
+    // ['en' => 'Homs', 'ar' => 'حمص'],
+    // ['en' => 'Idlib', 'ar' => 'إدلب'],
+    // ['en' => 'Latakia', 'ar' => 'اللاذقية'],
+    // ['en' => 'Quneitra', 'ar' => 'القنيطرة'],
+    // ['en' => 'Rif Dimashq', 'ar' => 'ريف دمشق'],
+    // ['en' => 'Tartus', 'ar' => 'طرطوس']
 
-            ['en' => 'Erbil ', 'ar' => 'أربيل'],
-            ['en' => 'Najaf ', 'ar' => 'النجف'],
-
-            ['en' => 'Dhi Qar', 'ar' => 'ذي قارة'],
-
-            ['en' => 'Anbar ', 'ar' => 'الأنبار'],
-
-            ['en' => 'Kirkuk', 'ar' => 'كركوك '],
-
-            ['en' => 'Diyala ', 'ar' => 'ديالى '],
-
-            ['en' => 'Muthanna ', 'ar' => 'المثنى'],
-
-            ['en' => 'Karbala )', 'ar' => 'كربلاء)'],
-
-            ['en' => 'Babil ', 'ar' => 'بابل'],
-
-            ['en' => 'Sulaymaniyah ', 'ar' => 'السليمانية'],
-
-            ['en' => 'Salah ad-Din ', 'ar' => 'صلاح الدين '],
-
-            ['en' => 'Wasit ', 'ar' => 'واسط'],
-
-            ['en' => 'Maysan', 'ar' => 'ميسان'],
-
-            ['en' => 'Qadisiyyah ', 'ar' => 'القادسية'],
 
 
             // ['en' => 'Baghdad (Baghdad)', 'ar' => 'بغداد (بغداد)'],
