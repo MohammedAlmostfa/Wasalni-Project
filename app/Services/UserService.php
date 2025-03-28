@@ -89,7 +89,6 @@ class UserService
     public function showUser(User $user)
     {
         try {
-            // Eager load relationships with specific columns to optimize query
             $ratings = User::with([
                 // Load profile with selected columns
                 'profile' => function ($query) {
@@ -107,6 +106,11 @@ class UserService
                     ->with(['user.profile' => function ($query) {
                         $query->select('id', 'user_id', 'first_name', 'last_name', 'phone');
                     }]);
+                },
+                // Load roles with aboutuser and cartype from the pivot table
+                'roles' => function ($query) {
+                    $query->select('roles.id', 'roles.name') // تحديد الأعمدة المطلوبة من جدول الأدوار
+                          ->withPivot('about_User', 'car_Type'); // إضافة الأعمدة من جدول الـ pivot
                 }
             ])->find($user->id);
 

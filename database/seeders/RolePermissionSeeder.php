@@ -1,5 +1,4 @@
 <?php
-
 namespace Database\Seeders;
 
 use App\Models\User;
@@ -50,11 +49,18 @@ class RolePermissionSeeder extends Seeder
         ]);
         $adminUser->assignRole($adminRole);
 
+
         // Create a private user
         $privateUser = User::create([
             'email' => 'private@example.com',
             'password' => bcrypt('P@ssw0rd123'),
         ]);
         $privateUser->assignRole($privateUserRole);
+
+
+        $privateUser->roles()->updateExistingPivot($privateUserRole->id, [
+            'about_User' => 'This user is a private user',
+            'car_Type' => 'SUV',
+        ]);
     }
 }
