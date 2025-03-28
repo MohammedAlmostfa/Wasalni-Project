@@ -11,57 +11,64 @@ class TripObserver
     /**
      * Handle the Trip "updated" event.
      *
-     * This method is triggered when a trip is updated.
-     * It checks if the `available_seats` attribute was changed:
-     * - If `available_seats` is now 0, it marks the trip as "Complete".
-     * - If `available_seats` is greater than 0, it marks the trip as "Pending".
+     * This method is triggered whenever a trip is updated.
+     * It checks the changes made to the `available_seats` and `status` attributes of the trip:
+     * - If `available_seats` becomes 0, it marks the trip as "Complete".
+     * - If `available_seats` becomes greater than 0, it marks the trip as "Pending".
+     * - If the trip's status is updated to 3, it triggers a notification to users whose bookings are affected.
      *
-     * @param Trip $trip The trip that was updated.
+     * @param Trip $trip The trip model that was updated.
      * @return void
      */
     public function updated(Trip $trip): void
     {
-        // Check if the `available_seats` attribute was changed and is now 0
+        // Check if the `available_seats` attribute has changed and is now 0
         if ($trip->wasChanged('available_seats') && $trip->available_seats == 0) {
             $this->markTripAsComplete($trip);
         }
-
-        // Check if the `available_seats` attribute was changed and is greater than 0
-        if ($trip->wasChanged('available_seats') && $trip->available_seats > 0) {
+        // Check if the `available_seats` attribute has changed and is greater than 0
+        elseif ($trip->wasChanged('available_seats') && $trip->available_seats > 0) {
             $this->markTripAsPending($trip);
         }
-        if ($trip->wasChanged('status') && $trip->status == 3) {
-            $this->sendNotifiction($trip);
+        // Check if the `status` attribute has changed and if it is set to 3 (Assuming 'Ending' status is mapped to 3)
+        elseif ($trip->wasChanged('status') && $trip->status == 3) {
+            $this->sendNotification($trip);
         }
-
     }
 
-
-    public function sendNotifiction($trip)
+    /**
+     * Send a notification to users when the trip is ending.
+     *
+     * This method sends a notification to all users who have booked the trip.
+     * It triggers the `NewNotification` with a message that the trip is ending, prompting users to make necessary arrangements.
+     *
+     * @param Trip $trip The trip that is ending.
+     * @return void
+     */
+    public function sendNotification(Trip $trip)
     {
-
+        // Ensure the trip status is 'Ending' before sending notifications
         if ($trip->status === 'Ending') {
+            // Fetch all users who have booked the current trip
+            $users = $trip->bookings->map(function ($booking) {
+                return $booking->user; // Return the user associated with each booking
+            });
 
-            $users = User::whereHas('bookings', function ($query) use ($trip) {
-                $query->where('trip_id', $trip->id);
-            })->get();
-
-
+            // Loop through each user and send a notification about the trip ending
             foreach ($users as $user) {
-
                 $user->notify(new NewNotification(
                     'Your Trip is Ending',
                     'The trip you booked is now ending. Please make necessary arrangements.'
                 ));
             }
         }
-
     }
+
     /**
      * Mark the trip as "Complete".
      *
      * This method updates the trip's status to "Complete" if it is not already marked as such.
-     * It ensures that the status is only updated when necessary.
+     * The status is only updated if necessary to avoid redundant updates.
      *
      * @param Trip $trip The trip to mark as complete.
      * @return void
@@ -70,8 +77,8 @@ class TripObserver
     {
         // Only update the status if it is not already 'Complete'
         if ($trip->status !== 'Complete') {
-            $trip->status = 'Complete';
-            $trip->save();
+            $trip->status = 'Complete'; // Set status to "Complete"
+            $trip->save(); // Save the updated trip
         }
     }
 
@@ -79,7 +86,7 @@ class TripObserver
      * Mark the trip as "Pending".
      *
      * This method updates the trip's status to "Pending" if it is not already marked as such.
-     * It ensures that the status is only updated when necessary.
+     * The status is only updated if necessary to avoid redundant updates.
      *
      * @param Trip $trip The trip to mark as pending.
      * @return void
@@ -88,8 +95,8 @@ class TripObserver
     {
         // Only update the status if it is not already 'Pending'
         if ($trip->status !== 'Pending') {
-            $trip->status = 'Pending';
-            $trip->save();
+            $trip->status = 'Pending'; // Set status to "Pending"
+            $trip->save(); // Save the updated trip
         }
     }
 }

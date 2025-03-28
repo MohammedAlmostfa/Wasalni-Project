@@ -14,8 +14,8 @@ class UserService
      * Retrieve private users based on the authenticated user's city.
      *
      * This method fetches users who:
-     * - Have a profile with the same city_id as the authenticated user
-     * - Have the 'PrivateUser' role assigned
+     * - Have a profile with the same city_id as the authenticated user.
+     * - Have the 'PrivateUser' role assigned.
      *
      * The response includes minimal user data (id) with associated profile names.
      *
@@ -33,6 +33,7 @@ class UserService
 
             // Validate user and profile existence
             if (!$user || !$user->profile) {
+                // Return error response if user profile is not found
                 return [
                     'status' => 404,
                     'message' => [
@@ -53,16 +54,18 @@ class UserService
                 ->whereHas('roles', function ($query) {
                     $query->where('name', 'PrivateUser');
                 })
-                ->with('profile:id,user_id,first_name,last_name')
-                ->select('id')
+                ->with('profile:id,user_id,first_name,last_name') // Include profile data (id, first_name, last_name)
+                ->select('id') // Only select the user ID
                 ->get();
 
+            // Return successful response with retrieved users
             return [
                 "message" => 'PrivateUser retrieved successfully',
                 'status' => 200,
                 'data' => $users,
             ];
         } catch (Exception $e) {
+            // Log the error and return error response
             Log::error('Error in showUsers: ' . $e->getMessage());
 
             return [
@@ -93,11 +96,10 @@ class UserService
     public function showUser(User $user)
     {
         try {
-
             // Load user data with relationships:
-            // - Profile with selected columns
-            // - Trip ratings with nested user profiles
-            // - Roles with pivot data
+            // - Profile with selected columns (user_id, first_name, last_name, birthday)
+            // - Trip ratings with nested user profiles (user_id, rate, review)
+            // - Roles with pivot data (about_User, car_Type)
             $UserData = User::with([
                 'profile' => function ($query) {
                     $query->select('user_id', 'first_name', 'last_name', 'birthday');
@@ -122,29 +124,35 @@ class UserService
 
             // Check if user data was found
             if (!$UserData) {
+                // Return error response if user profile is not found
                 return [
                     "message" => 'User profile not found for the specified user.',
                     'status' => 404,
                     'data' => null,
                 ];
             }
+
             // Get the authenticated user
             $authenticatedUser = Auth::user();
 
             // Check if the authenticated user has this user in their favorites
             $isFavorite = $authenticatedUser->favoritePeople()->where('favorite_user_id', $user->id)->exists();
 
-            $Usertrips=$user->trips()->count();
-            // Add favorite status to the user data
-            $UserData->is_favorite = $isFavorite;
-            $UserData->User_trips_count=$Usertrips;
+            // Get the number of trips the user has
+            $Usertrips = $user->trips()->count();
 
+            // Add favorite status and trip count to the user data
+            $UserData->is_favorite = $isFavorite;
+            $UserData->User_trips_count = $Usertrips;
+
+            // Return successful response with user data
             return [
                 "message" => 'User profile retrieved successfully',
                 'status' => 200,
                 'data' => $UserData,
             ];
         } catch (Exception $e) {
+            // Log the error and return error response
             Log::error('Error in showUser: ' . $e->getMessage());
 
             return [
