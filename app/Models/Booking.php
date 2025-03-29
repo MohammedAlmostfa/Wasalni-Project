@@ -21,6 +21,13 @@ class Booking extends Model
         "user_id",       // ID of the user who made the booking
         'nots'           // Notes or additional information about the booking
     ];
+    protected $casts = [
+        "trip_id" => "integer",
+        "status" => "integer",
+        "seats_number" => "integer",
+        "user_id" => "integer",
+        "nots" => "string"
+    ];
 
     /**
      * Convert numeric status to human-readable string.

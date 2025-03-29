@@ -23,8 +23,20 @@ class Profile extends Model
         'birthday',
         'phone',
         'address',
-        'city_id', // Foreign key for the City model
+        'city_id',
     ];
+
+    protected $casts = [
+     'user_id' => 'integer',
+     'first_name' => 'string',
+     'last_name' => 'string',
+     'gender' => 'string',
+     'birthday' => 'date',
+     'phone' => 'string',
+     'address' => 'string',
+     'city_id' => 'integer',
+];
+
 
     /**
      * Define an inverse one-to-one relationship with the User model.

@@ -62,7 +62,7 @@ class UserDeviceService
             return [
                 'status' => 500,
                 'message' => [
-                    'errorDetails' => [__('general_error')],
+                    'errorDetails' => [__('trip.general_error')],
                 ],
             ];
         }

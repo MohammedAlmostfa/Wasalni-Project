@@ -25,6 +25,10 @@ class FavoritePerson extends Model
         'favorite_user_id', // The ID of the user who was added as a favorite
     ];
 
+    protected $casts=[
+        "user_id"=> "integer",
+        "favorite_user_id"=> "integer",
+    ];
     /**
      * Get the user who added the favorite person.
      *

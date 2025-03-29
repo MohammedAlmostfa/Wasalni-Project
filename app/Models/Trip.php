@@ -35,8 +35,16 @@ class Trip extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        'trip_start' => 'datetime',
-    ];
+       'trip_start' => 'datetime',
+       'description' => 'string',
+       'from' => 'integer',
+       'to' => 'integer',
+       'status' => 'integer',
+       'seat_price' => 'integer',
+       'available_seats' => 'integer',
+       'user_id' => 'integer',
+];
+
 
     /**
      * Status mapping for human-readable conversion
