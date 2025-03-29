@@ -17,7 +17,7 @@ class TripSeeder extends Seeder
     {
         $faker = Faker::create();
 
-        for ($i = 0; $i < 100; $i++) {
+        for ($i = 0; $i < 3; $i++) {
             $seatPrices = range(1500, 3000, 100);
             $seatPrice = $seatPrices[array_rand($seatPrices)];
 
@@ -29,7 +29,7 @@ class TripSeeder extends Seeder
                 'status' => $faker->randomElement(['Pending', 'Ending', 'Complete']),
                 'seat_price' => $seatPrice,
                 'available_seats' => $faker->numberBetween(1, 20),
-                'user_id' => $faker->numberBetween(1, 10),
+                'user_id' => $faker->numberBetween(1, 2),
             ]);
         }
 
