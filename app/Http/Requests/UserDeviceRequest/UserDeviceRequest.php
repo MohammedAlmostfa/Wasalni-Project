@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\UserRequest;
+namespace App\Http\Requests\UserDeviceRequest;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -15,7 +15,7 @@ class UserDeviceRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**

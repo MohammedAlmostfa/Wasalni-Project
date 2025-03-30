@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\UserRequest\UserDeviceRequest;
-use App\Services\UserDeviceService;
 use Illuminate\Http\Request;
+use App\Services\UserDeviceService;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Requests\UserDeviceRequest\UserDeviceRequest;
 
 class UserDeviceController extends Controller
 {
