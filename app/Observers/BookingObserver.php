@@ -3,8 +3,10 @@
 namespace App\Observers;
 
 use App\Models\Trip;
+use App\Models\User;
 use App\Models\Booking;
 use Illuminate\Support\Facades\DB;
+use App\Notifications\NewNotification;
 
 class BookingObserver
 {
@@ -12,20 +14,29 @@ class BookingObserver
      * Handle the Booking "updated" event.
      *
      * This method is triggered whenever a booking is updated.
-     * It checks if the booking status was changed to "accepted" or "cancel" and adjusts the available seats accordingly.
+     * It checks if the booking status has been changed to "accepted", "rejected", or "cancel",
+     * and performs the corresponding actions such as adjusting the available seats of the trip.
      *
-     * @param Booking $booking The booking that was updated.
+     * @param Booking $booking The booking instance that was updated.
      * @return void
      */
     public function updated(Booking $booking): void
     {
-        // Check if the status was changed to "accepted"
+        // Check if the booking status has changed to "accepted"
         if ($booking->isDirty('status') && $booking->status === 'accepted') {
+            // Reduce available seats when booking is accepted
             $this->Reducingavailableseats($booking);
         }
 
-        // Check if the status was changed to "cancel"
+        // Check if the booking status has changed to "rejected"
+        if ($booking->isDirty('status') && $booking->status === 'rejected') {
+            // Handle booking rejection
+            $this->Rejectedbooking($booking);
+        }
+
+        // Check if the booking status has changed to "cancel"
         if ($booking->isDirty('status') && $booking->status === 'cancel') {
+            // Increase available seats when booking is canceled
             $this->Increaseavailableseats($booking);
         }
     }
@@ -33,10 +44,11 @@ class BookingObserver
     /**
      * Increase available seats when a booking is canceled.
      *
-     * This method increases the available seats in the trip when a booking is canceled.
-     * It uses a database transaction to ensure data consistency.
+     * This method is triggered when a booking status changes to "cancel",
+     * it increases the available seats of the trip by the number of seats the user booked.
+     * A database transaction is used to ensure data consistency.
      *
-     * @param Booking $booking The booking that was canceled.
+     * @param Booking $booking The booking instance that was canceled.
      * @return void
      */
     protected function Increaseavailableseats(Booking $booking): void
@@ -45,10 +57,20 @@ class BookingObserver
             // Lock the trip row for update to prevent race conditions
             $trip = $booking->trip()->lockForUpdate()->first();
 
-            // Increase the available seats by the number of seats booked
+            // Get the user associated with the booking
+            $userid = $booking->user_id;
+            $user = User::findorfail($userid);
+
+            // Send a notification to the user regarding the trip cancellation
+            $user->notify(new NewNotification(
+                __('notifications.booking_canceled.title'), // Title for trip cancellation
+                __('notifications.booking_canceled.message') // Message for trip cancellation
+            ));
+
+            // Increase the available seats of the trip by the number of seats the user booked
             $trip->available_seats += $booking->seats_number;
 
-            // Save the updated trip
+            // Save the updated trip information
             $trip->save();
         });
     }
@@ -56,10 +78,11 @@ class BookingObserver
     /**
      * Reduce available seats when a booking is accepted.
      *
-     * This method reduces the available seats in the trip when a booking is accepted.
-     * It uses a database transaction to ensure data consistency.
+     * This method is triggered when a booking status changes to "accepted",
+     * it decreases the available seats of the trip by the number of seats the user booked.
+     * A database transaction is used to ensure data consistency.
      *
-     * @param Booking $booking The booking that was accepted.
+     * @param Booking $booking The booking instance that was accepted.
      * @return void
      */
     protected function Reducingavailableseats(Booking $booking): void
@@ -68,11 +91,43 @@ class BookingObserver
             // Lock the trip row for update to prevent race conditions
             $trip = $booking->trip()->lockForUpdate()->first();
 
-            // Reduce the available seats by the number of seats booked
+            // Get the user associated with the booking
+            $userid = $booking->user_id;
+            $user = User::findorfail($userid);
+
+            // Send a notification to the user regarding the booking acceptance
+            $user->notify(new NewNotification(
+                __('notifications.booking_accepted.title'), // Title for booking acceptance
+                __('notifications.booking_accepted.message') // Message for booking acceptance
+            ));
+
+            // Reduce the available seats of the trip by the number of seats the user booked
             $trip->available_seats -= $booking->seats_number;
 
-            // Save the updated trip
+            // Save the updated trip information
             $trip->save();
         });
+    }
+
+    /**
+     * Handle a booking rejection.
+     *
+     * This method is triggered when a booking status changes to "rejected".
+     * It sends a notification to the user informing them of the rejection.
+     *
+     * @param Booking $booking The booking instance that was rejected.
+     * @return void
+     */
+    public function Rejectedbooking(Booking $booking): void
+    {
+        // Get the user associated with the booking
+        $userid = $booking->user_id;
+        $user = User::findorfail($userid);
+
+        // Send a notification to the user regarding the booking rejection
+        $user->notify(new NewNotification(
+            __('notifications.booking_rejected.title'), // Title for booking rejection
+            __('notifications.booking_rejected.message') // Message for booking rejection
+        ));
     }
 }

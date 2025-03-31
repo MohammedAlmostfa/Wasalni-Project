@@ -58,9 +58,10 @@ class TripObserver
             // Loop through each user and send a notification about the trip ending
             foreach ($users as $user) {
                 $user->notify(new NewNotification(
-                    'Your Trip is Ending',
-                    'The trip you booked is now ending. Please make necessary arrangements.'
+                    __('notifications.trip_Completion.title'),
+                    __('notifications.trip_Completion.message')
                 ));
+
             }
         }
     }
@@ -80,6 +81,15 @@ class TripObserver
         if ($trip->status !== 'Complete') {
             $trip->status = 'Complete'; // Set status to "Complete"
             $trip->save(); // Save the updated trip
+            $userid=$trip->user_id;
+            $user=User::findorfail($userid);
+            // Send a notification to the user
+            $user->notify(new NewNotification(
+                __('notifications.trip_completed.title'), // Title for trip completion
+                __('notifications.trip_completed.message') // Message for trip completion
+            ));
+
+
         }
     }
 

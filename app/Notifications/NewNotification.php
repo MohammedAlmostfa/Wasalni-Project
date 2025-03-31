@@ -87,9 +87,6 @@ class NewNotification extends Notification
             ->withNotification([
                 'title' => $this->title, // The notification title
                 'body'  => $this->body,  // The notification body
-            ])
-            ->withData([
-                'click_action' => "FLUTTER_NOTIFICATION_CLICK", // Action when clicked
             ]);
 
         try {
