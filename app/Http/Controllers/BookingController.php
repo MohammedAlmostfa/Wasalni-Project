@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use App\Services\BookingService;
 use App\Http\Resources\BookingResource;
 use App\Http\Resources\MyBookingResource;
-use App\Http\Requests\bookingrequest\FilterinBookingData;
+use App\Http\Requests\Bookingrequest\FilterinBookingData;
 use App\Http\Requests\BookingRequest\StoreBookingRequest;
 use App\Http\Requests\BookingRequest\UpdateBookingRequest;
 

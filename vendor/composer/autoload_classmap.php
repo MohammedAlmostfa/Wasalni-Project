@@ -6,6 +6,7 @@ $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
 return array(
+    'App\\Channels\\FcmChannel' => $baseDir . '/app/Channels/FcmChannel.php',
     'App\\Console\\Kernel' => $baseDir . '/app/Console/Kernel.php',
     'App\\Events\\Registered' => $baseDir . '/app/Events/Registered.php',
     'App\\Exceptions\\Handler' => $baseDir . '/app/Exceptions/Handler.php',
@@ -21,6 +22,7 @@ return array(
     'App\\Http\\Controllers\\SavedTripController' => $baseDir . '/app/Http/Controllers/SavedTripController.php',
     'App\\Http\\Controllers\\TripController' => $baseDir . '/app/Http/Controllers/TripController.php',
     'App\\Http\\Controllers\\UserController' => $baseDir . '/app/Http/Controllers/UserController.php',
+    'App\\Http\\Controllers\\UserDeviceController' => $baseDir . '/app/Http/Controllers/UserDeviceController.php',
     'App\\Http\\Kernel' => $baseDir . '/app/Http/Kernel.php',
     'App\\Http\\Middleware\\Authenticate' => $baseDir . '/app/Http/Middleware/Authenticate.php',
     'App\\Http\\Middleware\\EncryptCookies' => $baseDir . '/app/Http/Middleware/EncryptCookies.php',
@@ -53,6 +55,7 @@ return array(
     'App\\Http\\Requests\\TripRequest\\FilteringTripsData' => $baseDir . '/app/Http/Requests/TripRequest/FilteringTripsData.php',
     'App\\Http\\Requests\\TripRequest\\StoreTripRequest' => $baseDir . '/app/Http/Requests/TripRequest/StoreTripRequest.php',
     'App\\Http\\Requests\\TripRequest\\UpdateTripRequest' => $baseDir . '/app/Http/Requests/TripRequest/UpdateTripRequest.php',
+    'App\\Http\\Requests\\UserDeviceRequest\\UserDeviceRequest' => $baseDir . '/app/Http/Requests/UserDeviceRequest/UserDeviceRequest.php',
     'App\\Http\\Resources\\BookingResource' => $baseDir . '/app/Http/Resources/BookingResource.php',
     'App\\Http\\Resources\\FavoriteUserResource' => $baseDir . '/app/Http/Resources/FavoriteUserResource.php',
     'App\\Http\\Resources\\MyBookingResource' => $baseDir . '/app/Http/Resources/MyBookingResource.php',
@@ -73,6 +76,8 @@ return array(
     'App\\Models\\Rating' => $baseDir . '/app/Models/Rating.php',
     'App\\Models\\Trip' => $baseDir . '/app/Models/Trip.php',
     'App\\Models\\User' => $baseDir . '/app/Models/User.php',
+    'App\\Models\\UserDevice' => $baseDir . '/app/Models/UserDevice.php',
+    'App\\Notifications\\NewNotification' => $baseDir . '/app/Notifications/NewNotification.php',
     'App\\Observers\\BookingObserver' => $baseDir . '/app/Observers/BookingObserver.php',
     'App\\Observers\\TripObserver' => $baseDir . '/app/Observers/TripObserver.php',
     'App\\Policies\\BookingPolicy' => $baseDir . '/app/Policies/BookingPolicy.php',
@@ -99,6 +104,7 @@ return array(
     'App\\Services\\RatingService' => $baseDir . '/app/Services/RatingService.php',
     'App\\Services\\SavedTripService' => $baseDir . '/app/Services/SavedTripService.php',
     'App\\Services\\TripService' => $baseDir . '/app/Services/TripService.php',
+    'App\\Services\\UserDeviceService' => $baseDir . '/app/Services/UserDeviceService.php',
     'App\\Services\\UserService' => $baseDir . '/app/Services/UserService.php',
     'Attribute' => $vendorDir . '/symfony/polyfill-php80/Resources/stubs/Attribute.php',
     'Beste\\Cache\\CacheItem' => $vendorDir . '/beste/in-memory-cache/src/CacheItem.php',
@@ -4080,6 +4086,7 @@ return array(
     'Monolog\\Registry' => $vendorDir . '/monolog/monolog/src/Monolog/Registry.php',
     'Monolog\\ResettableInterface' => $vendorDir . '/monolog/monolog/src/Monolog/ResettableInterface.php',
     'Monolog\\SignalHandler' => $vendorDir . '/monolog/monolog/src/Monolog/SignalHandler.php',
+    'Monolog\\Test\\MonologTestCase' => $vendorDir . '/monolog/monolog/src/Monolog/Test/MonologTestCase.php',
     'Monolog\\Test\\TestCase' => $vendorDir . '/monolog/monolog/src/Monolog/Test/TestCase.php',
     'Monolog\\Utils' => $vendorDir . '/monolog/monolog/src/Monolog/Utils.php',
     'Nette\\ArgumentOutOfRangeException' => $vendorDir . '/nette/utils/src/exceptions.php',

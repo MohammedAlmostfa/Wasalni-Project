@@ -4,6 +4,7 @@ namespace App\Observers;
 
 use App\Models\Trip;
 use App\Models\User;
+use Illuminate\Support\Facades\Log;
 use App\Notifications\NewNotification;
 
 class TripObserver
@@ -31,7 +32,7 @@ class TripObserver
             $this->markTripAsPending($trip);
         }
         // Check if the `status` attribute has changed and if it is set to 3 (Assuming 'Ending' status is mapped to 3)
-        elseif ($trip->wasChanged('status') && $trip->status == 3) {
+        elseif ($trip->wasChanged('status') && $trip->status == "Ending") {
             $this->sendNotification($trip);
         }
     }
@@ -40,7 +41,7 @@ class TripObserver
      * Send a notification to users when the trip is ending.
      *
      * This method sends a notification to all users who have booked the trip.
-     * It triggers the `NewNotification` with a message that the trip is ending, prompting users to make necessary arrangements.
+     * It triggers the NewNotification with a message that the trip is ending, prompting users to make necessary arrangements.
      *
      * @param Trip $trip The trip that is ending.
      * @return void
@@ -48,7 +49,7 @@ class TripObserver
     public function sendNotification(Trip $trip)
     {
         // Ensure the trip status is 'Ending' before sending notifications
-        if ($trip->status === 'Ending') {
+        if ($trip->status == 'Ending') {
             // Fetch all users who have booked the current trip
             $users = $trip->bookings->map(function ($booking) {
                 return $booking->user; // Return the user associated with each booking

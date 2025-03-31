@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\bookingrequest;
+namespace App\Http\Requests\Bookingrequest;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;

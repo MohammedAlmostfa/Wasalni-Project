@@ -2,107 +2,103 @@
 
 namespace App\Notifications;
 
-use Kreait\Firebase\Factory;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Notification;
+use Kreait\Firebase\Factory;
 use Kreait\Firebase\Messaging\CloudMessage;
 use Kreait\Firebase\Messaging\RegistrationToken;
 use Illuminate\Support\Facades\Log;
-use App\Models\User;
+use Throwable;
 
+/**
+ * A notification class for sending notifications via Firebase Cloud Messaging (FCM).
+ */
 class NewNotification extends Notification
 {
-    // Properties to hold the notification title and body
+    use Queueable;
+
     protected $title;
     protected $body;
 
     /**
-     * Constructor to initialize the notification with a title and body.
+     * Constructor for creating a new notification instance.
      *
-     * @param string $title The title of the notification.
-     * @param string $body The body content of the notification.
+     * @param string $title Notification title.
+     * @param string $body Notification body.
      */
-    public function __construct($title, $body)
+    public function __construct(string $title, string $body)
     {
         $this->title = $title;
-        $this->body = $body;
+        $this->body  = $body;
     }
 
     /**
-     * Define the channels through which the notification will be sent.
+     * Specifies the delivery channels for the notification.
      *
-     * In this case, we're sending the notification via Firebase.
-     *
-     * @param mixed $notifiable The entity that is receiving the notification (e.g., a User).
-     * @return array The list of channels to use for sending the notification.
+     * @param mixed $notifiable The notifiable entity (e.g., user or model).
+     * @return array
      */
     public function via($notifiable)
     {
-        return ['firebase'];  // Define the 'firebase' channel for notification delivery.
+        // Use the custom FCM channel
+        return ['fcm'];
     }
 
     /**
-     * Send the notification through Firebase Cloud Messaging (FCM).
+     * Handles sending the notification through Firebase Cloud Messaging (FCM).
      *
-     * This method sends the notification to all devices associated with the user,
-     * using Firebase Cloud Messaging.
-     *
-     * @param mixed $notifiable The entity that is receiving the notification (e.g., a User).
+     * @param mixed $notifiable The notifiable entity (e.g., user or model).
      * @return void
      */
-    public function toFirebase($notifiable)
+    public function toFcm($notifiable)
     {
-        // Check if the user has any associated devices
+        // Retrieve the devices associated with the notifiable entity (e.g., user devices)
         $devices = $notifiable->devices;
 
-        // If no devices are found, log an error and stop
-        if ($devices->isEmpty()) {
-            Log::error('No devices found for user: ' . $notifiable->id);
+        if (!$devices) {
+            Log::error('No devices found for the user: ' . $notifiable->id);
             return;
         }
 
+        // Collect valid FCM tokens from the devices
+        $tokens = [];
+        foreach ($devices as $device) {
+            if (empty($device->fcm_token)) {
+                Log::warning('FCM token is missing for the user: ' . $notifiable->id);
+                continue;
+            }
+            $tokens[] = RegistrationToken::fromValue($device->fcm_token);
+        }
+
+        if (empty($tokens)) {
+            Log::warning('No valid FCM tokens found for the user: ' . $notifiable->id);
+            return;
+        }
+
+        // Initialize Firebase Messaging with credentials from the JSON configuration file
+        $firebaseFactory = (new Factory)
+            ->withServiceAccount(storage_path(config('services.fcm.credentialsPath')));
+
+        $messaging = $firebaseFactory->createMessaging();
+
+        // Construct the notification message
+        $message = CloudMessage::new()
+            ->withNotification([
+                'title' => $this->title, // The notification title
+                'body'  => $this->body,  // The notification body
+            ])
+            ->withData([
+                'click_action' => "FLUTTER_NOTIFICATION_CLICK", // Action when clicked
+            ]);
+
         try {
-            // Initialize Firebase Messaging
-            $firebase = (new Factory)
-                ->withServiceAccount(storage_path(env('FIREBASE_CREDENTIALS'))) // Load Firebase credentials from the specified path
-                ->createMessaging(); // Create a messaging instance
-
-            // Initialize an empty array to hold valid FCM tokens
-            $tokens = [];
-
-            // Loop through each device to collect valid FCM tokens
-            foreach ($devices as $device) {
-                // Check if the device has an FCM token; if not, log a warning and skip it
-                if (empty($device->fcm_token)) {
-                    Log::warning('FCM token is missing for device of user: ' . $notifiable->id);
-                    continue;
-                }
-
-                // Add the valid FCM token to the tokens array
-                $tokens[] = RegistrationToken::fromValue($device->fcm_token);
-            }
-
-            // If we have valid FCM tokens, send the notification
-            if (!empty($tokens)) {
-                // Create the message to be sent via Firebase
-                $message = CloudMessage::new()
-                    ->withNotification([
-                        'title' => $this->title,  // The title of the notification
-                        'body' => $this->body,    // The body of the notification
-                    ]);
-
-                // Send the message to all devices with valid tokens using multicast
-                $firebase->sendMulticast($message, $tokens);
-
-                // Log the successful delivery of the notification
-                Log::info('Firebase notification sent successfully to devices of user: ' . $notifiable->id);
-            } else {
-                // If no valid FCM tokens are found, log a warning
-                Log::warning('No valid FCM tokens found for user: ' . $notifiable->id);
-            }
-
-        } catch (\Exception $e) {
-            // In case of an exception (e.g., network issue or Firebase failure), log the error
-            Log::error('Error sending Firebase notification to user ' . $notifiable->id . ': ' . $e->getMessage());
+            // Send the notification to all valid FCM tokens
+            $response = $messaging->sendMulticast($message, $tokens);
+            Log::info('FCM notification sent successfully to user: ' . $notifiable->id);
+        } catch (Throwable $e) {
+            // Log errors during notification sending
+            Log::error('Error sending FCM notification: ' . $e->getMessage());
         }
     }
 }

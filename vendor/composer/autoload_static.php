@@ -750,6 +750,7 @@ class ComposerStaticInit9c491b8531eec05ba41a11d9276a5749
     );
 
     public static $classMap = array (
+        'App\\Channels\\FcmChannel' => __DIR__ . '/../..' . '/app/Channels/FcmChannel.php',
         'App\\Console\\Kernel' => __DIR__ . '/../..' . '/app/Console/Kernel.php',
         'App\\Events\\Registered' => __DIR__ . '/../..' . '/app/Events/Registered.php',
         'App\\Exceptions\\Handler' => __DIR__ . '/../..' . '/app/Exceptions/Handler.php',
@@ -765,6 +766,7 @@ class ComposerStaticInit9c491b8531eec05ba41a11d9276a5749
         'App\\Http\\Controllers\\SavedTripController' => __DIR__ . '/../..' . '/app/Http/Controllers/SavedTripController.php',
         'App\\Http\\Controllers\\TripController' => __DIR__ . '/../..' . '/app/Http/Controllers/TripController.php',
         'App\\Http\\Controllers\\UserController' => __DIR__ . '/../..' . '/app/Http/Controllers/UserController.php',
+        'App\\Http\\Controllers\\UserDeviceController' => __DIR__ . '/../..' . '/app/Http/Controllers/UserDeviceController.php',
         'App\\Http\\Kernel' => __DIR__ . '/../..' . '/app/Http/Kernel.php',
         'App\\Http\\Middleware\\Authenticate' => __DIR__ . '/../..' . '/app/Http/Middleware/Authenticate.php',
         'App\\Http\\Middleware\\EncryptCookies' => __DIR__ . '/../..' . '/app/Http/Middleware/EncryptCookies.php',
@@ -797,6 +799,7 @@ class ComposerStaticInit9c491b8531eec05ba41a11d9276a5749
         'App\\Http\\Requests\\TripRequest\\FilteringTripsData' => __DIR__ . '/../..' . '/app/Http/Requests/TripRequest/FilteringTripsData.php',
         'App\\Http\\Requests\\TripRequest\\StoreTripRequest' => __DIR__ . '/../..' . '/app/Http/Requests/TripRequest/StoreTripRequest.php',
         'App\\Http\\Requests\\TripRequest\\UpdateTripRequest' => __DIR__ . '/../..' . '/app/Http/Requests/TripRequest/UpdateTripRequest.php',
+        'App\\Http\\Requests\\UserDeviceRequest\\UserDeviceRequest' => __DIR__ . '/../..' . '/app/Http/Requests/UserDeviceRequest/UserDeviceRequest.php',
         'App\\Http\\Resources\\BookingResource' => __DIR__ . '/../..' . '/app/Http/Resources/BookingResource.php',
         'App\\Http\\Resources\\FavoriteUserResource' => __DIR__ . '/../..' . '/app/Http/Resources/FavoriteUserResource.php',
         'App\\Http\\Resources\\MyBookingResource' => __DIR__ . '/../..' . '/app/Http/Resources/MyBookingResource.php',
@@ -817,6 +820,8 @@ class ComposerStaticInit9c491b8531eec05ba41a11d9276a5749
         'App\\Models\\Rating' => __DIR__ . '/../..' . '/app/Models/Rating.php',
         'App\\Models\\Trip' => __DIR__ . '/../..' . '/app/Models/Trip.php',
         'App\\Models\\User' => __DIR__ . '/../..' . '/app/Models/User.php',
+        'App\\Models\\UserDevice' => __DIR__ . '/../..' . '/app/Models/UserDevice.php',
+        'App\\Notifications\\NewNotification' => __DIR__ . '/../..' . '/app/Notifications/NewNotification.php',
         'App\\Observers\\BookingObserver' => __DIR__ . '/../..' . '/app/Observers/BookingObserver.php',
         'App\\Observers\\TripObserver' => __DIR__ . '/../..' . '/app/Observers/TripObserver.php',
         'App\\Policies\\BookingPolicy' => __DIR__ . '/../..' . '/app/Policies/BookingPolicy.php',
@@ -843,6 +848,7 @@ class ComposerStaticInit9c491b8531eec05ba41a11d9276a5749
         'App\\Services\\RatingService' => __DIR__ . '/../..' . '/app/Services/RatingService.php',
         'App\\Services\\SavedTripService' => __DIR__ . '/../..' . '/app/Services/SavedTripService.php',
         'App\\Services\\TripService' => __DIR__ . '/../..' . '/app/Services/TripService.php',
+        'App\\Services\\UserDeviceService' => __DIR__ . '/../..' . '/app/Services/UserDeviceService.php',
         'App\\Services\\UserService' => __DIR__ . '/../..' . '/app/Services/UserService.php',
         'Attribute' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/Attribute.php',
         'Beste\\Cache\\CacheItem' => __DIR__ . '/..' . '/beste/in-memory-cache/src/CacheItem.php',
@@ -4824,6 +4830,7 @@ class ComposerStaticInit9c491b8531eec05ba41a11d9276a5749
         'Monolog\\Registry' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Registry.php',
         'Monolog\\ResettableInterface' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/ResettableInterface.php',
         'Monolog\\SignalHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/SignalHandler.php',
+        'Monolog\\Test\\MonologTestCase' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Test/MonologTestCase.php',
         'Monolog\\Test\\TestCase' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Test/TestCase.php',
         'Monolog\\Utils' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Utils.php',
         'Nette\\ArgumentOutOfRangeException' => __DIR__ . '/..' . '/nette/utils/src/exceptions.php',
