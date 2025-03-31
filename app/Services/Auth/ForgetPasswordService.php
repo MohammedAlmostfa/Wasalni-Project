@@ -29,25 +29,6 @@ class ForgetPasswordService
             $key = $email;
             Cache::delete($key);
 
-            // Check if a code has already been sent within the last hour
-            if (Cache::has($key)) {
-           //     $ttl = Redis::ttl("cache:" . $key);
-           //  if ($ttl > 0 && $ttl <= 600) {
-          // Calculate the time in minutes (optional: round it)
-          //      $minutes = ceil($ttl / 60);
-               //     return [
-                //        'status' => 400,
-                //        'message' => [
-                //            'errorDetails' => [
-                //                __('auth.verification_code_error', ['minutes' => $minutes]),
-                //            ],
-                //        ],
-                //    ];
-             //   } else {
-                    Cache::delete($key);
-               // }
-         //   }
-
             // Generate a 6-digit random code and store it in the cache for 1 hour
             $code = Cache::remember($key, 3600, function () {
                 return random_int(100000, 999999);

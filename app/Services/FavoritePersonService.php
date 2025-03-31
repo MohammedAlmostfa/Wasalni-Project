@@ -24,7 +24,7 @@ class FavoritePersonService
                 ->paginate(10);
 
             return [
-                'message' => 'All favorite users retrieved successfully.',
+                'message' => __('user.favorite_users_retrieved'),  // Use translation key
                 'data' => $favorite_users,
                 'status' => 200,
             ];
@@ -32,11 +32,11 @@ class FavoritePersonService
             // Log the error if an exception occurs
             Log::error('Error in showFavoritePerson: ' . $e->getMessage());
 
-            // Return an error message and status
+            // Return an error message and status using translation key
             return [
                 'status' => 500,
                 'message' => [
-                    'errorDetails' => ['An error occurred while retrieving favorite users.'],
+                    'errorDetails' => [__('user.general_error')], // Use translation key
                 ],
             ];
         }
@@ -56,7 +56,7 @@ class FavoritePersonService
                 return [
                     'status' => 400,
                     'message' => [
-                        'errorDetails' => ['You cannot add yourself to your favorite list.'],
+                        'errorDetails' => [__('user.cant_add_yourself_to_favorite')], // Use translation key
                     ],
                 ];
             }
@@ -67,7 +67,7 @@ class FavoritePersonService
             ]);
 
             return [
-                'message' => 'User added to your favorite users.',
+                'message' => __('user.user_added_to_favorite'), // Use translation key
                 'data' => null,
                 'status' => 201,
             ];
@@ -75,11 +75,11 @@ class FavoritePersonService
             // Log the error if an exception occurs
             Log::error('Error in addToFavorite: ' . $e->getMessage());
 
-            // Return an error message and status
+            // Return an error message and status using translation key
             return [
                 'status' => 500,
                 'message' => [
-                    'errorDetails' => ['An error occurred while adding the user to your favorite list.'],
+                  'errorDetails' => [__('user.general_error')], // Use translation key
                 ],
             ];
         }
@@ -98,18 +98,18 @@ class FavoritePersonService
             $favoritePerson->delete();
 
             return [
-                'message' => 'User removed from your favorite list.',
+                'message' => __('user.user_removed_from_favorite'), // Use translation key
                 'status' => 200,
             ];
         } catch (Exception $e) {
             // Log the error if an exception occurs
             Log::error('Error in removeFromFavorite: ' . $e->getMessage());
 
-            // Return an error message and status
+            // Return an error message and status using translation key
             return [
                 'status' => 500,
                 'message' => [
-                    'errorDetails' => ['An error occurred while removing the user from your favorite list.'],
+                  'errorDetails' => [__('user.general_error')], // Use translation key
                 ],
             ];
         }

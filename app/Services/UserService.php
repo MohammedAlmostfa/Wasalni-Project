@@ -28,16 +28,17 @@ class UserService
     public function showUsers()
     {
         try {
+            /** @var \App\Models\User $user */
             // Get the currently authenticated user
             $user = Auth::user();
 
             // Validate user and profile existence
             if (!$user || !$user->profile) {
-                // Return error response if user profile is not found
+                // Return error response if the user profile is not found
                 return [
                     'status' => 404,
                     'message' => [
-                        'errorDetails' => ['User profile not found.'],
+                        'errorDetails' => [__('user.user_profile_not_found')], // Translation for profile not found
                     ],
                 ];
             }
@@ -45,9 +46,7 @@ class UserService
             // Get the city_id from the user's profile
             $city_id = $user->profile->city_id;
 
-            // Query users with:
-            // - Matching city_id in their profile
-            // - 'PrivateUser' role
+            // Query users with matching city_id and the 'PrivateUser' role
             $users = User::whereHas('profile', function ($query) use ($city_id) {
                 $query->where('city_id', $city_id);
             })
@@ -60,18 +59,19 @@ class UserService
 
             // Return successful response with retrieved users
             return [
-                "message" => 'PrivateUser retrieved successfully',
+                'message' => __('user.private_user_retrieved'), // Translation for success message
                 'status' => 200,
                 'data' => $users,
             ];
         } catch (Exception $e) {
-            // Log the error and return error response
+            // Log the error message
             Log::error('Error in showUsers: ' . $e->getMessage());
 
+            // Return error response if an exception occurs
             return [
                 'status' => 500,
                 'message' => [
-                    'errorDetails' => ['An error occurred while retrieving users.'],
+                    'errorDetails' => [__('user.general_error')], // Translation for general error
                 ],
             ];
         }
@@ -80,11 +80,12 @@ class UserService
     /**
      * Retrieve detailed profile information for a specific user.
      *
-     * Includes:
+     * This method fetches the following details for a user:
      * - Basic profile information (first_name, last_name, birthday)
      * - Trip ratings with associated user details
      * - User roles with pivot data (about_User, car_Type)
      * - Favorite status relative to the authenticated user
+     * - Number of trips the user has
      *
      * @param User $user The user model to retrieve details for
      * @return array [
@@ -122,17 +123,17 @@ class UserService
                 }
             ])->find($user->id);
 
-            // Check if user data was found
+            // Check if the user data was found
             if (!$UserData) {
                 // Return error response if user profile is not found
                 return [
-                    "message" => 'User profile not found for the specified user.',
+                    "message" => __('user.user_profile_not_found_specified'), // Translation for profile not found
                     'status' => 404,
                     'data' => null,
                 ];
             }
 
-            // Get the authenticated user
+            /** @var \App\Models\User $user */
             $authenticatedUser = Auth::user();
 
             // Check if the authenticated user has this user in their favorites
@@ -147,18 +148,19 @@ class UserService
 
             // Return successful response with user data
             return [
-                "message" => 'User profile retrieved successfully',
+                "message" => __('user.user_profile_retrieved'), // Translation for profile retrieved successfully
                 'status' => 200,
                 'data' => $UserData,
             ];
         } catch (Exception $e) {
-            // Log the error and return error response
+            // Log the error message
             Log::error('Error in showUser: ' . $e->getMessage());
 
+            // Return error response if an exception occurs
             return [
                 'status' => 500,
                 'message' => [
-                    'errorDetails' => ['An error occurred while retrieving user profile.'],
+                    'errorDetails' => [__('user.general_error')], // Translation for general error
                 ],
             ];
         }
