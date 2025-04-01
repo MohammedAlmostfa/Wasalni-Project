@@ -10,28 +10,79 @@ use App\Notifications\NewNotification;
 class TripObserver
 {
     /**
+     * Handle the Trip "created" event.
+     *
+     * This method is triggered whenever a new trip is created. It performs the following actions:
+     * - Retrieves the user who created the trip.
+     * - Loads the user's profile (first name and last name).
+     * - Sends notifications to all users who have favorited the user who created the trip.
+     *
+     * @param Trip $trip The trip model that was created.
+     * @return void
+     */
+    public function create(Trip $trip)
+    {
+        // Get the user who created the trip
+        $userId = $trip->user_id;
+        $user = User::findOrFail($userId);
+
+        // Load profile data (first_name and last_name) for the user
+        $profile = $user->profile()->select(['first_name', 'last_name'])->first();
+
+        // Ensure profile data is available before accessing it
+
+        $firstName = $profile->first_name;
+        $lastName = $profile->last_name;
+
+
+        // Combine first name and last name
+        $userFullName = $firstName . ' ' . $lastName;
+
+        // Get all users who favorited the user who created the trip
+        $favoritedBy = $user->favoritedBy;
+
+        // If there are no users who have favorited the creator, exit early
+        if ($favoritedBy->isEmpty()) {
+            return;
+        }
+
+        // Loop through each user who favorited the creator and send a notification
+        foreach ($favoritedBy as $favoriter) {
+            $favoriter->notify(new NewNotification(
+                __('notifications.trip_created.title'),
+                __('notifications.trip_created.message', [
+                    'user' => $userFullName,
+                    'from' => $trip->cityFrom->city_name,
+                    'to' => $trip->cityTo->city_name,
+                    'date' => $trip->trip_start->format('Y-m-d H:i:s'), // Format the trip start date
+                ])
+            ));
+        }
+    }
+
+    /**
      * Handle the Trip "updated" event.
      *
-     * This method is triggered whenever a trip is updated.
-     * It checks the changes made to the `available_seats` and `status` attributes of the trip:
-     * - If `available_seats` becomes 0, it marks the trip as "Complete".
-     * - If `available_seats` becomes greater than 0, it marks the trip as "Pending".
-     * - If the trip's status is updated to 3, it triggers a notification to users whose bookings are affected.
+     * This method is triggered whenever a trip is updated. It checks if specific attributes
+     * such as `available_seats` or `status` have been modified and performs actions accordingly:
+     * - If `available_seats` becomes 0, the trip is marked as "Complete".
+     * - If `available_seats` is greater than 0, the trip is marked as "Pending".
+     * - If the trip's status is updated to "Ending", a notification is sent to the affected users.
      *
      * @param Trip $trip The trip model that was updated.
      * @return void
      */
     public function updated(Trip $trip): void
     {
-        // Check if the `available_seats` attribute has changed and is now 0
+        // If available_seats became 0, mark the trip as Complete
         if ($trip->wasChanged('available_seats') && $trip->available_seats == 0) {
             $this->markTripAsComplete($trip);
         }
-        // Check if the `available_seats` attribute has changed and is greater than 0
+        // If available_seats became greater than 0, mark the trip as Pending
         elseif ($trip->wasChanged('available_seats') && $trip->available_seats > 0) {
             $this->markTripAsPending($trip);
         }
-        // Check if the `status` attribute has changed and if it is set to 3 (Assuming 'Ending' status is mapped to 3)
+        // If the status changed to "Ending", send a notification to users
         elseif ($trip->wasChanged('status') && $trip->status == "Ending") {
             $this->sendNotification($trip);
         }
@@ -40,8 +91,8 @@ class TripObserver
     /**
      * Send a notification to users when the trip is ending.
      *
-     * This method sends a notification to all users who have booked the trip.
-     * It triggers the NewNotification with a message that the trip is ending, prompting users to make necessary arrangements.
+     * This method is triggered when the trip status is updated to "Ending". It sends a notification
+     * to all users who have booked the trip, informing them that the trip is ending.
      *
      * @param Trip $trip The trip that is ending.
      * @return void
@@ -61,7 +112,6 @@ class TripObserver
                     __('notifications.trip_Completion.title'),
                     __('notifications.trip_Completion.message')
                 ));
-
             }
         }
     }
@@ -81,15 +131,16 @@ class TripObserver
         if ($trip->status !== 'Complete') {
             $trip->status = 'Complete'; // Set status to "Complete"
             $trip->save(); // Save the updated trip
-            $userid=$trip->user_id;
-            $user=User::findorfail($userid);
+
+            // Get the user who created the trip
+            $userid = $trip->user_id;
+            $user = User::findOrFail($userid);
+
             // Send a notification to the user
             $user->notify(new NewNotification(
-                __('notifications.trip_completed.title'), // Title for trip completion
-                __('notifications.trip_completed.message') // Message for trip completion
+                __('notifications.trip_completed.title'),
+                __('notifications.trip_completed.message')
             ));
-
-
         }
     }
 
