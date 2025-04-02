@@ -2,11 +2,10 @@
 
 namespace App\Observers;
 
-use App\Models\Trip;
 use App\Models\User;
 use App\Models\Booking;
 use Illuminate\Support\Facades\DB;
-use App\Notifications\NewNotification;
+use App\Jobs\SendFcmNotificationJob;
 
 class BookingObserver
 {
@@ -62,10 +61,7 @@ class BookingObserver
             $user = User::findorfail($userid);
 
             // Send a notification to the user regarding the trip cancellation
-            $user->notify(new NewNotification(
-                __('notifications.booking_canceled.title'), // Title for trip cancellation
-                __('notifications.booking_canceled.message') // Message for trip cancellation
-            ));
+            SendFcmNotificationJob::dispatch($user, __('notifications.booking_canceled.title'), __('notifications.booking_canceled.message'));
 
             // Increase the available seats of the trip by the number of seats the user booked
             $trip->available_seats += $booking->seats_number;
@@ -96,10 +92,7 @@ class BookingObserver
             $user = User::findorfail($userid);
 
             // Send a notification to the user regarding the booking acceptance
-            $user->notify(new NewNotification(
-                __('notifications.booking_accepted.title'), // Title for booking acceptance
-                __('notifications.booking_accepted.message') // Message for booking acceptance
-            ));
+            SendFcmNotificationJob::dispatch($user, __('notifications.booking_accepted.title'), __('notifications.booking_accepted.message'));
 
             // Reduce the available seats of the trip by the number of seats the user booked
             $trip->available_seats -= $booking->seats_number;
@@ -125,9 +118,6 @@ class BookingObserver
         $user = User::findorfail($userid);
 
         // Send a notification to the user regarding the booking rejection
-        $user->notify(new NewNotification(
-            __('notifications.booking_rejected.title'), // Title for booking rejection
-            __('notifications.booking_rejected.message') // Message for booking rejection
-        ));
+        SendFcmNotificationJob::dispatch($user, __('notifications.booking_rejected.title'), __('notifications.booking_rejected.message'));
     }
 }

@@ -5,6 +5,7 @@ namespace App\Observers;
 use App\Models\Trip;
 use App\Models\User;
 use Illuminate\Support\Facades\Log;
+use App\Jobs\SendFcmNotificationJob;
 use App\Notifications\NewNotification;
 
 class TripObserver
@@ -48,15 +49,12 @@ class TripObserver
 
         // Loop through each user who favorited the creator and send a notification
         foreach ($favoritedBy as $favoriter) {
-            $favoriter->notify(new NewNotification(
-                __('notifications.trip_created.title'),
-                __('notifications.trip_created.message', [
-                    'user' => $userFullName,
-                    'from' => $trip->cityFrom->city_name,
-                    'to' => $trip->cityTo->city_name,
-                    'date' => $trip->trip_start->format('Y-m-d H:i:s'), // Format the trip start date
-                ])
-            ));
+            SendFcmNotificationJob::dispatch($favoriter, __('notifications.trip_created.title'), __('notifications.trip_created.message', [
+                'user' => $userFullName,
+                'from' => $trip->cityFrom->city_name,
+                'to' => $trip->cityTo->city_name,
+                'date' => $trip->trip_start->format('Y-m-d H:i:s'), // Formatted trip start date
+            ]));
         }
     }
 
@@ -108,10 +106,7 @@ class TripObserver
 
             // Loop through each user and send a notification about the trip ending
             foreach ($users as $user) {
-                $user->notify(new NewNotification(
-                    __('notifications.trip_Completion.title'),
-                    __('notifications.trip_Completion.message')
-                ));
+                SendFcmNotificationJob::dispatch($user, __('notifications.trip_Completion.title'), __('notifications.trip_Completion.message'));
             }
         }
     }
@@ -137,10 +132,7 @@ class TripObserver
             $user = User::findOrFail($userid);
 
             // Send a notification to the user
-            $user->notify(new NewNotification(
-                __('notifications.trip_completed.title'),
-                __('notifications.trip_completed.message')
-            ));
+            SendFcmNotificationJob::dispatch($user, __('notifications.trip_completed.title'), __('notifications.trip_completed.message'));
         }
     }
 
