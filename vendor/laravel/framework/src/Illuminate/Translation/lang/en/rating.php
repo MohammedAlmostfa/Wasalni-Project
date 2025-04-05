@@ -17,7 +17,6 @@ return [
     'rating_created_successfully' => 'Rating created successfully',
     'rating_updated_successfully' => 'Rating updated successfully',
     'rating_deleted_successfully' => 'Rating deleted successfully',
-
     'not_allowed_to_create_rating' => 'You are not allowed to create a rating for this booking.',
     'trip_not_ending' => 'The trip is not ending.',
     'not_allowed_to_update_rating' => 'You are not allowed to update this rating.',

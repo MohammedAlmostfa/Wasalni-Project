@@ -47,10 +47,28 @@ class TripController extends Controller
         // Call the trip service to retrieve trips based on the filtering data
         $result = $this->tripService->showTrips($validationData);
 
-        // If the status is 200, return paginated results; otherwise, return an error response
-        return $result['status'] === 200
-            ? $this->paginated($result['data'], TripResource::class, $result['message'], $result['status'])
-            : self::error(null, $result['message'], $result['status']);
+        if ($result['status'] === 200) {
+            // Return the trips grouped by date
+            $groupedTrips = $result['data'];
+
+            // Prepare the grouped trips response
+            $formattedGroupedTrips = [];
+
+            foreach ($groupedTrips as $date => $trips) {
+                $formattedGroupedTrips[] = [
+                    'date' => $date,
+                    'trips' => TripResource::collection($trips),
+                ];
+            }
+
+            return response()->json([
+                'message' => $result['message'],
+                'status' => $result['status'],
+                'data' => $formattedGroupedTrips, // Return the formatted grouped trips
+            ]);
+        } else {
+            return self::error(null, $result['message'], $result['status']);
+        }
     }
 
     /**

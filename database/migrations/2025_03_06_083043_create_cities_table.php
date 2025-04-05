@@ -14,6 +14,8 @@ return new class extends Migration {
             $table->id();
             $table->json('city_name');
             $table->timestamps();
+            $table->index('id');
+
         });
     }
 

@@ -84,6 +84,10 @@ return new class extends Migration {
             $table->index([$columnNames['model_morph_key'], 'model_type'], 'model_has_roles_model_id_model_type_index');
             $table->text('about_User')->nullable();
             $table->string('car_Type', 100)->nullable();
+            $table->string('image_name')->nullable();
+            $table->string('mime_type')->nullable();
+            $table->string('image_path')->nullable();
+
 
             $table->foreign($pivotRole)
                 ->references('id') // role id

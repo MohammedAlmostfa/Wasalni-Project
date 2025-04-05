@@ -3,86 +3,62 @@
 namespace App\Services\Auth;
 
 use Exception;
-use App\Models\City;
-use App\Models\User;
 use App\Models\Country;
 use App\Models\Profile;
+use Illuminate\Support\Str;
+use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Storage;
 
+/**
+ * Class ProfileService
+ *
+ * Provides functionalities related to user profile management.
+ */
 class ProfileService
 {
     /**
-     * Create a new profile for the authenticated user.
+     * Create a new user profile.
      *
-     * @param array $data The profile data to be stored.
-     * @return array An array containing the result of the operation.
-     *               - 'message': A message describing the result.
-     *               - 'data': The created or existing profile data.
-     *               - 'status': HTTP status code.
+     * @param array $data The profile data.
+     * @return array The result containing status, message, and data.
      */
-    public function createProfile($data)
+    public function createProfile(array $data): array
     {
         try {
             $user = Auth::user();
 
-            // Check if the user already has a profile
+            // Check if the user already has a profile to prevent duplicates
             if (!$user->profile) {
-                // Create a profile for the user
                 $profile = Profile::create([
                     'first_name' => $data['first_name'],
                     'last_name' => $data['last_name'],
-                    'gender' => $data['gender'] ?? null, // Optional field
-                    'birthday' => $data['birthday'] ?? null, // Optional field
+                    'gender' => $data['gender'] ?? null,
+                    'birthday' => $data['birthday'] ?? null,
                     'phone' => $data['phone'],
                     'address' => $data['address'],
-                    'user_id' => $user->id, // Link profile to the user
-                    //'country_id' => $data['country_id'],
+                    'user_id' => $user->id,
                     'city_id' => $data['city_id'],
                 ]);
-
-                // Find the country by ID
-                //  $country = Country::find($data['country_id']);
-
-                // Check if cities for the selected country already exist
-                //    if (!City::where('country_id', $data['country_id'])->exists()) {
-                // Make API call to fetch cities for the selected country
-                //       $response = Http::post('https://countriesnow.space/api/v0.1/countries/cities', [
-                //           'country' => $country->country_name,
-                //       ]);
-
-                // If the API call is successful, save the cities to the database
-                //       if ($response->successful()) {
-                //          $cities = $response->json()['data']; // Extract cities from the response
-
-                // Create cities in the database
-                //       foreach ($cities as $cityName) {
-                //          City::create([
-                ///                'city_name' => $cityName,
-                //              'country_id' => $country->id,
-                //        ]);
-                //    }
-                //   }
-                //}
 
                 return [
                     'message' => 'Profile created successfully',
                     'data' => $profile,
                     'status' => 200,
                 ];
-            } else {
-                return [
-                    'status' => 400,
-                    'message' => [
-                        'errorDetails' => ['User already has a profile.'],
-                    ],
-                ];
             }
+
+            return [
+                'status' => 400,
+                'message' => [
+                    'errorDetails' => ['User already has a profile.'],
+                ],
+            ];
         } catch (Exception $e) {
-            // Log the error
-            Log::error('Error in creating profile: ' . $e->getMessage());
+            Log::error('Profile creation failed: ' . $e->getMessage());
             return [
                 'status' => 500,
                 'message' => [
@@ -93,23 +69,18 @@ class ProfileService
     }
 
     /**
-     * Update the profile of the authenticated user.
+     * Update an existing user profile.
      *
      * @param array $data The updated profile data.
-     * @return array An array containing the result of the operation.
-     *               - 'message': A message describing the result.
-     *               - 'data': The updated profile data.
-     *               - 'status': HTTP status code.
+     * @return array The result containing status, message, and data.
      */
-    public function updateProfile($data)
+    public function updateProfile(array $data): array
     {
         try {
             $user = Auth::user();
             $profile = $user->profile;
 
-            // Check if the user already has a profile
             if ($profile) {
-                // Update the profile
                 $profile->update([
                     'first_name' => $data['first_name'] ?? $profile->first_name,
                     'last_name' => $data['last_name'] ?? $profile->last_name,
@@ -117,54 +88,27 @@ class ProfileService
                     'birthday' => $data['birthday'] ?? $profile->birthday,
                     'phone' => $data['phone'] ?? $profile->phone,
                     'address' => $data['address'] ?? $profile->address,
-                    //  'country_id' => $data['country_id'] ?? $profile->country_id,
                     'city_id' => $data['city_id'] ?? $profile->city_id,
                 ]);
-                $key = 'userdata_' . $user->id;
 
-                // Forget the cache entry
-                Cache::forget($key);
-
-                // Find the country by ID
-                $country = Country::find($profile->country_id);
-
-                // Check if cities for the selected country already exist
-                // if (!City::where('country_id', $profile->country_id)->exists()) {
-                // Make API call to fetch cities for the selected country
-                //     $response = Http::post('https://countriesnow.space/api/v0.1/countries/cities', [
-                //          'country' => $country->country_name,
-                //     ]);
-
-                // If the API call is successful, save the cities to the database
-                //    if ($response->successful()) {
-                //      $cities = $response->json()['data']; // Extract cities from the response
-
-                // Create cities in the database
-                //      foreach ($cities as $cityName) {
-                //       City::create([
-                //             'city_name' => $cityName,
-                //          'country_id' => $country->id,
-                //       ]);
-                //   }
-                // }
-                // }
+                // Clear cached user data
+                Cache::forget('userdata_' . $user->id);
 
                 return [
                     'message' => 'Profile updated successfully',
                     'data' => $profile,
                     'status' => 200,
                 ];
-            } else {
-                return [
-                    'status' => 404,
-                    'message' => [
-                        'errorDetails' => ['User does not have a profile.'],
-                    ],
-                ];
             }
+
+            return [
+                'status' => 404,
+                'message' => [
+                    'errorDetails' => ['User does not have a profile.'],
+                ],
+            ];
         } catch (Exception $e) {
-            // Log the error
-            Log::error('Error in updating profile: ' . $e->getMessage());
+            Log::error('Profile update failed: ' . $e->getMessage());
             return [
                 'status' => 500,
                 'message' => [
@@ -175,25 +119,20 @@ class ProfileService
     }
 
     /**
-     * Get the authenticated user's data.
+     * Retrieve the authenticated user's data.
      *
-     * @return array Contains message, status, and user data.
-     *               - 'message': A message describing the result.
-     *               - 'data': The user's profile data.
-     *               - 'status': HTTP status code.
+     * @return array The result containing status, message, and user data.
      */
-    public function getMe()
+    public function getMe(): array
     {
         try {
-            // Get the authenticated user
+            /** @var \App\Models\User $user */
+
             $user = Auth::user();
+            $cacheKey = 'userdata_' . $user->id;
 
-            // Generate a unique cache key
-            $key = 'userdata_' . $user->id;
-
-            // Retrieve or cache the user data
-            $userData = Cache::remember($key, 86400, function () use ($user) {
-                // Ensure profile and city relationships are loaded
+            // Cache user data for 24 hours (86400 seconds)
+            $userData = Cache::remember($cacheKey, 86400, function () use ($user) {
                 $user->load(['profile.city']);
                 return [
                     'id' => $user->id,
@@ -203,23 +142,137 @@ class ProfileService
                     'birthday' => $user->profile->birthday,
                     'phone' => $user->profile->phone,
                     'address' => $user->profile->address,
-                    "city_name" => $user->profile->city->city_name,
+                    'city_name' => $user->profile->city->city_name,
                 ];
             });
 
-            // Return user data
             return [
                 'message' => 'User data retrieved successfully',
                 'status' => 200,
                 'data' => $userData,
             ];
         } catch (Exception $e) {
-            // Log the error if fetching user data fails
-            Log::error('Error in getMe: ' . $e->getMessage());
+            Log::error('Failed to fetch user data: ' . $e->getMessage());
             return [
                 'status' => 500,
                 'message' => 'An error occurred while fetching user data.',
-                'errorDetails' => $e->getMessage(),
+                'errorDetails' => config('app.debug') ? $e->getMessage() : null,
+            ];
+        }
+    }
+
+    /**
+     * Create private user data for the authenticated user.
+     *
+     * @param array $data The private user data.
+     * @return array The result containing status, message, and data.
+     */
+    public function createPrivateUserData(array $data): array
+    {
+        try {
+            $privateUserRole = Role::where('name', 'PrivateUser')->firstOrFail();
+            /** @var \App\Models\User $user */
+            $user = Auth::user();
+
+            // Process and store the uploaded image
+            $image = $data['image'];
+            $imageName = Str::random(32) . '.' . $image->getClientOriginalExtension();
+            $path = $image->storeAs('private_users/images', $imageName, 'public');
+
+            // Prepare pivot data including image information
+            $pivotData = [
+                'about_User' => $data['about_User'] ?? 'This user is a private user',
+                'car_Type' => $data['car_Type'] ?? 'SUV',
+                'mime_type' => $image->getClientMimeType(),
+                'image_path' => Storage::url($path),
+                'image_name' => $imageName,
+            ];
+
+            // Attach role with pivot data
+            $user->roles()->syncWithoutDetaching([$privateUserRole->id => $pivotData]);
+
+            return [
+                'status' => 200,
+                'message' => 'Private user data created successfully',
+                'data' => [
+                    'about_User' => $pivotData['about_User'],
+                    'car_Type' => $pivotData['car_Type'],
+                    'image_url' => $pivotData['image_path'],
+                ]
+            ];
+        } catch (Exception $e) {
+            Log::error('Private user data creation failed: ' . $e->getMessage());
+            return [
+                'status' => 500,
+                'message' => 'An error occurred while creating private user data.',
+                'errorDetails' => config('app.debug') ? $e->getMessage() : null,
+            ];
+        }
+    }
+
+    /**
+     * Update private user data for the authenticated user.
+     *
+     * @param array $data The updated private user data.
+     * @return array The result containing status, message, and updated data.
+     */
+    public function updatePrivateUserData(array $data): array
+    {
+        try {
+            $privateUserRole = Role::where('name', 'PrivateUser')->firstOrFail();
+            /** @var \App\Models\User $user */
+
+            $user = Auth::user();
+
+            // Get current pivot data
+            $currentPivot = $user->roles()
+                                ->where('role_id', $privateUserRole->id)
+                                ->first()
+                                ->pivot;
+
+            $imageData = [];
+            if (isset($data['image'])) {
+                // Delete old image if exists
+                if ($currentPivot->image_name) {
+                    Storage::disk('public')->delete("private_users/images/{$currentPivot->image_name}");
+                }
+
+                // Store new image
+                $image = $data['image'];
+                $imageName = Str::random(32) . '.' . $image->getClientOriginalExtension();
+                $path = $image->storeAs('private_users/images', $imageName, 'public');
+
+                $imageData = [
+                    'mime_type' => $image->getClientMimeType(),
+                    'image_path' => Storage::url($path),
+                    'image_name' => $imageName,
+                ];
+            }
+
+            // Prepare update data
+            $updateData = [
+                'about_User' => $data['about_User'] ?? $currentPivot->about_User,
+                'car_Type' => $data['car_Type'] ?? $currentPivot->car_Type,
+            ] + $imageData;
+
+            // Update pivot data
+            $user->roles()->updateExistingPivot($privateUserRole->id, $updateData);
+
+            return [
+                'status' => 200,
+                'message' => 'Private user data updated successfully',
+                'data' => [
+                    'about_User' => $updateData['about_User'],
+                    'car_Type' => $updateData['car_Type'],
+                    'image_url' => $updateData['image_path'] ?? $currentPivot->image_path,
+                ]
+            ];
+        } catch (Exception $e) {
+            Log::error('Private user data update failed: ' . $e->getMessage());
+            return [
+                'status' => 500,
+                'message' => 'An error occurred while updating private user data.',
+                'errorDetails' => config('app.debug') ? $e->getMessage() : null,
             ];
         }
     }

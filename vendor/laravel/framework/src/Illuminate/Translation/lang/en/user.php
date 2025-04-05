@@ -13,7 +13,7 @@ return [
     'token_stored' => 'Token stored successfully',
 
 
- // FavoritePersonService Translations
+    //FavoritePersonService Translations
     'favorite_users_retrieved' => 'All favorite users retrieved successfully.',
     'cant_add_yourself_to_favorite' => 'You cannot add yourself to your favorite list.',
     'user_added_to_favorite' => 'User added to your favorite users.',

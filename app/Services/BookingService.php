@@ -129,7 +129,9 @@ class BookingService
     public function createBooking($data)
     {
         try {
-            $user = auth()->user(); // Get the authenticated user
+            /** @var \App\Models\User $user */
+
+            $user = Auth::user();// Get the authenticated user
 
             // Check if the user has any pending bookings for the same trip
             $pendingBookings = $user->bookings()

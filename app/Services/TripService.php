@@ -22,9 +22,8 @@ class TripService
     public function showTrips($filteringData)
     {
         try {
-            $userCityid = Auth::user()->profile->city->id;
+            $cityId = auth()->check() ? auth()->user()->profile->city_id : null;
 
-            // Retrieve trips with necessary relationships and apply filters
             $trips = Trip::select(
                 'trips.id As trip_id',
                 'trips.description',
@@ -35,31 +34,39 @@ class TripService
                 'trips.available_seats',
                 'trips.created_at'
             )
-                ->join('profiles', 'trips.user_id', '=', 'profiles.user_id')
-                ->join('cities AS city_from', 'trips.from', '=', 'city_from.id')
-                ->join('cities AS city_to', 'trips.to', '=', 'city_to.id')
-                ->leftJoin('trip_user', function ($join) {
-                    $join->on('trips.id', '=', 'trip_user.trip_id')
-                        ->where('trip_user.user_id', '=', Auth::user()->id);
-                })
-                ->addSelect(
-                    'profiles.first_name',
-                    'profiles.id AS driver_id',
-                    'profiles.last_name',
-                    'city_from.city_name AS from_city',
-                    'city_to.city_name AS to_city',
-                    DB::raw('CASE WHEN trip_user.user_id IS NOT NULL THEN 1 ELSE 0 END AS is_saved')
-                )
-                ->filterBy($filteringData)
-                ->when($userCityid, function ($query, $userCityid) {
-                    return $query->orderByRaw("CASE WHEN trips.from = ? THEN 1 ELSE 2 END", [$userCityid]);
-                })
-                ->orderBy('trips.trip_start', 'asc')
-                ->paginate(10);
+                    ->join('profiles', 'trips.user_id', '=', 'profiles.user_id')
+                    ->join('cities AS city_from', 'trips.from', '=', 'city_from.id')
+                    ->join('cities AS city_to', 'trips.to', '=', 'city_to.id')
+                    ->leftJoin('trip_user', function ($join) {
+                        $join->on('trips.id', '=', 'trip_user.trip_id')
+                             ->where('trip_user.user_id', auth()->id());
+                    })
+                    ->addSelect([
+                        'profiles.first_name',
+                        'profiles.id AS driver_id',
+                        'profiles.last_name',
+                        'city_from.city_name AS from_city',
+                        'city_to.city_name AS to_city',
+                        DB::raw('CASE WHEN trip_user.user_id IS NOT NULL THEN 1 ELSE 0 END AS is_saved'),
+                        DB::raw($cityId ?
+                            "CASE WHEN trips.from = {$cityId} THEN 0 ELSE 1 END AS city_priority" :
+                            "1 AS city_priority")
+                    ])
+                    ->when(!empty($filteringData), function ($query) use ($filteringData) {
+                        $query->filterBy($filteringData);
+                    })
+                    ->orderBy('trips.trip_start', 'asc')
+                    ->orderBy('city_priority', 'asc')
+                    ->paginate(10);
+
+
+            $groupedTrips = $trips->getCollection()->groupBy(function ($item) {
+                return $item->trip_start->format('Y-m-d');
+            });
 
             return [
                 'message' => __('trip.show_trips_success'),
-                'data' => $trips,
+                'data' => $groupedTrips,
                 'status' => 200,
             ];
         } catch (Exception $e) {
@@ -74,6 +81,7 @@ class TripService
             ];
         }
     }
+
 
     /**
      * Retrieve a paginated list of trips for the authenticated user with filtering options.

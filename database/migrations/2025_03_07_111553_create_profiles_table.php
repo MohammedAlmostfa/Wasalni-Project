@@ -22,6 +22,8 @@ return new class extends Migration {
             $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
             $table->foreignId('city_id')->constrained('cities')->cascadeOnDelete();
             $table->timestamps();
+            $table->index('user_id');
+
         });
     }
     /**

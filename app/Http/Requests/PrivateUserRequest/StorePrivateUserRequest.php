@@ -1,12 +1,13 @@
 <?php
 
-namespace App\Http\Requests\Profile;
+namespace App\Http\Requests\PrivateUserRequest;
 
+use App\Rules\CheckImage;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class StorProfileRequest extends FormRequest
+class StorePrivateUserRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,13 +25,9 @@ class StorProfileRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'last_name' => 'required|string|max:255',
-            'first_name' => 'required|string|max:255',
-            "gender" => 'nullable',
-            'birthday' => 'nullable|date|before:-13 years',
-            'phone' => 'required',
-            'address' => 'required',
-            'city_id'=>'required|exists:cities,id',
+          'about_User' => 'required|string|max:500',
+            'car_Type' => 'required|string|max:50',
+             'image' => ['required','image', new CheckImage]
         ];
     }
 

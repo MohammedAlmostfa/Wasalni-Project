@@ -17,8 +17,6 @@ return [
     'rating_created_successfully' => 'تم إنشاء التقييم بنجاح',
     'rating_updated_successfully' => 'تم تحديث التقييم بنجاح',
     'rating_deleted_successfully' => 'تم حذف التقييم بنجاح',
-
-
     'not_allowed_to_create_rating' => 'غير مسموح لك بإنشاء تقييم لهذه الحجز.',
     'trip_not_ending' => 'الرحلة لم تنته بعد.',
     'not_allowed_to_update_rating' => 'غير مسموح لك بتحديث هذا التقييم.',

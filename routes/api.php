@@ -95,6 +95,8 @@ Route::middleware('auth:api')->group(function () {
     // API resource routes for user profile
     Route::put('profile', [ProfileController::class, 'update']); // Updates user profile
     Route::apiResource('profile', ProfileController::class); // Handles additional profile-related actions
+    Route::post('profile/privatuser/store', [ProfileController::class, 'creatprivatuserdata']); // Add a trip to the saved trips list
+    Route::post('profile/privatuser/update', [ProfileController::class, 'updateprivatuserdata']); // Remove a trip from the saved trips list
 
     // API resource routes for bookings (CRUD operations)
     Route::apiResource('booking', BookingController::class); // Handles CRUD for bookings

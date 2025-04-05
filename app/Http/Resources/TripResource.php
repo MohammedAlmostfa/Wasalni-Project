@@ -24,7 +24,7 @@ class TripResource extends JsonResource
             'from_city' => json_decode($this->from_city, true),
             'to_city' => json_decode($this->to_city, true),
             'created_at' =>$this->created_at->format('Y-m-d  h:i A'),
-            'trip_start' => $this->trip_start->format('Y-m-d h:i A'),
+            'trip_start' => $this->trip_start->format('h:i A'),
             'seat_price' => $this->seat_price,
              'available_seats' => $this->available_seats,
              'is_saved'=>$this->is_saved,

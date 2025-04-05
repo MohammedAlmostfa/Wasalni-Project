@@ -100,9 +100,10 @@ class TripObserver
         // Ensure the trip status is 'Ending' before sending notifications
         if ($trip->status == 'Ending') {
             // Fetch all users who have booked the current trip
-            $users = $trip->bookings->map(function ($booking) {
-                return $booking->user; // Return the user associated with each booking
+            $users = $trip->bookings->where('status', 'accepted')  ->map(function ($booking) {
+                return $booking->user;
             });
+
 
             // Loop through each user and send a notification about the trip ending
             foreach ($users as $user) {

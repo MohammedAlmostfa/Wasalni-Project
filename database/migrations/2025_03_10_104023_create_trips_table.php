@@ -21,7 +21,9 @@ return new class extends Migration {
             $table->integer('available_seats')->unsigned();
             $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
             $table->timestamps();
-            $table->index(['from', 'to','status']);
+            $table->index(['from', 'to','status','trip_start']);
+
+
 
         });
     }

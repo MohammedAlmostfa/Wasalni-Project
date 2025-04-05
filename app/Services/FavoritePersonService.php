@@ -17,8 +17,9 @@ class FavoritePersonService
     public function showFavoritePerson()
     {
         try {
-            // Get the authenticated user's favorite persons with pagination
-            $favorite_users = Auth::user()
+            /** @var \App\Models\User $user */
+            $user = Auth::user();
+            $favorite_users = $user
                 ->favoritePeople()
                 ->with('favoriteUser.profile')
                 ->paginate(10);
@@ -79,7 +80,7 @@ class FavoritePersonService
             return [
                 'status' => 500,
                 'message' => [
-                  'errorDetails' => [__('user.general_error')], // Use translation key
+                    'errorDetails' => [__('user.general_error')], // Use translation key
                 ],
             ];
         }
@@ -109,7 +110,7 @@ class FavoritePersonService
             return [
                 'status' => 500,
                 'message' => [
-                  'errorDetails' => [__('user.general_error')], // Use translation key
+                    'errorDetails' => [__('user.general_error')], // Use translation key
                 ],
             ];
         }

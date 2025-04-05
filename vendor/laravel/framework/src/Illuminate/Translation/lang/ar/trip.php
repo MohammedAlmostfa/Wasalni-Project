@@ -13,8 +13,8 @@ return [
     |
     */
 
-     'show_user_trips_success'    => 'تم استرجاع جميع الرحلات بنجاح.',
-"show_your_trips_success"=> 'تم استرجاع رحلاتك بنجاح.',
+    'show_user_trips_success'    => 'تم استرجاع جميع الرحلات بنجاح.',
+    "show_your_trips_success" => 'تم استرجاع رحلاتك بنجاح.',
     'create_success' => 'تم إنشاء الرحلة بنجاح.',
     'update_success' => 'تم تحديث الرحلة بنجاح.',
     'delete_success' => 'تم حذف الرحلة بنجاح.',
@@ -31,11 +31,11 @@ return [
     'end_not_owner' => 'أنت غير مسموح لك بإنهاء هذه الرحلة.',
     'end_already_ended' => 'الرحلة قد تم وضعها بالفعل كمنتهية.',
     'ended_permission_denied' => 'أنت غير مسموح لك أنهاء الرحل.',
-    "Resource_not_found"=>"السجل غير موجود",
-   'trip_saved_before' => 'لقد قمت بحفظ هذه الرحلة من قبل.',
-   "trip_unsaved_before"=>'لم تقم بحفظ هذه الرحلة من قبل.',
+    "Resource_not_found" => "السجل غير موجود",
+    'trip_saved_before' => 'لقد قمت بحفظ هذه الرحلة من قبل.',
+    "trip_unsaved_before" => 'لم تقم بحفظ هذه الرحلة من قبل.',
     'authorization_remove' => 'غير مسموح لك بإزالة الرحلة.',
     'trip_saved_successfully' => 'تم حفظ الرحلة بنجاح.',
     'trip_removed_successfully' => 'تمت إزالة الرحلة بنجاح.',
-    'on_the_way_successfully'=>'تم انطلاق الرحلة'
+    'on_the_way_successfully' => 'تم انطلاق الرحلة'
 ];

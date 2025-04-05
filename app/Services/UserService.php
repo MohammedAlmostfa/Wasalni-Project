@@ -134,6 +134,7 @@ class UserService
             }
 
             /** @var \App\Models\User $user */
+
             $authenticatedUser = Auth::user();
 
             // Check if the authenticated user has this user in their favorites
