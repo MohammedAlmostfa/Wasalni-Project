@@ -6,6 +6,7 @@ use App\Models\Trip;
 use App\Services\TripService;
 use App\Http\Resources\UserTrips;
 use App\Http\Resources\TripResource;
+use App\Http\Resources\GroupedTripsResource;
 use App\Http\Requests\TripRequest\StoreTripRequest;
 use App\Http\Requests\TripRequest\UpdateTripRequest;
 use App\Http\Requests\TripRequest\FilteringTripsData;
@@ -41,35 +42,26 @@ class TripController extends Controller
      */
     public function index(FilteringTripsData $request)
     {
-        // Validate the filtering data passed in the request
         $validationData = $request->validated();
 
-        // Call the trip service to retrieve trips based on the filtering data
         $result = $this->tripService->showTrips($validationData);
 
-        if ($result['status'] === 200) {
-            // Return the trips grouped by date
-            $groupedTrips = $result['data'];
-
-            // Prepare the grouped trips response
-            $formattedGroupedTrips = [];
-
-            foreach ($groupedTrips as $date => $trips) {
-                $formattedGroupedTrips[] = [
-                    'date' => $date,
-                    'trips' => TripResource::collection($trips),
-                ];
-            }
-
-            return response()->json([
+        return $result['status'] === 200
+            ? response()->json([
+                'status' => 'success',
                 'message' => $result['message'],
-                'status' => $result['status'],
-                'data' => $formattedGroupedTrips, // Return the formatted grouped trips
-            ]);
-        } else {
-            return self::error(null, $result['message'], $result['status']);
-        }
+                'data' => new GroupedTripsResource($result['data']->getCollection()), // استخدام Resource
+                'pagination' => [
+                    'total' => $result['data']->total(),
+                    'count' => $result['data']->count(),
+                    'per_page' => $result['data']->perPage(),
+                    'current_page' => $result['data']->currentPage(),
+                    'total_pages' => $result['data']->lastPage(),
+                ],
+            ], $result['status'])
+            : self::error(null, $result['message'], $result['status']);
     }
+
 
     /**
      * Display the authenticated user's trips.
