@@ -50,7 +50,7 @@ class TripController extends Controller
             ? response()->json([
                 'status' => 'success',
                 'message' => $result['message'],
-                'data' => new GroupedTripsResource($result['data']->getCollection()), // استخدام Resource
+                'data' => new GroupedTripsResource($result['data']->getCollection()),
                 'pagination' => [
                     'total' => $result['data']->total(),
                     'count' => $result['data']->count(),

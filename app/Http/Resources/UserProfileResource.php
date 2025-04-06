@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -11,7 +12,7 @@ class UserProfileResource extends JsonResource
             'id' => $this->id,
             'email' => $this->email,
             'user_id' => $this->profile->user_id,
-            'user_name' => $this->profile->first_name.' '.$this->profile->last_name,
+            'user_name' => $this->profile->first_name . ' ' . $this->profile->last_name,
             'birthday' => $this->profile->birthday,
 
             'roles' => $this->roles->map(function ($role) {
@@ -26,12 +27,16 @@ class UserProfileResource extends JsonResource
                     'rate' => $rating->rate,
                     'review' => $rating->review,
                     'created_at' => $rating->created_at,
-                    'user_name' => $rating->user->profile->first_name.' '.$rating->user->profile->last_name
+                    'user_name' => $rating->user->profile->first_name . ' ' . $rating->user->profile->last_name
                 ];
             }),
 
-            'is_favorite' =>$this->is_favorite,
-            "User_trips_count"=>$this->User_trips_count,
+            'is_favorite' => $this->is_favorite,
+            "User_trips_count" => $this->User_trips_count,
+            "avg_rating" => $this->avg_rating,
+
+
+
         ];
     }
 }

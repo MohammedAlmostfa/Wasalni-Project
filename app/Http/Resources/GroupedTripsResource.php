@@ -9,12 +9,12 @@ class GroupedTripsResource extends ResourceCollection
     public function toArray($request)
     {
         return $this->collection->groupBy(function ($item) {
-            return $item->trip_start->format('Y-m-d'); // ترتيب حسب التاريخ
+            return $item->trip_start->format('Y-m-d');
         })->map(function ($group, $date) {
             return [
                 'date' => $date,
-                'trips' => TripResource::collection($group), // تحويل كل مجموعة ل Resource
+                'trips' => TripResource::collection($group),
             ];
-        })->values(); // تحويل النتيجة إلى مصفوفة مرقمة
+        })->values();
     }
 }
