@@ -24,40 +24,49 @@ class TripService
         try {
             $cityId = auth()->check() ? auth()->user()->profile->city_id : null;
 
-            $trips = Trip::select(
-                'trips.id As trip_id',
-                'trips.description',
-                'trips.status',
-                'trips.user_id',
-                'trips.trip_start',
-                'trips.seat_price',
-                'trips.available_seats',
-                'trips.created_at'
-            )
-                ->join('profiles', 'trips.user_id', '=', 'profiles.user_id')
-                ->join('cities AS city_from', 'trips.from', '=', 'city_from.id')
-                ->join('cities AS city_to', 'trips.to', '=', 'city_to.id')
-                ->leftJoin('trip_user', function ($join) {
-                    $join->on('trips.id', '=', 'trip_user.trip_id')
-                         ->where('trip_user.user_id', auth()->id());
-                })
+            $trips = Trip::with([
+                'user.profile' => function ($query) {
+                    $query->select('user_id', 'first_name', 'last_name');
+                },
+                'user' => function ($query) {
+                    $query->withAvg('tripRatings as avg_driver_rating', 'rate');
+                },
+                'cityFrom' => function ($query) {
+                    $query->select('id', 'city_name');
+                },
+                'cityTo' => function ($query) {
+                    $query->select('id', 'city_name');
+                },
+                'savedByUsers' => function ($query) {
+                    $query->where('user_id', auth()->id());
+                },
+                 'user.roles' => function ($query) {
+                     $query->select('roles.id', 'roles.name')->withPivot('image_name', 'mime_type', 'image_path');
+                 }
+            ])
+
+                ->select([
+                     'id AS trip_id',
+                     'description',
+                     'status',
+                     'to',
+                     'from',
+                     'user_id',
+                     'trip_start',
+                     'seat_price',
+                     'available_seats',
+                     'created_at',
+                 ])
                 ->addSelect([
-                    'profiles.first_name',
-                    'profiles.id AS driver_id',
-                    'profiles.last_name',
-                    'city_from.city_name AS from_city',
-                    'city_to.city_name AS to_city',
-                    DB::raw('CASE WHEN trip_user.user_id IS NOT NULL THEN 1 ELSE 0 END AS is_saved'),
-                    DB::raw($cityId ? "CASE WHEN trips.from = {$cityId} THEN 0 ELSE 1 END AS city_priority" : "1 AS city_priority")
-                ])
+                     DB::raw('CASE WHEN EXISTS (SELECT 1 FROM trip_user WHERE trip_user.trip_id = trips.id AND trip_user.user_id = ' . auth()->id() . ') THEN 1 ELSE 0 END AS is_saved'),
+                     DB::raw($cityId ? "CASE WHEN trips.from = {$cityId} THEN 0 ELSE 1 END AS city_priority" : "1 AS city_priority")
+                 ])
                 ->when(!empty($filteringData), function ($query) use ($filteringData) {
                     $query->filterBy($filteringData);
                 })
-                ->orderBy('trips.trip_start', 'asc')
+                ->orderBy('trip_start', 'asc')
                 ->orderBy('city_priority', 'asc')
-                ->paginate(10); // Keep this paginated
-
-
+                ->paginate(10);
 
             return [
                 'message' => __('trip.show_trips_success'),

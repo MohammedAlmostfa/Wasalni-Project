@@ -19,16 +19,20 @@ class TripResource extends JsonResource
             'trip_id' => $this->trip_id,
             'description' => $this->description,
             'status' => $this->status,
-            'name' => $this->first_name ." ". $this->last_name ??null,
-            'driver_id'=> $this->driver_id,
-            'from_city' => json_decode($this->from_city, true),
-            'to_city' => json_decode($this->to_city, true),
-            'created_at' =>$this->created_at->format('Y-m-d  h:i A'),
+            'name' => optional($this->user->profile)->first_name . " " . optional($this->user->profile)->last_name,
+            'driver_id' => $this->user_id,
+            'from_city' => optional($this->cityFrom)->city_name,
+            'to_city' => optional($this->cityTo)->city_name,
+            'created_at' => $this->created_at->format('Y-m-d h:i A'),
             'trip_start' => $this->trip_start->format('h:i A'),
             'seat_price' => $this->seat_price,
-             'available_seats' => $this->available_seats,
-             'is_saved'=>$this->is_saved,
-
+            'available_seats' => $this->available_seats,
+            'is_saved' => $this->is_saved,
+            'avg_driver_rating' => $this->user->avg_driver_rating ,
+               'image_name' => $this->user->roles->first()->pivot->image_name,
+                'mime_type' => $this->user->roles->first()->pivot->mime_type,
+                'image_path' => $this->user->roles->first()->pivot->image_path,
         ];
     }
+
 }

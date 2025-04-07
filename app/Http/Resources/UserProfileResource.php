@@ -19,6 +19,9 @@ class UserProfileResource extends JsonResource
                 return [
                     'about_User' => $role->pivot->about_User,
                     'car_Type' => $role->pivot->car_Type,
+                    'image_name' => $role->pivot->image_name,
+                    'mime_type' => $role->pivot->mime_type,
+                    'image_path' => $role->pivot->image_path,
                 ];
             }),
             'ratings' => $this->tripRatings->map(function ($rating) {

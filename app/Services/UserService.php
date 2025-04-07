@@ -76,7 +76,7 @@ class UserService
                     }]);
                 },
                 'roles' => function ($query) {
-                    $query->select('roles.id', 'roles.name')->withPivot('about_User', 'car_Type');
+                    $query->select('roles.id', 'roles.name')->withPivot('about_User', 'car_Type', 'image_name', 'mime_type', 'image_path');
                 }
             ])
             ->withCount('trips as User_trips_count') // Count the number of trips
