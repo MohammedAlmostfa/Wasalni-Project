@@ -29,7 +29,7 @@ class TripService
                     $query->select('user_id', 'first_name', 'last_name');
                 },
                 'user' => function ($query) {
-                    $query->withAvg('tripRatings as avg_driver_rating', 'rate');
+                    $query->withAvg('tripRatings as avg_driver_rating', 'rate')->withCount('tripRatings as number_of_rating');
                 },
                 'cityFrom' => function ($query) {
                     $query->select('id', 'city_name');
