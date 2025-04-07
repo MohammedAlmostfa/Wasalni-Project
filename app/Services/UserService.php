@@ -69,6 +69,10 @@ class UserService
                 'profile' => function ($query) {
                     $query->select('user_id', 'first_name', 'last_name', 'birthday');
                 },
+              'tripproperies' => function ($query) {
+                  $query->select('attributes'); // تحميل البيانات بشكل صحيح
+              },
+
                 'tripRatings' => function ($query) {
                     $query->select('ratings.id', 'ratings.rate', 'ratings.review', 'ratings.user_id', 'ratings.created_at')
                     ->with(['user.profile' => function ($query) {
@@ -77,7 +81,8 @@ class UserService
                 },
                 'roles' => function ($query) {
                     $query->select('roles.id', 'roles.name')->withPivot('about_User', 'car_Type', 'image_name', 'mime_type', 'image_path');
-                }
+                },
+
             ])
             ->withCount('trips as User_trips_count') // Count the number of trips
             ->withAvg('tripRatings as avg_rating', 'rate') // Calculate average trip rating

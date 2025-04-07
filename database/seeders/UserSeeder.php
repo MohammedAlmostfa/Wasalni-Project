@@ -24,6 +24,9 @@ class UserSeeder extends Seeder
 
              ]);
             $user->assignRole($faker->randomElement(['Admin', 'User','PrivateUser']));
+            // Attach trip properties to the user
+            $user->tripproperies()->sync([1, 2, 3, 4, 5, 6, 7, 8]);
+
         }
     }
 }

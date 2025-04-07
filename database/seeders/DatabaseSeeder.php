@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
                         CitySeeder::class,
             RolePermissionSeeder::class,
+                  tripPropertiesSeeder::class,
             UserSeeder::class,
             //    CountrySeeder::class,
 
@@ -26,6 +27,7 @@ class DatabaseSeeder extends Seeder
             TripSeeder::class,
             BookingSeeder::class,
             RatingSeeder::class,
+
         ]);
     }
 }
