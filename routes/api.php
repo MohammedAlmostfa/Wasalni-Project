@@ -64,6 +64,7 @@ Route::middleware('auth:api')->group(function () {
 
     // API resource routes for favorite persons
     Route::apiResource("favorite", FavoritePersonController::class); // Handles CRUD operations for favorite persons
+    Route::post("favorite/remove", [FavoritePersonController::class,'remove']);
 
     // API resource routes for countries (CRUD operations)
     Route::apiResource('countries', CountryController::class); // Handles CRUD for countries

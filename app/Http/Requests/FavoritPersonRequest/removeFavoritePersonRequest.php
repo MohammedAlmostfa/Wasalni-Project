@@ -6,7 +6,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class StorFavoritePersonRequest extends FormRequest
+class removeFavoritePersonRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -21,22 +21,20 @@ class StorFavoritePersonRequest extends FormRequest
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
-
-    public function rules(): array
+    public function rules()
     {
         return [
-            'favorite_user_id' => 'required|exists:users,id|unique:favorite_people,favorite_user_id,NULL,id,user_id,' . auth()->id(),
+            'favorite_user_id' => 'required|exists:favorite_people,favorite_user_id,user_id,' . auth()->id(),
         ];
-
     }
+
     /**
-    * Handle a failed validation attempt.
-    * This method is called when validation fails.
-    * Logs failed attempts and throws validation exception.
-    * @param \Illuminate\Validation\Validator $validator
-    * @return void
-    *
-    */
+     * Handle a failed validation attempt.
+     * Logs failed attempts and throws validation exception.
+     *
+     * @param \Illuminate\Validation\Validator $validator
+     * @return void
+     */
     protected function failedValidation(Validator $validator): void
     {
         throw new HttpResponseException(response()->json([

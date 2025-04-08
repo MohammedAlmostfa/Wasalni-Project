@@ -99,8 +99,9 @@ class UserService
 
             // Check if the authenticated user has marked this user as favorite
             $authenticatedUser = Auth::user();
-            $isFavorite = $authenticatedUser->favoritePeople()->where('favorite_user_id', $user->id)->exists();
+            $isFavorite = $authenticatedUser->favorites()->where('favorite_user_id', $user->id)->exists();
             $UserData->is_favorite = $isFavorite;
+
 
             return [
                 'message' => __('user.user_profile_retrieved'),

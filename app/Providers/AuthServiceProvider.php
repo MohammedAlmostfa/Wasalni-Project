@@ -26,7 +26,7 @@ class AuthServiceProvider extends ServiceProvider
         Trip::class => TripPolicy::class,
         Booking::class=>BookingPolicy::class,
         Rating::class=>RatingPolicy::class,
-        FavoritePerson::class=>FavoritePerson::class,
+
     ];
 
     /**
