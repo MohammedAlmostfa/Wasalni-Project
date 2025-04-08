@@ -16,15 +16,12 @@ class UserProfileResource extends JsonResource
             'birthday' => optional($this->profile)->birthday,
 
             // Roles mapping
-            'roles' => $this->roles->map(function ($role) {
-                return [
-                    'about_User' => $role->pivot->about_User,
-                    'car_Type' => $role->pivot->car_Type,
-                    'image_name' => $role->pivot->image_name,
-                    'mime_type' => $role->pivot->mime_type,
-                    'image_path' => $role->pivot->image_path,
-                ];
-            }),
+            'about_user' => optional($this->roles->first())->pivot->about_User,
+            'car_type' => optional($this->roles->first())->pivot->car_Type,
+            'image_name' => optional($this->roles->first())->pivot->image_name,
+            'mime_type' => optional($this->roles->first())->pivot->mime_type,
+            'image_path' => optional($this->roles->first())->pivot->image_path,
+'Joining_date'=>$this->created_at->format('Y-m-d'),
 
             // Trip properties mapping
             'tripproperies' => $this->tripproperies->map(function ($property) {
