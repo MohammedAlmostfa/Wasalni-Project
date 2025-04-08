@@ -17,32 +17,30 @@ class User extends Authenticatable implements JWTSubject
     use HasFactory, Notifiable, HasRoles, HasRelationships;
 
     // Guard name for JWT Authentication
-    protected $guard_name = 'api'; // Defines guard used for permissions and JWT auth
+    protected $guard_name = 'api';
 
-    // Attributes that are mass assignable
+    // Mass assignable attributes for the User model
     protected $fillable = [
-        'email',    // Email address of the user
-        'password', // Password for authentication
+        'email',
+        'password',
     ];
 
-    // Attributes hidden from array and JSON output
+    // Attributes hidden from array and JSON output (for security)
     protected $hidden = [
-        'password',         // To prevent the password from being exposed
-        'remember_token',   // Security token used for "remember me" functionality
+        'password',
+        'remember_token',
     ];
 
-    // Attribute type casting
+    // Casts attributes to specific types (e.g., casting email_verified_at to a datetime object)
     protected $casts = [
-        'email_verified_at' => 'datetime', // Converts to a DateTime object
-        'password' => 'hashed',           // Ensures the password is hashed before saving
+        'email_verified_at' => 'datetime',
+        'password' => 'hashed', // Ensuring password is hashed
     ];
 
     /**
-     * Get the identifier for the JWT.
+     * Get the identifier for the JWT (used for authentication).
      *
-     * This provides the unique identifier for the JWT token.
-     *
-     * @return mixed The user's primary key.
+     * @return mixed The identifier for the JWT (user's primary key).
      */
     public function getJWTIdentifier()
     {
@@ -50,11 +48,9 @@ class User extends Authenticatable implements JWTSubject
     }
 
     /**
-     * Get custom claims for the JWT.
+     * Get the custom claims for the JWT (empty in this case).
      *
-     * Returns additional claims that should be included in the JWT token.
-     *
-     * @return array An empty array (custom claims can be added here).
+     * @return array An empty array or any additional claims you need in the JWT.
      */
     public function getJWTCustomClaims()
     {
@@ -62,9 +58,9 @@ class User extends Authenticatable implements JWTSubject
     }
 
     /**
-     * Relationship: One-to-One with Profile.
+     * Define a one-to-one relationship with the Profile model.
      *
-     * Each user has a single profile.
+     * This means each user has one profile.
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
@@ -74,27 +70,27 @@ class User extends Authenticatable implements JWTSubject
     }
 
     /**
-     * Relationship: Has-Many-Through with City.
+     * Define a has-many-through relationship to access cities through the profile and country.
      *
-     * This allows users to access cities through their profile and country.
+     * This allows accessing cities that are related to a user's profile's country.
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasManyThrough
      */
     public function cities()
     {
         return $this->hasManyThrough(
-            City::class,         // The final model (cities)
-            Profile::class,      // Intermediate model (profiles)
-            'user_id',           // Foreign key on profiles table
-            'country_id',        // Foreign key on cities table
-            'id',                // Local key on users table
+            City::class,
+            Profile::class,
+            'user_id',    // Foreign key on profiles table
+            'country_id', // Foreign key on cities table
+            'id',         // Local key on users table
         );
     }
 
     /**
-     * Relationship: Has-Many with Trip.
+     * Define a has-many relationship with the Trip model.
      *
-     * A user can create multiple trips.
+     * This establishes that a user can have many trips.
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
@@ -103,36 +99,27 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasMany(Trip::class);
     }
 
-    /**
-     * Relationship: Many-to-Many with User (Favorites).
-     *
-     * Represents the users this user has marked as "favorite."
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
-     */
     public function favorites()
     {
         return $this->belongsToMany(User::class, 'favorite_people', 'user_id', 'favorite_user_id')
-                    ->withTimestamps(); // Tracks when a favorite was added
+                    ->withTimestamps();
     }
 
     /**
-     * Relationship: Many-to-Many (Favorited By).
-     *
-     * Retrieves users who have added this user to their favorites.
+     * علاقة Many-to-Many لمعرفة من يفضل هذا المستخدم.
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
     public function favoritedBy()
     {
         return $this->belongsToMany(User::class, 'favorite_people', 'favorite_user_id', 'user_id')
-                    ->withTimestamps(); // Tracks when this user was favorited
+                    ->withTimestamps();
     }
 
     /**
-     * Relationship: Has-Many with Booking.
+     * Define a has-many relationship with the Booking model.
      *
-     * A user can create multiple bookings for their trips.
+     * This indicates that a user can have many bookings.
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
@@ -142,9 +129,9 @@ class User extends Authenticatable implements JWTSubject
     }
 
     /**
-     * Relationship: Has-Many with Rating.
+     * Define a has-many relationship with the Rating model.
      *
-     * A user can have many ratings associated with their trips.
+     * This defines that a user can have many ratings associated with their trips.
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
@@ -154,9 +141,9 @@ class User extends Authenticatable implements JWTSubject
     }
 
     /**
-     * Relationship: Many-to-Many with Trip (Saved Trips).
+     * Define a many-to-many relationship with the Trip model.
      *
-     * Access trips saved by this user via the pivot table `trip_user`.
+     * This allows accessing trips that are saved by the user through the trip_user pivot table.
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
@@ -166,9 +153,9 @@ class User extends Authenticatable implements JWTSubject
     }
 
     /**
-     * Relationship: Has-Many with UserDevice.
+     * Define a has-many relationship with the UserDevice model.
      *
-     * A user can have multiple associated devices.
+     * This indicates that a user can have many devices associated with them.
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
@@ -176,43 +163,36 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->hasMany(UserDevice::class);
     }
-
-    /**
-     * Relationship: Many-to-Many with TripPropertie.
-     *
-     * Links users to trip properties through the pivot table `trip_properties_users`.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
-     */
-    public function tripProperties()
+    public function tripproperies()
     {
         return $this->belongsToMany(TripPropertie::class, 'trip_properties_users', 'user_id', 'tripProperty_id');
     }
 
+
     /**
-     * Deep Relationship: Trip Ratings through Bookings.
+     * Get the ratings for trips through bookings (deep relationship).
      *
-     * Defines a complex many-to-many-to-many relationship to access
-     * trip ratings through trips and bookings.
-     *
+     * This establishes a complex many-to-many-to-many relationship between:
      * Users -> Trips -> Bookings -> Ratings
+     *
+     * This allows retrieving ratings for trips booked by this user.
      *
      * @return \Staudenmeir\EloquentHasManyDeep\HasManyDeep
      */
     public function tripRatings()
     {
         return $this->hasManyDeep(
-            Rating::class,           // Final model
+            Rating::class,
             [Trip::class, Booking::class], // Intermediate models
             [
-                'user_id',           // Foreign key on trips table
-                'trip_id',           // Foreign key on bookings table
-                'booking_id'         // Foreign key on ratings table
+                'user_id',    // Foreign key on trips table (references users)
+                'trip_id',    // Foreign key on bookings table (references trips)
+                'booking_id'  // Foreign key on ratings table (references bookings)
             ],
             [
-                'id',                // Local key on users table
-                'id',                // Local key on trips table
-                'id'                 // Local key on bookings table
+                'id',        // Local key on users table
+                'id',        // Local key on trips table
+                'id'         // Local key on bookings table
             ]
         );
     }
