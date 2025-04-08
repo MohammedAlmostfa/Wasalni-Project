@@ -18,7 +18,7 @@ class TripPropertie extends Model
 
     public function users()
     {
-        return $this->belongsToMany(User::class, 'tip_properties_users', 'tipProperty_id', 'user_id');
+        return $this->belongsToMany(User::class, 'trip_properties_users', 'tripProperty_id', 'user_id');
     }
 
 

@@ -172,7 +172,7 @@ class User extends Authenticatable implements JWTSubject
     }
     public function tripproperies()
     {
-        return $this->belongsToMany(TripPropertie::class, 'tip_properties_users', 'user_id', 'tipProperty_id');
+        return $this->belongsToMany(TripPropertie::class, 'trip_properties_users', 'user_id', 'tripProperty_id');
     }
 
 
