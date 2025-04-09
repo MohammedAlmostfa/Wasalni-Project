@@ -326,13 +326,17 @@ class AuthService
     public function refresh()
     {
         try {
+            $newToken = JWTAuth::parseToken()->refresh();
+
+            // Correct way to refresh the token
+
             // Refresh the token for the authenticated user
             return [
                 'message' => __('auth.token_refresh_success'),
                 'status' => 200, // HTTP status code for success
                 'data' => [
-                    'user' => Auth::user(), // Return the authenticated user
-                    'token' => Auth::refresh(), // Return the new token
+                    'user' => auth()->user(), // Return the authenticated user
+                    'token' => $newToken, // Return the new refreshed token
                 ],
             ];
         } catch (Exception $e) {
