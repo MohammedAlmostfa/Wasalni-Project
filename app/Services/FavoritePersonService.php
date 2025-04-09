@@ -10,107 +10,107 @@ use Illuminate\Support\Facades\Auth;
 class FavoritePersonService
 {
     /**
-     * Show all favorite persons for the authenticated user.
+     * Retrieves a paginated list of all favorite users for the authenticated user.
      *
-     * This method retrieves a paginated list of all users in the authenticated user's favorite list.
-     * It uses the `favoritePeople` relationship and includes the favorite user's profile data.
+     * The method loads the relationship `favorites` and includes the associated profile information.
      *
-     * @return array Contains message, data (paginated list of favorite persons), and status.
+     * @return array Contains a message, data (paginated list of favorite users), and status.
      */
-    public function showFavoritePerson()
+    public function showFavoriteUsers()
     {
         try {
-            /** @var \App\Models\User $user Authenticated user instance */
+            /** @var \App\Models\User $user Authenticated user */
             $user = Auth::user();
 
-            // Retrieve a paginated list of favorite persons with their profiles
-            $favorite_users = $user
-                ->favoritePeople()
-                ->with('favoriteUser.profile')
+            // Fetch favorite users along with their profile data
+            $favorite_users = $user->favorites()
+                ->with(['profile' => function ($query) {
+                    $query->select('id', 'user_id', 'first_name', 'last_name'); // Selecting relevant profile fields
+                }])
                 ->paginate(10);
 
-            // Return the data along with a success message and status
+            // Return successful response
             return [
-                'message' => __('user.favorite_users_retrieved'),  // Translation key for success message
-                'data' => $favorite_users,                         // Paginated list of favorite persons
+                'message' => __('user.favorite_users_retrieved'),
+                'data' => $favorite_users,
                 'status' => 200,
             ];
         } catch (Exception $e) {
-            // Log the error details in case of failure
-            Log::error('Error in showFavoritePerson: ' . $e->getMessage());
+            // Log the error details
+            Log::error('Error in showFavoriteUsers: ' . $e->getMessage());
 
-            // Return an error message with status code 500
+            // Return error response
             return [
                 'status' => 500,
                 'message' => [
-                    'errorDetails' => [__('user.general_error')], // General error message
+                    'errorDetails' => [__('user.general_error')],
                 ],
             ];
         }
     }
 
     /**
-     * Add a user to the authenticated user's favorite list.
+     * Adds a user to the authenticated user's favorite list.
      *
-     * This method attaches a user (by ID) to the authenticated user's favorites list in the `favorite_people` table.
+     * Attaches the specified user ID to the favorites list in the pivot table.
      *
-     * @param array $data Contains the user_id of the person to be added to the favorite list.
-     * @return array Contains a success message, data (null in this case), and status.
+     * @param array $data Contains the favorite_user_id to be added.
+     * @return array Success message and status.
      */
     public function addToFavorite($data)
     {
         try {
-            // Add the user to the authenticated user's favorites list
+            // Attach the user to the authenticated user's favorite list
             Auth::user()->favorites()->attach($data['favorite_user_id']);
 
             // Return success response
             return [
-                'message' => __('user.user_added_to_favorite'), // Translation key for success message
-                'data' => null,                                // No additional data needed
-                'status' => 201,                               // HTTP status code for resource creation
+                'message' => __('user.user_added_to_favorite'),
+                'data' => null,
+                'status' => 201, // HTTP 201 indicates resource creation
             ];
         } catch (Exception $e) {
-            // Log the error details in case of failure
+            // Log the error
             Log::error('Error in addToFavorite: ' . $e->getMessage());
 
-            // Return an error message with status code 500
+            // Return error response
             return [
                 'status' => 500,
                 'message' => [
-                    'errorDetails' => [__('user.general_error')], // General error message
+                    'errorDetails' => [__('user.general_error')],
                 ],
             ];
         }
     }
 
     /**
-     * Remove a user from the authenticated user's favorite list.
+     * Removes a user from the authenticated user's favorite list.
      *
-     * This method detaches a user (by ID) from the authenticated user's favorites list in the `favorite_people` table.
+     * Detaches the specified user ID from the favorites list.
      *
-     * @param array $data Contains the user_id of the person to be removed from the favorite list.
-     * @return array Contains a success message and status.
+     * @param array $data Contains the favorite_user_id to be removed.
+     * @return array Success message and status.
      */
     public function removeFromFavorite($data)
     {
         try {
-            // Remove the user from the authenticated user's favorites list
+            // Detach the user from favorites
             Auth::user()->favorites()->detach($data['favorite_user_id']);
 
             // Return success response
             return [
-                'message' => __('user.user_removed_from_favorite'), // Translation key for success message
-                'status' => 200,                                   // HTTP status code for success
+                'message' => __('user.user_removed_from_favorite'),
+                'status' => 200, // HTTP 200 indicates successful deletion
             ];
         } catch (Exception $e) {
-            // Log the error details in case of failure
+            // Log the error
             Log::error('Error in removeFromFavorite: ' . $e->getMessage());
 
-            // Return an error message with status code 500
+            // Return error response
             return [
                 'status' => 500,
                 'message' => [
-                    'errorDetails' => [__('user.general_error')], // General error message
+                    'errorDetails' => [__('user.general_error')],
                 ],
             ];
         }

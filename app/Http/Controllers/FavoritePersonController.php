@@ -31,7 +31,7 @@ class FavoritePersonController extends Controller
     public function index()
     {
         // Retrieve the result from the FavoritePersonService
-        $result = $this->favoritePersonService->showFavoritePerson();
+        $result = $this->favoritePersonService->showFavoriteUsers();
 
         // Return a paginated response if the status is 200 (OK)
         // Otherwise, return an error response
