@@ -60,8 +60,10 @@ class FavoritePersonService
     public function addToFavorite($data)
     {
         try {
+            /** @var \App\Models\User $user Authenticated user */
+            $user = Auth::user();
             // Attach the user to the authenticated user's favorite list
-            Auth::user()->favorites()->attach($data['favorite_user_id']);
+            $user->favorites()->attach($data['favorite_user_id']);
 
             // Return success response
             return [
@@ -94,8 +96,10 @@ class FavoritePersonService
     public function removeFromFavorite($data)
     {
         try {
+            /** @var \App\Models\User $user Authenticated user */
+            $user = Auth::user();
             // Detach the user from favorites
-            Auth::user()->favorites()->detach($data['favorite_user_id']);
+            $user ->favorites()->detach($data['favorite_user_id']);
 
             // Return success response
             return [

@@ -70,23 +70,23 @@ class User extends Authenticatable implements JWTSubject
 
     }
 
-    /**
-     * Define a has-many-through relationship to access cities through the profile and country.
-     *
-     * This allows accessing cities that are related to a user's profile's country.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasManyThrough
-     */
-    public function cities()
-    {
-        return $this->hasManyThrough(
-            City::class,
-            Profile::class,
-            'user_id',    // Foreign key on profiles table
-            'country_id', // Foreign key on cities table
-            'id',         // Local key on users table
-        );
-    }
+    // /**
+    //  * Define a has-many-through relationship to access cities through the profile and country.
+    //  *
+    //  * This allows accessing cities that are related to a user's profile's country.
+    //  *
+    //  * @return \Illuminate\Database\Eloquent\Relations\HasManyThrough
+    //  */
+    // public function cities()
+    // {
+    //     return $this->hasManyThrough(
+    //         City::class,
+    //         Profile::class,
+    //         'user_id',    // Foreign key on profiles table
+    //         'country_id', // Foreign key on cities table
+    //         'id',         // Local key on users table
+    //     );
+    // }
 
     /**
      * Define a has-many relationship with the Trip model.

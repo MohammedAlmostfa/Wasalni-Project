@@ -21,58 +21,79 @@ class BookingService
     {
         try {
             // Retrieve the authenticated user
-            $user = auth()->user();
+            $user = Auth::user();
 
-            // Retrieve the user's bookings with pagination and optional filtering
-            $bookings = Booking::join('trips', 'bookings.trip_id', '=', 'trips.id')
-                ->join('cities as cityFrom', 'trips.from', '=', 'cityFrom.id')
-                ->join('cities as cityTo', 'trips.to', '=', 'cityTo.id')
-                ->join('users', 'trips.user_id', '=', 'users.id')
-                ->join('profiles', 'users.id', '=', 'profiles.user_id')
-                ->select(
-                    'bookings.id as id',
-                    'bookings.seats_number',
-                    'bookings.nots',
-                    'bookings.status',
-                    'trips.trip_start',
-                    'trips.seat_price',
-                    'trips.user_id as driver_id',
-                    'trips.id As trip_id',
-                    'cityFrom.city_name as from_city',
-                    'cityTo.city_name as to_city',
-                    'profiles.first_name',
-                    'profiles.last_name'
-                )
-                ->where('bookings.user_id', $user->id)
-                ->orderBy('trips.trip_start', 'asc')
-                ->filterby($filteringData) // Apply filtering if provided
-                ->paginate(10);
+            /** @var \App\Models\User $user */
+            // Fetch bookings related to the authenticated user and load related trip and profile data
+            $bookings = $user->bookings()
+    ->with([
+        // Load trip data with only required fields
+        'trip' => function ($query) {
+            $query->select('id', 'user_id', 'trip_start', 'from', 'to'); // Select only the relevant columns for the trip
+        },
 
-            // If no bookings are found, return a 404 error
+        // Load city data related to the trip's origin city (`cityFrom`)
+        'trip.cityFrom' => function ($query) {
+            $query->select('id', 'city_name'); // Select the `id` and `city_name` for the origin city
+        },
+
+        // Load city data related to the trip's destination city (`cityTo`)
+        'trip.cityTo' => function ($query) {
+            $query->select('id', 'city_name'); // Select the `id` and `city_name` for the destination city
+        },
+
+        // Load the user who created the trip
+        'trip.user' => function ($query) {
+            $query->select('id', 'created_at'); // Select only `id` and `created_at` for the trip owner
+        },
+
+        // Load the profile of the user who created the trip (just the first and last names)
+        'trip.user.profile' => function ($query) {
+            $query->select('user_id', 'first_name', 'last_name'); // Only select `user_id`, `first_name`, and `last_name`
+        },
+
+        // Load the roles of the user who made the booking, including the pivot columns
+        'user.roles' => function ($query) {
+            $query->select('roles.id', 'roles.name') // Select only `roles.id` and `roles.name`
+                ->withPivot('image_name', 'mime_type', 'image_path'); // Include pivot data for the role
+        }
+    ])
+    ->when(!empty($filteringData), function ($query) use ($filteringData) {
+        // Apply filtering criteria if provided (e.g., status, seats_number)
+        $query->filterBy($filteringData);
+    })
+    ->paginate(10); // Fetch data with pagination
+
+
+            $sortedItems = $bookings->getCollection()->sortBy('trip.trip_start')->values();
+            $bookings->setCollection($sortedItems);
+
+
+            // If no bookings found, return an error response
             if (!$bookings) {
                 return [
                     'status' => 404,
                     'message' => [
-                        'errorDetails' => [__('booking.booking_not_found')],
+                        'errorDetails' => [__('booking.booking_not_found')], // Localization for booking not found message
                     ],
                 ];
             }
 
-            // Return success response with bookings data
+            // Return a success response with the bookings data
             return [
-                'message' => __('booking.mybookings_retrieved'),
+                'message' => __('booking.mybookings_retrieved'), // Localization for success message
                 'data' => $bookings,
                 'status' => 200,
             ];
         } catch (Exception $e) {
-            // Log the error
+            // Log any errors that occur
             Log::error('Error in show my booking: ' . $e->getMessage());
 
-            // Return error response
+            // Return a general error response
             return [
                 'status' => 500,
                 'message' => [
-                    'errorDetails' => [__('booking.general_error')],
+                    'errorDetails' => [__('booking.general_error')], // Localization for general error message
                 ],
             ];
         }
@@ -90,31 +111,31 @@ class BookingService
             // Retrieve the trip by ID or fail if not found
             $trip = Trip::findOrFail($id);
 
-            // Retrieve the trip's bookings with related user and profile data
+            // Fetch all bookings for the trip with user and profile details
             $bookings = $trip->bookings()->with([
                 'user' => function ($query) {
-                    $query->select('id'); // Select only the user ID
+                    $query->select('id'); // Load only the user ID
                 },
                 'user.profile' => function ($query) {
-                    $query->select('user_id', 'first_name', 'last_name'); // Select profile details
+                    $query->select('user_id', 'first_name', 'last_name'); // Load profile details
                 }
-            ])->paginate(10);
+            ])->paginate(10); // Fetch bookings with pagination
 
-            // Return success response with bookings data
+            // Return a success response with the bookings data
             return [
-                'message' => __('booking.bookings_retrieved'),
+                'message' => __('booking.bookings_retrieved'), // Localization for success message
                 'data' => $bookings,
                 'status' => 200,
             ];
         } catch (Exception $e) {
-            // Log the error
+            // Log any errors that occur
             Log::error('Error in show booking by trip: ' . $e->getMessage());
 
-            // Return error response
+            // Return a general error response
             return [
                 'status' => 500,
                 'message' => [
-                    'errorDetails' => [__('booking.general_error')],
+                    'errorDetails' => [__('booking.general_error')], // Localization for general error message
                 ],
             ];
         }
@@ -129,11 +150,10 @@ class BookingService
     public function createBooking($data)
     {
         try {
-            /** @var \App\Models\User $user */
+            /** @var \App\Models\User $user Authenticated user */
+            $user = Auth::user(); // Get the authenticated user
 
-            $user = Auth::user();// Get the authenticated user
-
-            // Check if the user has any pending bookings for the same trip
+            // Check if the user already has pending bookings for the same trip
             $pendingBookings = $user->bookings()
                 ->where('trip_id', $data['trip_id'])
                 ->where('status', 'pending')
@@ -144,7 +164,7 @@ class BookingService
                 return [
                     'status' => 409,
                     'message' => [
-                        'errorDetails' => [__('booking.trip_has_booking')],
+                        'errorDetails' => [__('booking.trip_has_booking')], // Localization for conflict message
                     ],
                 ];
             }
@@ -152,29 +172,29 @@ class BookingService
             // Retrieve the trip by ID or fail if not found
             $trip = Trip::findOrFail($data['trip_id']);
 
-            // Create a new booking
+            // Create the new booking
             $booking = Booking::create([
                 'trip_id' => $data['trip_id'],
-                'nots' => $data['nots'] ?? null,
+                'nots' => $data['nots'] ?? null, // Optional 'nots' field
                 'seats_number' => $data['seats_number'],
                 'user_id' => $user->id,
             ]);
 
-            // Return success response
+            // Return a success response with the new booking data
             return [
-                'message' => __('booking.booking_created'),
+                'message' => __('booking.booking_created'), // Localization for success message
                 'status' => 200,
                 'data' => $booking,
             ];
         } catch (Exception $e) {
-            // Log the error
+            // Log any errors that occur
             Log::error('Error in createBooking: ' . $e->getMessage());
 
-            // Return error response
+            // Return a general error response
             return [
                 'status' => 500,
                 'message' => [
-                    'errorDetails' => [__('booking.general_error')],
+                    'errorDetails' => [__('booking.general_error')], // Localization for general error message
                 ],
             ];
         }
@@ -192,25 +212,25 @@ class BookingService
         try {
             // Update the booking with new data
             $booking->update([
-                'seats_number' => $data['seats_number'] ?? $booking->seats_number,
-                'nots' => $data['nots'] ?? $booking->nots,
+                'seats_number' => $data['seats_number'] ?? $booking->seats_number, // Keep current value if not provided
+                'nots' => $data['nots'] ?? $booking->nots, // Keep current value if not provided
             ]);
 
-            // Return success response
+            // Return a success response with the updated booking data
             return [
-                'message' => __('booking.booking_updated'),
+                'message' => __('booking.booking_updated'), // Localization for success message
                 'status' => 200,
                 'data' => $booking,
             ];
         } catch (Exception $e) {
-            // Log the error
+            // Log any errors that occur
             Log::error('Error in updateBooking: ' . $e->getMessage());
 
-            // Return error response
+            // Return a general error response
             return [
                 'status' => 500,
                 'message' => [
-                    'errorDetails' => [__('booking.general_error')],
+                    'errorDetails' => [__('booking.general_error')], // Localization for general error message
                 ],
             ];
         }
@@ -228,20 +248,20 @@ class BookingService
             // Delete the booking
             $booking->delete();
 
-            // Return success response
+            // Return a success response
             return [
-                'message' => __('booking.booking_deleted'),
+                'message' => __('booking.booking_deleted'), // Localization for success message
                 'status' => 200,
             ];
         } catch (Exception $e) {
-            // Log the error
+            // Log any errors that occur
             Log::error('Error in deleteBooking: ' . $e->getMessage());
 
-            // Return error response
+            // Return a general error response
             return [
                 'status' => 500,
                 'message' => [
-                    'errorDetails' => [__('booking.general_error')],
+                    'errorDetails' => [__('booking.general_error')], // Localization for general error message
                 ],
             ];
         }
@@ -261,7 +281,7 @@ class BookingService
                 return [
                     'status' => 400,
                     'message' => [
-                        'errorDetails' => [__('booking.booking_already_cancel')],
+                        'errorDetails' => [__('booking.booking_already_cancel')], // Localization for already canceled message
                     ],
                 ];
             }
@@ -273,18 +293,18 @@ class BookingService
 
             // Return success response
             return [
-                'message' => __('booking.booking_cancel'),
+                'message' => __('booking.booking_cancel'), // Localization for success message
                 'status' => 200,
             ];
         } catch (Exception $e) {
-            // Log the error
+            // Log any errors that occur
             Log::error('Error in cancelbooking: ' . $e->getMessage());
 
-            // Return error response
+            // Return a general error response
             return [
                 'status' => 500,
                 'message' => [
-                    'errorDetails' => [__('booking.general_error')],
+                    'errorDetails' => [__('booking.general_error')], // Localization for general error message
                 ],
             ];
         }
@@ -304,7 +324,7 @@ class BookingService
                 return [
                     'status' => 400,
                     'message' => [
-                        'errorDetails' => [__('booking.booking_already_accepted')],
+                        'errorDetails' => [__('booking.booking_already_accepted')], // Localization for already accepted message
                     ],
                 ];
             }
@@ -316,19 +336,19 @@ class BookingService
 
             // Return success response
             return [
-                'message' => __('booking.booking_accepted'),
+                'message' => __('booking.booking_accepted'), // Localization for success message
                 'status' => 200,
                 'data' => $booking,
             ];
         } catch (Exception $e) {
-            // Log the error
+            // Log any errors that occur
             Log::error('Error in acceptedBooking: ' . $e->getMessage());
 
-            // Return error response
+            // Return a general error response
             return [
                 'status' => 500,
                 'message' => [
-                    'errorDetails' => [__('booking.general_error')],
+                    'errorDetails' => [__('booking.general_error')], // Localization for general error message
                 ],
             ];
         }
@@ -348,7 +368,7 @@ class BookingService
                 return [
                     'status' => 400,
                     'message' => [
-                        'errorDetails' => [__('booking.booking_already_rejected')],
+                        'errorDetails' => [__('booking.booking_already_rejected')], // Localization for already rejected message
                     ],
                 ];
             }
@@ -360,19 +380,19 @@ class BookingService
 
             // Return success response
             return [
-                'message' => __('booking.booking_rejected'),
+                'message' => __('booking.booking_rejected'), // Localization for success message
                 'status' => 200,
                 'data' => $booking,
             ];
         } catch (Exception $e) {
-            // Log the error
+            // Log any errors that occur
             Log::error('Error in rejectBooking: ' . $e->getMessage());
 
-            // Return error response
+            // Return a general error response
             return [
                 'status' => 500,
                 'message' => [
-                    'errorDetails' => [__('booking.general_error')],
+                    'errorDetails' => [__('booking.general_error')], // Localization for general error message
                 ],
             ];
         }

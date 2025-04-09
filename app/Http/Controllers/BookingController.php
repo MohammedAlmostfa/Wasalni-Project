@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Services\BookingService;
 use App\Http\Resources\BookingResource;
 use App\Http\Resources\MyBookingResource;
+use App\Http\Resources\GroupedBookingResource;
 use App\Http\Requests\Bookingrequest\FilterinBookingData;
 use App\Http\Requests\BookingRequest\StoreBookingRequest;
 use App\Http\Requests\BookingRequest\UpdateBookingRequest;
@@ -44,10 +45,20 @@ class BookingController extends Controller
         // Retrieve bookings for the current authenticated user
         $result = $this->BookingService->showmybooking($validateddata);
 
-        // Return a success or error response based on the result
         return $result['status'] === 200
-            ? $this->paginated($result['data'], MyBookingResource::class, $result['message'], $result['status'])
-            : self::error(null, $result['message'], $result['status']);
+                ? response()->json([
+                    'status' => 'success',
+                    'message' => $result['message'],
+                    'data' => new GroupedBookingResource($result['data']->getCollection()),
+                    'pagination' => [
+                        'total' => $result['data']->total(),
+                        'count' => $result['data']->count(),
+                        'per_page' => $result['data']->perPage(),
+                        'current_page' => $result['data']->currentPage(),
+                        'total_pages' => $result['data']->lastPage(),
+                    ],
+                ], $result['status'])
+                : self::error(null, $result['message'], $result['status']);
     }
 
     /**
