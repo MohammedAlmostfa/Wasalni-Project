@@ -29,7 +29,7 @@ class BookingService
     ->with([
         // Load trip data with only required fields
         'trip' => function ($query) {
-            $query->select('id', 'user_id', 'trip_start', 'from', 'to'); // Select only the relevant columns for the trip
+            $query->select('id', 'user_id', 'trip_start', 'from', 'to', 'available_seats', 'seat_price'); // Select only the relevant columns for the trip
         },
 
         // Load city data related to the trip's origin city (`cityFrom`)

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
@@ -13,11 +14,13 @@ class MyBookingResource extends JsonResource
             'trip_id' => $this->trip_id,
             'status' => $this->status,
             'seats_number' => $this->seats_number,
+            'available_seats'=>$this->trip->available_seats,
+                 'seat_price'=>$this->trip->seat_price,
             'nots' => $this->nots,
             'driver_name' => $this->trip->user->profile->first_name . " " . $this->trip->user->profile->last_name,
-      'trip_start' => $this->trip->trip_start->format('h:i A'),
-               'from_city' => optional($this->city_from)->city_name,
-            'to_city' => optional($this->city_to)->city_name,
+            'trip_start' => $this->trip->trip_start->format('h:i A'),
+            'from_city' => optional($this->trip->cityFrom)->city_name,
+            'to_city' => optional($this->trip->cityTo)->city_name,
             'image_name' => $this->user->roles->first()->pivot->image_name ?? null,
             'mime_type' => $this->user->roles->first()->pivot->mime_type ?? null,
             'image_path' => $this->user->roles->first()->pivot->image_path ?? null,

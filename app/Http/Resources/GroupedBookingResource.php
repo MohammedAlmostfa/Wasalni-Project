@@ -18,7 +18,7 @@ class GroupedBookingResource extends JsonResource
         })->map(function ($group, $date) {
             return [
                 'date' => $date,
-                'trips' => MyBookingResource::collection($group),
+                'my_booking' => MyBookingResource::collection($group),
             ];
         })->values();  // Return the grouped values as an array
     }
