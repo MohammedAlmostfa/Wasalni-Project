@@ -26,43 +26,44 @@ class BookingService
             /** @var \App\Models\User $user */
             // Fetch bookings related to the authenticated user and load related trip and profile data
             $bookings = $user->bookings()
-    ->with([
-        // Load trip data with only required fields
-        'trip' => function ($query) {
-            $query->select('id', 'user_id', 'trip_start', 'from', 'to', 'available_seats', 'seat_price'); // Select only the relevant columns for the trip
-        },
+                ->with([
+                    // Load trip data with only required fields
+                    'trip' => function ($query) {
+                        $query->select('id', 'user_id', 'trip_start', 'from', 'to', 'available_seats', 'seat_price'); // Select only the relevant columns for the trip
+                    },
 
-        // Load city data related to the trip's origin city (`cityFrom`)
-        'trip.cityFrom' => function ($query) {
-            $query->select('id', 'city_name'); // Select the `id` and `city_name` for the origin city
-        },
+                    // Load city data related to the trip's origin city (`cityFrom`)
+                    'trip.cityFrom' => function ($query) {
+                        $query->select('id', 'city_name'); // Select the `id` and `city_name` for the origin city
+                    },
 
-        // Load city data related to the trip's destination city (`cityTo`)
-        'trip.cityTo' => function ($query) {
-            $query->select('id', 'city_name'); // Select the `id` and `city_name` for the destination city
-        },
+                    // Load city data related to the trip's destination city (`cityTo`)
+                    'trip.cityTo' => function ($query) {
+                        $query->select('id', 'city_name'); // Select the `id` and `city_name` for the destination city
+                    },
 
-        // Load the user who created the trip
-        'trip.user' => function ($query) {
-            $query->select('id', 'created_at'); // Select only `id` and `created_at` for the trip owner
-        },
+                  'trip.user' => function ($query) {
+                      $query->select('id', 'created_at')
+                            ->withAvg('tripRatings as avg_driver_rating', 'rate')
+                            ->withCount('tripRatings as number_of_rating');
+                  },
 
-        // Load the profile of the user who created the trip (just the first and last names)
-        'trip.user.profile' => function ($query) {
-            $query->select('user_id', 'first_name', 'last_name'); // Only select `user_id`, `first_name`, and `last_name`
-        },
+                    // Load the profile of the user who created the trip (just the first and last names)
+                    'trip.user.profile' => function ($query) {
+                        $query->select('user_id', 'first_name', 'last_name'); // Only select `user_id`, `first_name`, and `last_name`
+                    },
 
-        // Load the roles of the user who made the booking, including the pivot columns
-        'user.roles' => function ($query) {
-            $query->select('roles.id', 'roles.name') // Select only `roles.id` and `roles.name`
-                ->withPivot('image_name', 'mime_type', 'image_path'); // Include pivot data for the role
-        }
-    ])
-    ->when(!empty($filteringData), function ($query) use ($filteringData) {
-        // Apply filtering criteria if provided (e.g., status, seats_number)
-        $query->filterBy($filteringData);
-    })
-    ->paginate(10); // Fetch data with pagination
+                    // Load the roles of the user who made the booking, including the pivot columns
+                    'user.roles' => function ($query) {
+                        $query->select('roles.id', 'roles.name') // Select only `roles.id` and `roles.name`
+                            ->withPivot('image_name', 'mime_type', 'image_path'); // Include pivot data for the role
+                    }
+                ])
+                ->when(!empty($filteringData), function ($query) use ($filteringData) {
+                    // Apply filtering criteria if provided (e.g., status, seats_number)
+                    $query->filterBy($filteringData);
+                })
+                ->paginate(10); // Fetch data with pagination
 
 
             $sortedItems = $bookings->getCollection()->sortBy('trip.trip_start')->values();
