@@ -28,12 +28,9 @@ class TripResource extends JsonResource
             'seat_price' => $this->seat_price,
             'available_seats' => $this->available_seats,
             'is_saved' => $this->is_saved,
-            'avg_driver_rating' => $this->user->avg_driver_rating ,
-            "number_of_rating" => $this->user->number_of_rating ,
-               'image_name' => $this->user->roles->first()->pivot->image_name,
-                'mime_type' => $this->user->roles->first()->pivot->mime_type,
-                'image_path' => $this->user->roles->first()->pivot->image_path,
+            'avg_driver_rating' => $this->user->avg_driver_rating,
+            "number_of_rating" => $this->user->number_of_rating,
+            'image' => $this->user->roles->first()->pivot->image_path . '/' . $this->user->roles->first()->pivot->image_name . '.' . $this->user->roles->first()->pivot->mime_type ?? null,
         ];
     }
-
 }

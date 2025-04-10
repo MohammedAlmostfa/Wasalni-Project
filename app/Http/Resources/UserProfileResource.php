@@ -21,6 +21,7 @@ class UserProfileResource extends JsonResource
             'image_name' => optional($this->roles->first())->pivot->image_name,
             'mime_type' => optional($this->roles->first())->pivot->mime_type,
             'image_path' => optional($this->roles->first())->pivot->image_path,
+
             'Joining_date' => $this->created_at->format('Y-m-d'),
      'is_favorite' => $this->is_favorite,
             'User_trips_count' => $this->User_trips_count,

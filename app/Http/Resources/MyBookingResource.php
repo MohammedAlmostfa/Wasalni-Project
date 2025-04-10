@@ -24,9 +24,8 @@ class MyBookingResource extends JsonResource
             "number_of_rating" => $this->trip->user->number_of_rating ,
             'from_city' => optional($this->trip->cityFrom)->city_name,
             'to_city' => optional($this->trip->cityTo)->city_name,
-            'image_name' => $this->user->roles->first()->pivot->image_name ?? null,
-            'mime_type' => $this->user->roles->first()->pivot->mime_type ?? null,
-            'image_path' => $this->user->roles->first()->pivot->image_path ?? null,
+
+            'image'=> $this->user->roles->first()->pivot->image_path.'/'.$this->user->roles->first()->pivot->image_name.'.'.$this->user->roles->first()->pivot->mime_type ??null ,
         ];
     }
 }
