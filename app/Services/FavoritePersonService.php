@@ -26,7 +26,10 @@ class FavoritePersonService
             $favorite_users = $user->favorites()
                 ->with(['profile' => function ($query) {
                     $query->select('id', 'user_id', 'first_name', 'last_name'); // Selecting relevant profile fields
-                }])
+                },
+                   'roles' => function ($query) {
+                       $query->select('roles.id', 'roles.name')->withPivot('image_name', 'mime_type', 'image_path');
+                   }])
                 ->paginate(10);
 
             // Return successful response
