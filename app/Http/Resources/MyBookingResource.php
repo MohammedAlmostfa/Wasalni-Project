@@ -18,6 +18,7 @@ class MyBookingResource extends JsonResource
             'seat_price' => $this->trip->seat_price,
             'nots' => $this->nots,
             'name' => $this->trip->user->profile->first_name . " " . $this->trip->user->profile->last_name,
+               'driver_id' => $this->trip->user->id,
             'trip_start' => $this->trip->trip_start->format('h:i A'),
             'avg_driver_rating' => $this->trip->user->avg_driver_rating ,
             "number_of_rating" => $this->trip->user->number_of_rating ,
