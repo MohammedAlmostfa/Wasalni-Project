@@ -23,9 +23,21 @@ class UserSeeder extends Seeder
                  'password' => bcrypt('P@ssw0rd123'),
 
              ]);
-            $user->assignRole($faker->randomElement(['Admin', 'User','PrivateUser']));
-            // Attach trip properties to the user
-            $user->tripproperies()->sync([1, 2, 3, 4, 5, 6, 7, 8]);
+            $roleName = $faker->randomElement(['Admin', 'User', 'PrivateUser']);
+            $user->assignRole($roleName);
+
+
+            $assignedRole = $user->roles()->where('name', $roleName)->first();
+
+            $user->roles()->updateExistingPivot($assignedRole->id, [
+                'about_User' => 'This user is a private user',
+                'car_Type' => 'SUV',
+                'image_name' => 'ceb457975b293aa4bd9fd5d7a0dff8a2',
+                'image_path' => '//i.pinimg.com/736x/ce/b4/57',
+                'mime_type' => 'jpg',
+            ]);
+
+
 
         }
     }

@@ -28,45 +28,45 @@ class SavedTripService
 
             //
             $savedTrips = $user->savedTrips()->with([
-    'user.profile' => function ($query) {
-        $query->select('user_id', 'first_name', 'last_name');
-    },
-    'user' => function ($query) {
-        $query->withAvg('tripRatings as avg_driver_rating', 'rate')
-              ->withCount('tripRatings as number_of_rating');
-    },
-    'cityFrom' => function ($query) {
-        $query->select('id', 'city_name');
-    },
-    'cityTo' => function ($query) {
-        $query->select('id', 'city_name');
-    },
-    'savedByUsers' => function ($query) use ($user) {
-        $query->where('user_id', $user->id)
-              ->select('users.id');
-    },
-    'user.roles' => function ($query) {
-        $query->select('roles.id', 'roles.name')
-              ->withPivot('image_name', 'mime_type', 'image_path');
-    }
-])
-->select([
-    'trips.id AS trip_id',
-    'trips.description',
-    'trips.status',
-    'trips.to',
-    'trips.from',
-    'trips.user_id',
-    'trips.trip_start',
-    'trips.seat_price',
-    'trips.available_seats',
-    'trips.created_at',
-])
-  ->addSelect([
-    DB::raw('1 AS is_saved') // إضافة هذا الحقل الثابت
-])
-->orderBy('trips.trip_start', 'asc')
-->paginate(10);
+                'user.profile' => function ($query) {
+                    $query->select('user_id', 'first_name', 'last_name');
+                },
+                'user' => function ($query) {
+                    $query->withAvg('tripRatings as avg_driver_rating', 'rate')
+                        ->withCount('tripRatings as number_of_rating');
+                },
+                'cityFrom' => function ($query) {
+                    $query->select('id', 'city_name');
+                },
+                'cityTo' => function ($query) {
+                    $query->select('id', 'city_name');
+                },
+                'savedByUsers' => function ($query) use ($user) {
+                    $query->where('user_id', $user->id)
+                        ->select('users.id');
+                },
+                'user.roles' => function ($query) {
+                    $query->select('roles.id', 'roles.name')
+                        ->withPivot('image_name', 'mime_type', 'image_path');
+                }
+            ])
+                ->select([
+                    'trips.id AS trip_id',
+                    'trips.description',
+                    'trips.status',
+                    'trips.to',
+                    'trips.from',
+                    'trips.user_id',
+                    'trips.trip_start',
+                    'trips.seat_price',
+                    'trips.available_seats',
+                    'trips.created_at',
+                ])
+                ->addSelect([
+                    DB::raw('1 AS is_saved')
+                ])
+                ->orderBy('trips.trip_start', 'asc')
+                ->paginate(10);
 
 
 
@@ -109,7 +109,6 @@ class SavedTripService
                 'status' => 200,
                 'message' => __("trip.trip_saved_successfully"),
             ];
-
         } catch (Exception $e) {
             // Log the error if an exception occurs
             Log::error('Error in addToSavedTrip: ' . $e->getMessage());

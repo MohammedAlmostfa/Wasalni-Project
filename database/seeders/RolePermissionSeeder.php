@@ -1,4 +1,5 @@
 <?php
+
 namespace Database\Seeders;
 
 use App\Models\User;
@@ -61,6 +62,10 @@ class RolePermissionSeeder extends Seeder
         $privateUser->roles()->updateExistingPivot($privateUserRole->id, [
             'about_User' => 'This user is a private user',
             'car_Type' => 'SUV',
+            'image_name' => 'ceb457975b293aa4bd9fd5d7a0dff8a2',
+            'image_path' => '//i.pinimg.com/736x/ce/b4/57',
+            'mime_type' => 'jpg',
+
         ]);
     }
 }
