@@ -4,10 +4,11 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Services\SavedTripService;
+use App\Http\Resources\SavedTripResource;
+use App\Http\Resources\GroupedTripsResource;
 use App\Http\Requests\TripRequest\FilteringTripsData;
 use App\Http\Requests\SavedTripRequst\AddToSavedTripRequest;
 use App\Http\Requests\SavedTripRequst\DeletfromSavedTripRequest;
-use App\Http\Resources\SavedTripResource;
 
 class SavedTripController extends Controller
 {
@@ -38,8 +39,19 @@ class SavedTripController extends Controller
 
         // Return paginated response if status is 200, or return an error message
         return $result['status'] === 200
-            ? $this->paginated($result['data'], SavedTripResource::class, $result['message'], $result['status'])
-            : self::error(null, $result['message'], $result['status']);
+               ? response()->json([
+                   'status' => 'success',
+                   'message' => $result['message'],
+                   'data' => new GroupedTripsResource($result['data']->getCollection()),
+                   'pagination' => [
+                       'total' => $result['data']->total(),
+                       'count' => $result['data']->count(),
+                       'per_page' => $result['data']->perPage(),
+                       'current_page' => $result['data']->currentPage(),
+                       'total_pages' => $result['data']->lastPage(),
+                   ],
+               ], $result['status'])
+               : self::error(null, $result['message'], $result['status']);
     }
 
     /**
