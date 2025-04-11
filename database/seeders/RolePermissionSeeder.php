@@ -50,6 +50,14 @@ class RolePermissionSeeder extends Seeder
         ]);
         $adminUser->assignRole($adminRole);
 
+        $adminUser->roles()->updateExistingPivot($adminRole->id, [
+                  'about_User' => 'This user is a private user',
+                  'car_Type' => 'SUV',
+                  'image_name' => 'ceb457975b293aa4bd9fd5d7a0dff8a2',
+                  'image_path' => '//i.pinimg.com/736x/ce/b4/57',
+                  'mime_type' => 'jpg',
+
+              ]);
 
         // Create a private user
         $privateUser = User::create([
