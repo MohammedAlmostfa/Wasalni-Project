@@ -79,8 +79,10 @@ class UserService
                         $query->select('id', 'user_id', 'first_name', 'last_name', 'phone');
                     }]);
                 },
-                'image'
-
+                'roles' => function ($query) {
+                    $query->select('roles.id', 'roles.name')->withPivot('about_User', 'car_Type', );
+                },
+'image',
             ])
             ->withCount('trips as User_trips_count') // Count the number of trips
             ->withAvg('tripRatings as avg_rating', 'rate') // Calculate average trip rating
