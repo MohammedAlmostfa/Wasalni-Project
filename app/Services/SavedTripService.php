@@ -45,10 +45,7 @@ class SavedTripService
                     $query->where('user_id', $user->id)
                         ->select('users.id');
                 },
-                'user.roles' => function ($query) {
-                    $query->select('roles.id', 'roles.name')
-                        ->withPivot('image_name', 'mime_type', 'image_path');
-                }
+                'user.image'
             ])
                 ->select([
                     'trips.id AS trip_id',

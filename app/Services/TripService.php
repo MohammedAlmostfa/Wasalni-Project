@@ -125,7 +125,7 @@ class TripService
                 'status' => 200,
             ];
         } catch (Exception $e) {
-            // Log the error if an exception occurs
+
             Log::error('Error in showhisTrips: ' . $e->getMessage());
 
             return [
