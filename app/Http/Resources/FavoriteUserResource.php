@@ -8,17 +8,16 @@ class FavoriteUserResource extends JsonResource
 {
     public function toArray($request)
     {
-        // ✅ التأكد من أن جميع البيانات موجودة قبل الوصول إليها
+
         $profile = optional($this->profile);
-        $imagePivot = optional($this->roles->first())->pivot;
+        $image = optional($this->image);
+
 
         return [
             "user_id" => $profile->user_id,
             'name' => "{$profile->first_name} {$profile->last_name}",
-
-
-            'image' => $imagePivot && $imagePivot->image_path && $imagePivot->image_name && $imagePivot->mime_type
-                ? "{$imagePivot->image_path}/{$imagePivot->image_name}.{$imagePivot->mime_type}"
+            'image' => $image && $image->image_path && $image->image_name && $image->mime_type
+                ? "{$image->image_path}/{$image->image_name}.{$image->mime_type}"
                 : null,
         ];
     }

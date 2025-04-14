@@ -54,10 +54,7 @@ class BookingService
                     },
 
                     // Load the roles of the user who made the booking, including the pivot columns
-                    'trip.user.roles' => function ($query) {
-                        $query->select('roles.id', 'roles.name') // Select only `roles.id` and `roles.name`
-                            ->withPivot('image_name', 'mime_type', 'image_path'); // Include pivot data for the role
-                    }
+                    'trip.user.image'
                 ])
                 ->when(!empty($filteringData), function ($query) use ($filteringData) {
                     // Apply filtering criteria if provided (e.g., status, seats_number)

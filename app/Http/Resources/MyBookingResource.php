@@ -13,7 +13,8 @@ class MyBookingResource extends JsonResource
         $trip = optional($this->trip);
         $user = optional($trip->user);
         $profile = optional($user->profile);
-        $imagePivot = optional($user->roles->first())->pivot;
+        $image = optional($user->image);
+
 
         return [
             'booking_id' => $this->id,
@@ -32,8 +33,8 @@ class MyBookingResource extends JsonResource
             'to_city' => optional($trip->cityTo)->city_name,
 
 
-            'image' => $imagePivot && $imagePivot->image_path && $imagePivot->image_name && $imagePivot->mime_type
-                ? "{$imagePivot->image_path}/{$imagePivot->image_name}.{$imagePivot->mime_type}"
+            'image' => $image && $image->image_path && $image->image_name && $image->mime_type
+                ? "{$image->image_path}/{$image->image_name}.{$image->mime_type}"
                 : null,
         ];
     }

@@ -51,6 +51,8 @@ class FilteringTripsData extends FormRequest
             'status' => 'nullable|string',
             'seat_price' => 'nullable|integer|min:0',
             'available_seats' => 'nullable|integer|min:0',
+            'order_desc'=>'nullable|string',
+            "order_asc"=>'nullable|string',
 
         ];
     }

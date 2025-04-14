@@ -79,9 +79,7 @@ class UserService
                         $query->select('id', 'user_id', 'first_name', 'last_name', 'phone');
                     }]);
                 },
-                'roles' => function ($query) {
-                    $query->select('roles.id', 'roles.name')->withPivot('about_User', 'car_Type', 'image_name', 'mime_type', 'image_path');
-                },
+                'image'
 
             ])
             ->withCount('trips as User_trips_count') // Count the number of trips

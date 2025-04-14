@@ -25,12 +25,12 @@ class TripService
             $cityId = auth()->check() ? auth()->user()->profile->city_id : null;
 
             $trips = Trip::with([
-                'user.profile' => function ($query) {
-                    $query->select('user_id', 'first_name', 'last_name');
-                },
                 'user' => function ($query) {
                     $query->withAvg('tripRatings as avg_driver_rating', 'rate')->withCount('tripRatings as number_of_rating');
                 },
+                   'user.profile' => function ($query) {
+                       $query->select('user_id', 'first_name', 'last_name');
+                   },
                 'cityFrom' => function ($query) {
                     $query->select('id', 'city_name');
                 },
@@ -40,29 +40,33 @@ class TripService
                 'savedByUsers' => function ($query) {
                     $query->where('user_id', auth()->id());
                 },
-                 'user.roles' => function ($query) {
-                     $query->select('roles.id', 'roles.name')->withPivot('image_name', 'mime_type', 'image_path');
-                 }
+                'user.image'
             ])
-
                 ->select([
-                     'id AS trip_id',
-                     'description',
-                     'status',
-                     'to',
-                     'from',
-                     'user_id',
-                     'trip_start',
-                     'seat_price',
-                     'available_seats',
-                     'created_at',
-                 ])
+                    'id AS trip_id',
+                    'description',
+                    'status',
+                    'to',
+                    'from',
+                    'user_id',
+                    'trip_start',
+                    'seat_price',
+                    'available_seats',
+                    'created_at',
+                ])
                 ->addSelect([
-                     DB::raw('CASE WHEN EXISTS (SELECT 1 FROM trip_user WHERE trip_user.trip_id = trips.id AND trip_user.user_id = ' . auth()->id() . ') THEN 1 ELSE 0 END AS is_saved'),
-                     DB::raw($cityId ? "CASE WHEN trips.from = {$cityId} THEN 0 ELSE 1 END AS city_priority" : "1 AS city_priority")
-                 ])
+                    DB::raw('CASE WHEN EXISTS (SELECT 1 FROM trip_user WHERE trip_user.trip_id = trips.id AND trip_user.user_id = ' . auth()->id() . ') THEN 1 ELSE 0 END AS is_saved'),
+                    DB::raw($cityId ? "CASE WHEN trips.from = {$cityId} THEN 0 ELSE 1 END AS city_priority" : "1 AS city_priority")
+                ])
                 ->when(!empty($filteringData), function ($query) use ($filteringData) {
                     $query->filterBy($filteringData);
+                })
+
+                ->when(isset($filteringData['order_asc']), function ($query) use ($filteringData) {
+                    $query->orderBy($filteringData['order_asc'], 'asc');
+                })
+                ->when(isset($filteringData['order_desc']), function ($query) use ($filteringData) {
+                    $query->orderBy($filteringData['order_desc'], 'desc');
                 })
                 ->orderBy('trip_start', 'asc')
                 ->orderBy('city_priority', 'asc')
@@ -70,7 +74,7 @@ class TripService
 
             return [
                 'message' => __('trip.show_trips_success'),
-                'data' => $trips, // Grouped trips
+                'data' => $trips,
                 'status' => 200,
             ];
         } catch (Exception $e) {

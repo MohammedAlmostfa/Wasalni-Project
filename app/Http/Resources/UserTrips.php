@@ -23,7 +23,7 @@ class UserTrips extends JsonResource
               'created_at' => date('Y-m-d H:i', strtotime($this->created_at)),
               'trip_start' => date('Y-m-d H:i', strtotime($this->trip_start)),
               'seat_price' => $this->seat_price,
-               'available_seats' => $this->available_seats,
+            'available_seats' => $this->available_seats,
           ];
 
     }

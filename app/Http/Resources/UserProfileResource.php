@@ -8,6 +8,8 @@ class UserProfileResource extends JsonResource
 {
     public function toArray($request)
     {
+        $image = optional($this->image);
+
         return [
             'id' => $this->id,
             'email' => $this->email,
@@ -19,13 +21,16 @@ class UserProfileResource extends JsonResource
             'about_user' => optional($this->roles->first())->pivot->about_User,
             'car_type' => optional($this->roles->first())->pivot->car_Type,
 
-'image' => optional($this->roles->first()->pivot)->image_path && optional($this->roles->first()->pivot)->image_name && optional($this->roles->first()->pivot)->mime_type
-    ? $this->roles->first()->pivot->image_path . '/' . $this->roles->first()->pivot->image_name . '.' . $this->roles->first()->pivot->mime_type
-    : null,
+            // Image path
+            'image' => $image && $image->image_path && $image->image_name && $image->mime_type
+                ? "{$image->image_path}/{$image->image_name}.{$image->mime_type}"
+                : null,
+
             'Joining_date' => $this->created_at->format('Y-m-d'),
-     'is_favorite' => $this->is_favorite,
+            'is_favorite' => $this->is_favorite,
             'User_trips_count' => $this->User_trips_count,
             'avg_rating' => $this->avg_rating,
+
             // Trip properties mapping
             'tripproperies' => $this->tripproperies->map(function ($property) {
                 return [
@@ -43,8 +48,6 @@ class UserProfileResource extends JsonResource
                     'user_name' => optional($rating->user->profile)->first_name . ' ' . optional($rating->user->profile)->last_name,
                 ];
             }),
-
-
         ];
     }
 }

@@ -51,16 +51,10 @@ class UserSeeder extends Seeder
 
 
             $image = $images[array_rand($images)];
+            $user->image()->create($image);
 
-            if ($assignedRole && $roleName !== 'User') {
-                $user->roles()->updateExistingPivot($assignedRole->id, [
-                    'about_User' => 'This user is a private user',
-                    'car_Type' => 'SUV',
-                    'image_name' => $image['image_name'],
-                    'image_path' => $image['image_path'],
-                    'mime_type' => $image['mime_type'],
-                ]);
-            }
+
+
         }
     }
 }

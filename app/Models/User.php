@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
+use App\Models\Image;
 use App\Models\Rating;
 use Spatie\Permission\Traits\HasRoles;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Staudenmeir\EloquentHasManyDeep\HasRelationships;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -168,7 +170,10 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->belongsToMany(TripPropertie::class, 'trip_properties_users', 'user_id', 'tripProperty_id');
     }
-
+    public function image(): MorphOne
+    {
+        return $this->morphOne(Image::class, 'imageable');
+    }
 
     /**
      * Get the ratings for trips through bookings (deep relationship).

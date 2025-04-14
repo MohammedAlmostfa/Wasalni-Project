@@ -18,7 +18,7 @@ class TripResource extends JsonResource
 
         $user = optional($this->user);
         $profile = optional($user->profile);
-        $imagePivot = optional($user->roles->first())->pivot;
+        $image = optional($user->image);
 
         return [
             'trip_id' => $this->trip_id,
@@ -36,8 +36,8 @@ class TripResource extends JsonResource
             'avg_driver_rating' => $user->avg_driver_rating,
             'number_of_rating' => $user->number_of_rating,
 
-            'image' => $imagePivot && $imagePivot->image_path && $imagePivot->image_name && $imagePivot->mime_type
-                ? "{$imagePivot->image_path}/{$imagePivot->image_name}.{$imagePivot->mime_type}"
+            'image' => $image && $image->image_path && $image->image_name && $image->mime_type
+                ? "{$image->image_path}/{$image->image_name}.{$image->mime_type}"
                 : null,
         ];
     }
