@@ -168,7 +168,7 @@ class User extends Authenticatable implements JWTSubject
      */
     public function image(): MorphOne
     {
-        return $this->morphOne(Image::class, 'imageable')->where('tag', 'profile');
+        return $this->morphOne(Image::class, 'imageable')->where('tage', 'profile');
     }
 
     /**
@@ -178,7 +178,7 @@ class User extends Authenticatable implements JWTSubject
      */
     public function carImage()
     {
-        return $this->morphMany(Image::class, 'imageable')->where('tag', 'car');
+        return $this->morphMany(Image::class, 'imageable')->where('tage', 'car');
     }
 
     /**
