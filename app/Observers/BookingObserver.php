@@ -52,23 +52,27 @@ class BookingObserver
      */
     protected function Increaseavailableseats(Booking $booking): void
     {
-        DB::transaction(function () use ($booking) {
-            // Lock the trip row for update to prevent race conditions
-            $trip = $booking->trip()->lockForUpdate()->first();
 
-            // Get the user associated with the booking
-            $userid = $booking->user_id;
-            $user = User::findorfail($userid);
+        // Lock the trip row for update to prevent race conditions
+        $trip = $booking->trip()->lockForUpdate()->first();
 
-            // Send a notification to the user regarding the trip cancellation
-            SendFcmNotificationJob::dispatch($user, __('notifications.booking_canceled.title'), __('notifications.booking_canceled.message'));
+        // Get the user associated with the booking
+        $userid = $booking->user_id;
+        $user = User::findorfail($userid);
+        $cityfrom =$trip->cityFrom->city_name;
+        $cityto =$trip->cityTo->city_name;
 
-            // Increase the available seats of the trip by the number of seats the user booked
-            $trip->available_seats += $booking->seats_number;
 
-            // Save the updated trip information
-            $trip->save();
-        });
+        // Send a notification to the user regarding the trip cancellation
+        SendFcmNotificationJob::dispatch($user, $cityto, $cityfrom, __('notifications.booking_canceled.title'), 'booking_canceled');
+
+
+        // Increase the available seats of the trip by the number of seats the user booked
+        $trip->available_seats += $booking->seats_number;
+
+        // Save the updated trip information
+        $trip->save();
+
     }
 
     /**
@@ -83,23 +87,27 @@ class BookingObserver
      */
     protected function Reducingavailableseats(Booking $booking): void
     {
-        DB::transaction(function () use ($booking) {
-            // Lock the trip row for update to prevent race conditions
-            $trip = $booking->trip()->lockForUpdate()->first();
 
-            // Get the user associated with the booking
-            $userid = $booking->user_id;
-            $user = User::findorfail($userid);
+        // Lock the trip row for update to prevent race conditions
+        $trip = $booking->trip()->lockForUpdate()->first();
 
-            // Send a notification to the user regarding the booking acceptance
-            SendFcmNotificationJob::dispatch($user, __('notifications.booking_accepted.title'), __('notifications.booking_accepted.message'));
+        // Get the user associated with the booking
+        $userid = $booking->user_id;
+        $user = User::findorfail($userid);
 
-            // Reduce the available seats of the trip by the number of seats the user booked
-            $trip->available_seats -= $booking->seats_number;
+        $cityfrom =$trip->cityFrom->city_name;
+        $cityto =$trip->cityTo->city_name;
 
-            // Save the updated trip information
-            $trip->save();
-        });
+
+        // Send a notification to the user regarding the trip cancellation
+        SendFcmNotificationJob::dispatch($user, $cityto, $cityfrom, __('notifications.booking_accepted.title'), 'booking_accepted');
+
+        // Reduce the available seats of the trip by the number of seats the user booked
+        $trip->available_seats -= $booking->seats_number;
+
+        // Save the updated trip information
+        $trip->save();
+
     }
 
     /**
@@ -113,11 +121,18 @@ class BookingObserver
      */
     public function Rejectedbooking(Booking $booking): void
     {
+
+        $trip = $booking->trip()->lockForUpdate()->first();
+
         // Get the user associated with the booking
         $userid = $booking->user_id;
         $user = User::findorfail($userid);
 
-        // Send a notification to the user regarding the booking rejection
-        SendFcmNotificationJob::dispatch($user, __('notifications.booking_rejected.title'), __('notifications.booking_rejected.message'));
+        $cityfrom =$trip->cityFrom->city_name;
+        $cityto =$trip->cityTo->city_name;
+
+        SendFcmNotificationJob::dispatch($user, $cityto, $cityfrom, __('notifications.booking_rejected.title'), 'booking_rejected');
+
+
     }
 }

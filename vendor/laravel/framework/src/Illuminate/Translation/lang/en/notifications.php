@@ -6,18 +6,24 @@ return [
     // Booking notifications
     // =======================
     'booking_accepted' => [
-        'title' => 'Booking Confirmed',
-        'message' => 'Your booking has been confirmed. We’re excited to have you with us!',
+        'title' => [
+            'en' => 'Booking Confirmed',
+            'ar' => 'تم تأكيد الحجز',
+        ],
     ],
 
     'booking_canceled' => [
-        'title' => 'Booking Canceled',
-        'message' => 'Your booking has been canceled. We apologize for any inconvenience caused.',
+        'title' => [
+            'en' => 'Booking Canceled',
+            'ar' => 'تم إلغاء الحجز',
+        ],
     ],
 
     'booking_rejected' => [
-        'title' => 'Booking Rejected',
-        'message' => 'Unfortunately, your booking has been rejected. We’re sorry for the inconvenience.',
+        'title' => [
+            'en' => 'Booking Rejected',
+            'ar' => 'تم رفض الحجز',
+        ],
     ],
 
 
@@ -25,32 +31,42 @@ return [
     // Trip-related notifications
     // =======================
     'trip_completed' => [
-        'title' => 'Trip Completed',
-        'message' => 'Your trip has ended. Please take a moment to rate your experience—your feedback helps us improve.',
+        'title' => [
+            'en' => 'Trip Completed',
+            'ar' => 'اكتملت الرحلة',
+        ],
     ],
 
     'trip_booking_completed' => [
-        'title' => 'Trip Booking Completed',
-        'message' => 'Your trip booking has been successfully completed.',
+        'title' => [
+            'en' => 'Trip Booking Completed',
+            'ar' => 'تم حجز الرحلة بنجاح',
+        ],
     ],
 
     'trip_created' => [
-        'title' => 'New Trip Added',
-        'message' => ':user just added a new trip from :from to :to on :date. Don’t miss it!',
+        'title' => [
+            'en' => 'New Trip Added',
+            'ar' => 'تمت إضافة رحلة جديدة',
+        ],
     ],
 
 
     // =======================
-    // Driver (PrivateUser) status notifications
+    // Driver status notifications
     // =======================
     'driver_accepted' => [
-        'title' => 'Driver Request Approved',
-        'message' => 'Great news! Your request to become a driver has been approved. Welcome aboard!',
+        'title' => [
+            'en' => 'Driver Request Approved',
+            'ar' => 'تمت الموافقة على طلب السائق',
+        ],
     ],
 
     'driver_rejected' => [
-        'title' => 'Driver Request Declined',
-        'message' => 'We’re sorry. Your request to become a driver was declined. Feel free to try again in the future.',
+        'title' => [
+            'en' => 'Driver Request Declined',
+            'ar' => 'تم رفض طلب السائق',
+        ],
     ],
 
 ];
