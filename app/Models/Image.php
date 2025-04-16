@@ -11,6 +11,7 @@ class Image extends Model
         "image_name",
         "mime_type",
         "image_path",
+        'tage'
     ];
     public function imageable(): MorphTo
     {

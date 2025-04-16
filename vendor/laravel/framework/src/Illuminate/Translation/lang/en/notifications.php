@@ -1,36 +1,56 @@
 <?php
 
 return [
+
+    // =======================
     // Booking notifications
+    // =======================
     'booking_accepted' => [
-        'title' => 'Booking Accepted',
-        'message' => 'Your booking has been successfully accepted. We are excited to have you on board!'  ,
+        'title' => 'Booking Confirmed',
+        'message' => 'Your booking has been confirmed. We’re excited to have you with us!',
     ],
 
     'booking_canceled' => [
         'title' => 'Booking Canceled',
-        'message' => 'Your booking has been canceled. We sincerely apologize for the inconvenience.'
+        'message' => 'Your booking has been canceled. We apologize for any inconvenience caused.',
     ],
 
     'booking_rejected' => [
         'title' => 'Booking Rejected',
-        'message' => 'Your booking has been rejected. We sincerely apologize for the inconvenience.'
+        'message' => 'Unfortunately, your booking has been rejected. We’re sorry for the inconvenience.',
     ],
 
+
+    // =======================
     // Trip-related notifications
-    'trip_Completion' => [
-        'title' => 'Trip Completion',
-        'message' => 'Your trip has now ended. Kindly rate your experience with us. Your feedback is valuable for improving our services.'
+    // =======================
+    'trip_completed' => [
+        'title' => 'Trip Completed',
+        'message' => 'Your trip has ended. Please take a moment to rate your experience—your feedback helps us improve.',
     ],
 
-    'trip_completed' => [
+    'trip_booking_completed' => [
         'title' => 'Trip Booking Completed',
-        'message' => 'Your trip booking has now been completed.'
+        'message' => 'Your trip booking has been successfully completed.',
     ],
 
     'trip_created' => [
-        'title' => 'New Trip ',
-        'message' => ':user has added a new trip from :from to :to on :date.'
+        'title' => 'New Trip Added',
+        'message' => ':user just added a new trip from :from to :to on :date. Don’t miss it!',
+    ],
+
+
+    // =======================
+    // Driver (PrivateUser) status notifications
+    // =======================
+    'driver_accepted' => [
+        'title' => 'Driver Request Approved',
+        'message' => 'Great news! Your request to become a driver has been approved. Welcome aboard!',
+    ],
+
+    'driver_rejected' => [
+        'title' => 'Driver Request Declined',
+        'message' => 'We’re sorry. Your request to become a driver was declined. Feel free to try again in the future.',
     ],
 
 ];

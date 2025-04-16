@@ -2,14 +2,16 @@
 
 namespace App\Providers;
 
-use App\Models\Booking;
+use App\Models\Trip;
 
+use App\Models\Booking;
+use App\Models\Request;
 use App\Events\Registered;
+use App\Observers\TripObserver;
 use App\Observers\BookingObserver;
+use App\Observers\RequestObserver;
 use Illuminate\Support\Facades\Event;
 use App\Listeners\SendVerificationEmail;
-use App\Models\Trip;
-use App\Observers\TripObserver;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 
@@ -34,6 +36,8 @@ class EventServiceProvider extends ServiceProvider
     {
         Booking::observe(BookingObserver::class);
         Trip::observe(TripObserver::class);
+        Request::observe(RequestObserver::class);
+
     }
 
     /**

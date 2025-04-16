@@ -9,8 +9,10 @@ use App\Models\Rating;
 use App\Models\Booking;
 use App\Policies\TripPolicy;
 use App\Models\FavoritePerson;
+use App\Models\Request;
 use App\Policies\RatingPolicy;
 use App\Policies\BookingPolicy;
+use App\Policies\RequestPolicy;
 use App\Policies\SavedTripPolicy;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
@@ -26,6 +28,7 @@ class AuthServiceProvider extends ServiceProvider
         Trip::class => TripPolicy::class,
         Booking::class=>BookingPolicy::class,
         Rating::class=>RatingPolicy::class,
+        Request::class=>RequestPolicy::class,
 
     ];
 

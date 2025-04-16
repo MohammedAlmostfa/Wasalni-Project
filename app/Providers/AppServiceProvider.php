@@ -22,6 +22,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+
         $this->app->make(ChannelManager::class)->extend('fcm', function () {
             return new FcmChannel;
         });

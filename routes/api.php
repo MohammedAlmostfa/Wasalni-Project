@@ -18,6 +18,7 @@ use App\Http\Controllers\Auth\ProfileController;
 use App\Http\Controllers\FavoritePersonController;
 use App\Http\Controllers\Auth\VerificationController;
 use App\Http\Controllers\Auth\ForgetPasswordController;
+use App\Http\Controllers\RequestController;
 
 /*
 |--------------------------------------------------------------------------
@@ -108,4 +109,7 @@ Route::middleware('auth:api')->group(function () {
 
     // API resource routes for ratings
     Route::apiResource("rating", RatingController::class); // Handles CRUD operations for ratings
+
+    Route::apiResource("request", RequestController::class);
+
 });
