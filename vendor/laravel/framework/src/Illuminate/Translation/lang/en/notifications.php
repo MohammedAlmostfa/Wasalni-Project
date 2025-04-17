@@ -1,3 +1,11 @@
+تمام، يعني بدك العناوين تكون **أقصر وبدون أفعال**، بصيغة **وصفية** أكتر، متل:
+
+- بدل "تم تأكيد الحجز" ⟵ تصير: **"تأكيد الحجز"**
+- بدل "تم رفض طلب السائق" ⟵ تصير: **"رفض طلب السائق"**
+
+هيني عدّلتلك كل العناوين بصيغة مختصرة ووصفية، بدون أفعال:
+
+```php
 <?php
 
 return [
@@ -7,22 +15,22 @@ return [
     // =======================
     'booking_accepted' => [
         'title' => [
-            'en' => 'Booking Confirmed',
-            'ar' => 'تم تأكيد الحجز',
+            'en' => 'Booking Confirmation',
+            'ar' => 'تأكيد الحجز',
         ],
     ],
 
     'booking_canceled' => [
         'title' => [
-            'en' => 'Booking Canceled',
-            'ar' => 'تم إلغاء الحجز',
+            'en' => 'Booking Cancellation',
+            'ar' => 'إلغاء الحجز',
         ],
     ],
 
     'booking_rejected' => [
         'title' => [
-            'en' => 'Booking Rejected',
-            'ar' => 'تم رفض الحجز',
+            'en' => 'Booking Rejection',
+            'ar' => 'رفض الحجز',
         ],
     ],
 
@@ -32,22 +40,22 @@ return [
     // =======================
     'trip_Ending' => [
         'title' => [
-            'en' => 'Trip Ending',
-            'ar' => 'انتهت الرحلة',
+            'en' => 'Trip Completion',
+            'ar' => 'انتهاء الرحلة',
         ],
     ],
 
     'trip_booking_completed' => [
         'title' => [
-            'en' => 'Trip Booking Completed',
-            'ar' => 'تم حجز الرحلة بنجاح',
+            'en' => 'Trip Booking',
+            'ar' => 'حجز الرحلة',
         ],
     ],
 
     'trip_created' => [
         'title' => [
-            'en' => 'New Trip Added',
-            'ar' => 'تمت إضافة رحلة جديدة',
+            'en' => 'New Trip',
+            'ar' => 'رحلة جديدة',
         ],
     ],
 
@@ -57,15 +65,15 @@ return [
     // =======================
     'driver_accepted' => [
         'title' => [
-            'en' => 'Driver Request Approved',
-            'ar' => 'تمت الموافقة على طلب السائق',
+            'en' => 'Driver Request Approval',
+            'ar' => 'موافقة طلب السائق',
         ],
     ],
 
     'driver_rejected' => [
         'title' => [
-            'en' => 'Driver Request Declined',
-            'ar' => 'تم رفض طلب السائق',
+            'en' => 'Driver Request Rejection',
+            'ar' => 'رفض طلب السائق',
         ],
     ],
 

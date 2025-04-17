@@ -34,7 +34,8 @@ class RequestObserver
             }
 
             // Send notification
-            // SendFcmNotificationJob::dispatch($user, __('notifications.driver_accepted.title'), __('notifications.driver_accepted.message'));
+            SendFcmNotificationJob::dispatch($user, null, null, __('notifications.driver_accepted.title'), 'driver_accepted');
+
         } elseif($request->status === 'rejected') {
             if ($user->image) {
                 $user->image()->delete();
@@ -44,7 +45,9 @@ class RequestObserver
                 $user->carImage()->delete();
             }
 
-            // SendFcmNotificationJob::dispatch($user, __('notifications.driver_rejected.title'), __('notifications.driver_rejected.message'));
+            SendFcmNotificationJob::dispatch($user, null, null, __('notifications.driver_rejected.title'), 'driver_rejected');
+
+
         }
     }
 

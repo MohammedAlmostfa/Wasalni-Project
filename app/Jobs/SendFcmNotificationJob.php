@@ -22,7 +22,7 @@ class SendFcmNotificationJob implements ShouldQueue
     /**
      * Create a new job instance.
      */
-    public function __construct($user, array $notify_from, array $notify_to, array $notify_title, string $notify_type)
+    public function __construct($user, ?array $notify_from = null, ?array $notify_to = null, array $notify_title, string $notify_type)
     {
         $this->user = $user;
         $this->notify_title = $notify_title;
@@ -30,6 +30,7 @@ class SendFcmNotificationJob implements ShouldQueue
         $this->notify_to = $notify_to;
         $this->notify_type = $notify_type;
     }
+
 
     /**
      * Execute the job.
