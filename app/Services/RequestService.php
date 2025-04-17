@@ -12,60 +12,58 @@ use Illuminate\Support\Facades\Storage;
 class RequestService
 {
     /**
-     * Create a new request.
+     * Create a new request for the authenticated user.
      *
-     * @param array $data
-     * @return array
+     * @param array $data The input data for creating the request.
+     * @return array Response with message, status code, and request data if successful.
      */
-
-
     public function createRequest($data)
     {
         try {
             /** @var \App\Models\User $user */
-
             $user = Auth::user();
 
-            // Create the request
+            // Create the request associated with the user
             $request = Request::create([
                 'about_user' => $data['about_user'],
                 'car_type' => $data['car_type'],
                 'user_id' => $user->id,
             ]);
 
-            // Handle user profile image
+            // Handle uploading the user profile image
             if (isset($data['User_image'])) {
                 $image = $data['User_image'];
                 $imageName = Str::random(32) . '.' . $image->getClientOriginalExtension();
                 $path = $image->storeAs('private_users/profile/images', $imageName, 'public');
 
                 $imageData = [
-                    'mime_type' =>Str::after($image->getClientMimeType(), '/'),
+                    'mime_type' => Str::after($image->getClientMimeType(), '/'),
                     'image_path' => Storage::url($path),
                     'image_name' => $imageName,
-                    'tage' => 'profile',
+                    'tage' => 'profile', // typo: should probably be 'tag'
                 ];
 
                 $user->image()->create($imageData);
             }
 
-            // Handle car images
+            // Handle uploading car images (if multiple)
             if (isset($data['car_images']) && is_array($data['car_images'])) {
                 foreach ($data['car_images'] as $carImage) {
                     $imageName = Str::random(32) . '.' . $carImage->getClientOriginalExtension();
                     $path = $carImage->storeAs('private_users/car/images', $imageName, 'public');
 
                     $imageData = [
-                        'mime_type' =>Str::after($carImage->getClientMimeType(), '/'),
+                        'mime_type' => Str::after($carImage->getClientMimeType(), '/'),
                         'image_path' => Storage::url($path),
                         'image_name' => $imageName,
-                        'tage' => 'car',
+                        'tage' => 'car', // typo: should probably be 'tag'
                     ];
 
                     $user->image()->create($imageData);
                 }
             }
 
+            // Return success response
             return [
                 'message' => __('request.request_created_successfully'),
                 'data' => $request,
@@ -73,6 +71,7 @@ class RequestService
             ];
 
         } catch (Exception $e) {
+            // Log the exception
             Log::error('Error in createRequest: ' . $e->getMessage());
 
             return [
@@ -85,33 +84,34 @@ class RequestService
     }
 
     /**
-     * Change the status of the request.
+     * Update the status of a given request (e.g., accepted or rejected).
      *
-     * @param array $data
-     * @param Request $request
-     * @return array
+     * @param array $data The new status value (e.g., "accepted", "rejected")
+     * @param Request $request The request model instance to be updated
+     * @return array Response with message, status, and data
      */
-    public function changeStatus($data, Request $request)
+    public function updataStatus($data, Request $request)
     {
         try {
-            // Update the status of the request
+            // Update the status field on the request model
             $request->update([
-                'status' => $data['status'],  // New status to be updated
+                'status' => $data['status'], // Will be converted via setStatusAttribute
             ]);
 
             return [
-                'message' => __('request.status_updated_successfully'),  // Success message for status update
-                'data' => $request,  // The updated request data
-                'status' => 200,  // HTTP status code 200 indicating success
+                'message' => __('request.status_updated_successfully'),
+                'data' => $request,
+                'status' => 200,
             ];
+
         } catch (Exception $e) {
-            // Log the error in the system logs
+            // Log any exception that occurs
             Log::error('Error in changeStatus: ' . $e->getMessage());
 
             return [
-                'status' => 500,  // HTTP status code 500 indicating internal server error
+                'status' => 500,
                 'message' => [
-                    'errorDetails' => __('request.general_error'),  // General error message
+                    'errorDetails' => __('request.general_error'),
                 ],
             ];
         }

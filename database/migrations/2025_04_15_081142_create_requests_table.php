@@ -14,7 +14,7 @@ return new class extends Migration {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->text('about_user');
-            $table->enum('status', ['1', '2', '3']);
+            $table->unsignedTinyInteger('status')->default(0);
             $table->string('car_type');
             $table->timestamps();
         });

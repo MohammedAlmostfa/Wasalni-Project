@@ -30,10 +30,10 @@ return [
     // =======================
     // Trip-related notifications
     // =======================
-    'trip_completed' => [
+    'trip_Ending' => [
         'title' => [
-            'en' => 'Trip Completed',
-            'ar' => 'اكتملت الرحلة',
+            'en' => 'Trip Ending',
+            'ar' => 'انتهت الرحلة',
         ],
     ],
 

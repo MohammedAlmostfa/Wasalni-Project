@@ -2,53 +2,76 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
+/**
+ * Class Request
+ *
+ * This model represents a user's request to join as a private driver,
+ * including status management and relationship with the user.
+ *
+ * @package App\Models
+ */
 class Request extends Model
 {
     use HasFactory;
-    protected $fillable = [
-       'user_id',      // Foreign key for the associated user
-       'about_user',   // A description or additional details about the user
-       'status',       // The status of the request (e.g., pending, approved, etc.)
-       'car_type',     // Type of car associated with the request (e.g., SUV, sedan, etc.)
-    ];
 
     /**
-     * Status mapping for human-readable conversion
-     */
-    const STATUS_MAP = [
-   0 => 'pending',
-            1 => 'accepted',
-            2 => 'rejected',
-    ];
-
-    /**
-     * Get human-readable status from stored integer value
+     * The attributes that are mass assignable.
      *
-     * @param int $value The stored status value
-     * @return string Human-readable status
+     * @var array<int, string>
+     */
+    protected $fillable = [
+        'user_id',      // Foreign key linking to the user
+        'about_user',   // Description or additional info about the user
+        'status',       // Status of the request (mapped using statusMap)
+        'car_type',     // Car type provided in the request
+    ];
+
+    /**
+     * Mapping of status codes to human-readable strings.
+     *
+     * @var array<int, string>
+     */
+    protected static array $statusMap = [
+        0 => 'pending',
+        1 => 'accepted',
+        2 => 'rejected',
+    ];
+
+    /**
+     * Accessor for the `status` attribute.
+     * Converts integer value from DB into readable string.
+     *
+     * @param mixed $value
+     * @return string
      */
     public function getStatusAttribute($value): string
     {
-        return self::STATUS_MAP[$value] ?? 'Unknown';
+        return self::$statusMap[$value] ?? 'Unknown';
     }
 
     /**
-     * Set status by converting human-readable string to stored integer value
+     * Mutator for the `status` attribute.
+     * Converts string input (like "accepted") to numeric value before saving.
      *
-     * @param string $value Human-readable status
+     * @param mixed $value
+     * @return void
      */
     public function setStatusAttribute($value): void
     {
-        $flippedMap = array_flip(self::STATUS_MAP);
+        $flippedMap = array_flip(self::$statusMap);
+        Log::info("Setting status: {$value} => " . ($flippedMap[$value] ?? 'invalid'));
+
+        // Default to 'pending' if input is invalid
         $this->attributes['status'] = $flippedMap[$value] ?? 0;
     }
 
     /**
-     * Define the relationship between PrivateUser and User.
-     * A PrivateUser belongs to one User (one-to-many relationship).
+     * Defines the inverse one-to-many relationship with the User model.
+     * A request belongs to a single user.
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */

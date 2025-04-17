@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Policies;
 
 use App\Models\Request;
@@ -17,9 +16,14 @@ class RequestPolicy
      */
     public function update(User $user, Request $request): Response|bool
     {
-        // Check if the user has permission to update the request
-        if (!$user->can('update.request')) {
+
+        if (!$user->can('request.update')) {
             return Response::deny(__('request.update_permission_denied'), 403);
+        }
+
+
+        if ($request->status !== 'pending') {
+            return Response::deny(__('request.status_update_not_allowed'), 403);
         }
 
         return true;

@@ -40,6 +40,9 @@ class RolePermissionSeeder extends Seeder
         $acceptBookingPermission = Permission::create(['name' => 'booking.accept', 'guard_name' => 'api']);
         $rejectBookingPermission = Permission::create(['name' => 'booking.reject', 'guard_name' => 'api']);
         $cancelBookingPermission = Permission::create(['name' => 'booking.cancel', 'guard_name' => 'api']);
+        $updataRequestPermission = Permission::create(['name' => 'request.update', 'guard_name' => 'api']);
+
+
 
         // Assign permissions to the 'PrivateUser' role
         // This gives the 'PrivateUser' role the ability to perform the actions defined in the permissions above
@@ -54,7 +57,9 @@ class RolePermissionSeeder extends Seeder
             $rejectBookingPermission,
             $cancelBookingPermission,
         ]);
-
+        $adminRole->givePermissionTo([
+         $updataRequestPermission,
+        ]);
         // Define the image to be associated with users (profile picture)
         // This is the image data that will be assigned to the users in the seeder
         $image = [

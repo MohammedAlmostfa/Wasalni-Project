@@ -14,20 +14,20 @@ class NewNotification extends Notification
 {
     use Queueable;
 
-    protected $title;
-    protected $cityfrom;
-    protected $cityto;
-    protected $type;
+    protected $notify_title;
+    protected $notify_from;
+    protected $notify_to;
+    protected $notify_type;
 
     /**
      * Constructor
      */
-    public function __construct(array $cityfrom, array $cityto, array $title, string $type)
+    public function __construct(array $notify_from, array $notify_to, array $notify_title, string $notify_type)
     {
-        $this->title = $title;
-        $this->cityfrom = $cityfrom;
-        $this->cityto = $cityto;
-        $this->type = $type;
+        $this->notify_title = $notify_title;
+        $this->notify_from = $notify_from;
+        $this->notify_to = $notify_to;
+        $this->notify_type = $notify_type;
     }
 
     /**
@@ -69,14 +69,11 @@ class NewNotification extends Notification
         $messaging = $firebaseFactory->createMessaging();
 
         $message = CloudMessage::new()
-            ->withNotification([
-                'title' => $this->title, // The notification title
-
-            ])->withData([
-                 'title' => $this->title,
-                'from' => $this->cityfrom,
-                'to' => $this->cityto,
-                'type' => $this->type,
+           ->withData([
+                'notify_title' => json_encode($this->notify_title, JSON_UNESCAPED_UNICODE),
+                'notify_from' => json_encode($this->notify_from, JSON_UNESCAPED_UNICODE),
+                'notify_to' => json_encode($this->notify_to, JSON_UNESCAPED_UNICODE),
+                'notify_type' => (string)$this->notify_type,
             ]);
 
         try {

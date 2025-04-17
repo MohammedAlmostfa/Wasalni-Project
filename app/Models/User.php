@@ -91,7 +91,7 @@ class User extends Authenticatable implements JWTSubject
     public function favorites()
     {
         return $this->belongsToMany(User::class, 'favorite_people', 'user_id', 'favorite_user_id')
-                    ->withTimestamps();
+            ->withTimestamps();
     }
 
     /**
@@ -102,7 +102,7 @@ class User extends Authenticatable implements JWTSubject
     public function favoritedBy()
     {
         return $this->belongsToMany(User::class, 'favorite_people', 'favorite_user_id', 'user_id')
-                    ->withTimestamps();
+            ->withTimestamps();
     }
 
     /**

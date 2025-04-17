@@ -14,21 +14,21 @@ class SendFcmNotificationJob implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     protected $user;
-    protected $title;
-    protected $cityfrom;
-    protected $cityto;
-    protected $type;
+    protected $notify_title;
+    protected $notify_from;
+    protected $notify_to;
+    protected $notify_type;
 
     /**
      * Create a new job instance.
      */
-    public function __construct($user, array $cityfrom, array $cityto, array $title, string $type)
+    public function __construct($user, array $notify_from, array $notify_to, array $notify_title, string $notify_type)
     {
         $this->user = $user;
-        $this->title = $title;
-        $this->cityfrom = $cityfrom;
-        $this->cityto = $cityto;
-        $this->type = $type;
+        $this->notify_title = $notify_title;
+        $this->notify_from = $notify_from;
+        $this->notify_to = $notify_to;
+        $this->notify_type = $notify_type;
     }
 
     /**
@@ -38,10 +38,10 @@ class SendFcmNotificationJob implements ShouldQueue
     {
 
         $this->user->notify(new NewNotification(
-            $this->title,
-            $this->cityfrom,
-            $this->cityto,
-            $this->type
+            $this->notify_title,
+            $this->notify_from,
+            $this->notify_to,
+            $this->notify_type
         ));
 
 

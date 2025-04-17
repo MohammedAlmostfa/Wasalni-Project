@@ -14,18 +14,18 @@ class RequestObserver
      */
     public function updated(Request $request): void
     {
+        if (!$request->isDirty('status')) {
+            return;
+        }
+
         $user = User::findOrFail($request->user_id);
 
-        // If the request was accepted
         if ($request->status === 'accepted') {
-            // Assign the "PrivateUser" role if not already assigned
             if (!$user->hasRole('PrivateUser')) {
                 $user->assignRole('PrivateUser');
             }
 
-            // Optional: Update pivot table if your role-user relation supports it
             $privateUserRole = Role::where('name', 'PrivateUser')->first();
-
             if ($privateUserRole) {
                 $user->roles()->updateExistingPivot($privateUserRole->id, [
                     'about_user' => $request->about_user,
@@ -33,11 +33,18 @@ class RequestObserver
                 ]);
             }
 
-            // Send accepted notification
-            SendFcmNotificationJob::dispatch($user, __('notifications.driver_accepted.title'), __('notifications.driver_accepted.message'));
-        } else {
-            // Send rejected notification
-            SendFcmNotificationJob::dispatch($user, __('notifications.driver_rejected.title'), __('notifications.driver_rejected.message'));
+            // Send notification
+            // SendFcmNotificationJob::dispatch($user, __('notifications.driver_accepted.title'), __('notifications.driver_accepted.message'));
+        } elseif($request->status === 'rejected') {
+            if ($user->image) {
+                $user->image()->delete();
+            }
+
+            if ($user->carImage) {
+                $user->carImage()->delete();
+            }
+
+            // SendFcmNotificationJob::dispatch($user, __('notifications.driver_rejected.title'), __('notifications.driver_rejected.message'));
         }
     }
 

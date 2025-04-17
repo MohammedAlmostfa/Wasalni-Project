@@ -103,11 +103,14 @@ class TripObserver
             $users = $trip->bookings->where('status', 'accepted')  ->map(function ($booking) {
                 return $booking->user;
             });
+            $cityfrom =$trip->cityFrom->city_name;
+            $cityto =$trip->cityTo->city_name;
 
 
             // Loop through each user and send a notification about the trip ending
             foreach ($users as $user) {
-                SendFcmNotificationJob::dispatch($user, __('notifications.trip_Completion.title'), __('notifications.trip_Completion.message'));
+                SendFcmNotificationJob::dispatch($user, $cityto, $cityfrom, __('notifications.trip_Ending.title'), 'trip_Ending');
+
             }
         }
     }
@@ -127,13 +130,16 @@ class TripObserver
         if ($trip->status !== 'Complete') {
             $trip->status = 'Complete'; // Set status to "Complete"
             $trip->save(); // Save the updated trip
+            $cityfrom =$trip->cityFrom->city_name;
+            $cityto =$trip->cityTo->city_name;
 
             // Get the user who created the trip
             $userid = $trip->user_id;
             $user = User::findOrFail($userid);
 
             // Send a notification to the user
-            SendFcmNotificationJob::dispatch($user, __('notifications.trip_completed.title'), __('notifications.trip_completed.message'));
+            SendFcmNotificationJob::dispatch($user, $cityto, $cityfrom, __('notifications.trip_booking_completed.title'), 'trip_booking_completed');
+
         }
     }
 
