@@ -24,9 +24,8 @@ Wasalni is a backend system developed using Laravel to support a Flutter-based m
 
 -   **Backend Framework**: Laravel (PHP)
 -   **Database**: MySQL
--   **Authentication**: Laravel Sanctum
+-   **Authentication**: Laravel jwt
 -   **Notifications**: Firebase Cloud Messaging (FCM)
--   **API Documentation**: Swagger/OpenAPI
 
 ## 📂 Project Structure
 
