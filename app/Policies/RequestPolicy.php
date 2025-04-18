@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Policies;
 
 use App\Models\Request;
@@ -7,6 +8,28 @@ use Illuminate\Auth\Access\Response;
 
 class RequestPolicy
 {
+    /**
+     * Determine whether the user can create a request.
+     *
+     * @param User $user
+     * @param Request $request
+     * @return \Illuminate\Auth\Access\Response|bool
+     */
+    public function create(User $user, Request $request): Response|bool
+    {
+
+        if ($user->hasRole('PrivateUser')) {
+            return Response::deny(__('request.create_permission_denied'), 403);
+        }
+
+
+        if ($user->requests()->where('status', 'pending')->exists()) {
+            return Response::deny(__('request.pending_request_exists'), 403);
+        }
+
+        return true;
+    }
+
     /**
      * Determine whether the user can update the model.
      *

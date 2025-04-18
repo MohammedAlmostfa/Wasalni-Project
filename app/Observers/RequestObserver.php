@@ -9,6 +9,8 @@ use App\Jobs\SendFcmNotificationJob;
 
 class RequestObserver
 {
+
+
     /**
      * Handle the Request "updated" event.
      */
