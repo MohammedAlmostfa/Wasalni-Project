@@ -23,54 +23,66 @@ class TripService
     {
         try {
             $cityId = auth()->check() ? auth()->user()->profile->city_id : null;
+            $page = request('page', 1);
+            $cacheKey = 'trips' . $page . (empty($filteringData) ? '' : md5(json_encode($filteringData)));
+            $cacheKeys = Cache::get('all_trips_keys', []);
 
-            $trips = Trip::with([
-                'user' => function ($query) {
-                    $query->withAvg('tripRatings as avg_driver_rating', 'rate')->withCount('tripRatings as number_of_rating');
-                },
-                   'user.profile' => function ($query) {
-                       $query->select('user_id', 'first_name', 'last_name');
-                   },
-                'cityFrom' => function ($query) {
-                    $query->select('id', 'city_name');
-                },
-                'cityTo' => function ($query) {
-                    $query->select('id', 'city_name');
-                },
-                'savedByUsers' => function ($query) {
-                    $query->where('user_id', auth()->id());
-                },
-                'user.image'
-            ])
-                ->select([
-                    'id AS trip_id',
-                    'description',
-                    'status',
-                    'to',
-                    'from',
-                    'user_id',
-                    'trip_start',
-                    'seat_price',
-                    'available_seats',
-                    'created_at',
-                ])
-                ->addSelect([
-                    DB::raw('CASE WHEN EXISTS (SELECT 1 FROM trip_user WHERE trip_user.trip_id = trips.id AND trip_user.user_id = ' . auth()->id() . ') THEN 1 ELSE 0 END AS is_saved'),
-                    DB::raw($cityId ? "CASE WHEN trips.from = {$cityId} THEN 0 ELSE 1 END AS city_priority" : "1 AS city_priority")
-                ])
-                ->when(!empty($filteringData), function ($query) use ($filteringData) {
-                    $query->filterBy($filteringData);
-                })
+            if (!in_array($cacheKey, $cacheKeys)) {
+                $cacheKeys[] = $cacheKey;
+                Cache::put('all_trips_keys', $cacheKeys, now()->addHours(2));
+            }
 
-                ->when(isset($filteringData['order_asc']), function ($query) use ($filteringData) {
-                    $query->orderBy($filteringData['order_asc'], 'asc');
-                })
-                ->when(isset($filteringData['order_desc']), function ($query) use ($filteringData) {
-                    $query->orderBy($filteringData['order_desc'], 'desc');
-                })
-                ->orderBy('trip_start', 'asc')
-                ->orderBy('city_priority', 'asc')
-                ->paginate(10);
+            return Cache::remember($cacheKey, now()->addMinutes(120), function () use ($filteringData, $cityId) {
+                $trips = Trip::with([
+                    'user' => function ($query) {
+                        $query->withAvg('tripRatings as avg_driver_rating', 'rate')
+                            ->withCount('tripRatings as number_of_rating');
+                    },
+                    'user.profile' => function ($query) {
+                        $query->select('user_id', 'first_name', 'last_name');
+                    },
+                    'cityFrom' => function ($query) {
+                        $query->select('id', 'city_name');
+                    },
+                    'cityTo' => function ($query) {
+                        $query->select('id', 'city_name');
+                    },
+                    'savedByUsers' => function ($query) {
+                        $query->where('user_id', auth()->id());
+                    },
+                    'user.image'
+                ])
+                    ->select([
+                        'id AS trip_id',
+                        'description',
+                        'status',
+                        'to',
+                        'from',
+                        'user_id',
+                        'trip_start',
+                        'seat_price',
+                        'available_seats',
+                        'created_at',
+                    ])
+                    ->addSelect([
+                        DB::raw('CASE WHEN EXISTS (SELECT 1 FROM trip_user WHERE trip_user.trip_id = trips.id AND trip_user.user_id = ' . auth()->id() . ') THEN 1 ELSE 0 END AS is_saved'),
+                        DB::raw($cityId ? "CASE WHEN trips.from = {$cityId} THEN 0 ELSE 1 END AS city_priority" : "1 AS city_priority")
+                    ])
+                    ->when(!empty($filteringData), function ($query) use ($filteringData) {
+                        $query->filterBy($filteringData);
+                    })
+                    ->when(isset($filteringData['order_asc']), function ($query) use ($filteringData) {
+                        $query->orderBy($filteringData['order_asc'], 'asc');
+                    })
+                    ->when(isset($filteringData['order_desc']), function ($query) use ($filteringData) {
+                        $query->orderBy($filteringData['order_desc'], 'desc');
+                    })
+                    ->orderBy('trip_start', 'asc')
+                    ->orderBy('city_priority', 'asc')
+                    ->paginate(10);
+
+                return $trips;
+            });
 
             return [
                 'message' => __('trip.show_trips_success'),
@@ -97,7 +109,7 @@ class TripService
      * @param array $filteringData An array of filtering criteria.
      * @return array Contains the status, message, and paginated trip data.
      */
-    public function showhisTrips($filteringData)
+    public function showHisTrips($filteringData)
     {
         try {
             /** @var \App\Models\User $user */
@@ -144,7 +156,7 @@ class TripService
      * @param int $id The ID of the user whose trips are being retrieved.
      * @return array Contains the status, message, and paginated trip data.
      */
-    public function showuserTrips($filteringData, $id)
+    public function showUserTrips($filteringData, $id)
     {
         try {
             $user = User::findorfail($id);
@@ -189,7 +201,7 @@ class TripService
      * @param array $data An array of trip data (e.g., description, trip_start, from, to, etc.).
      * @return array Contains the status, message, and created trip data.
      */
-    public function creattrip($data)
+    public function creatTrip($data)
     {
         try {
             // Create a new trip
@@ -203,10 +215,7 @@ class TripService
                 'available_seats' => $data['available_seats'],
                 'user_id' => Auth::user()->id,
             ]);
-            //forget  trips chache
-
-            Cache::forget('trips');
-
+    
             // Retrieve city names for 'from' and 'to' fields
             $fromCity = City::findorfail($data['from']);
             $toCity = City::findorfail($data['to']);
@@ -238,7 +247,7 @@ class TripService
      * @param Trip $trip The trip model to be updated.
      * @return array Contains the status, message, and updated trip data.
      */
-    public function updatetrip($data, Trip $trip)
+    public function updateTrip($data, Trip $trip)
     {
         try {
             // Update the trip with the provided data
@@ -251,8 +260,7 @@ class TripService
                 'seat_price' => $data['seat_price'] ?? $trip->seat_price,
                 'available_seats' => $data['available_seats'] ?? $trip->available_seats,
             ]);
-            //forget  trips chache
-            Cache::forget('trips');
+      
 
             // Retrieve city names for 'from' and 'to' fields
             $fromCity = City::findorfail($trip->from);
@@ -284,7 +292,7 @@ class TripService
      * @param Trip $trip The trip model to be deleted.
      * @return array Contains the status and message.
      */
-    public function delettrip(Trip $trip)
+    public function deleteTrip(Trip $trip)
     {
         try {
             // Delete the trip
@@ -346,7 +354,7 @@ class TripService
      * @param int $id The ID of the trip to be marked as ending.
      * @return array Contains the status and message.
      */
-    public function Onthethewaytrip($id)
+    public function OnTheWayTrip($id)
     {
         try {
             // Find the trip by ID

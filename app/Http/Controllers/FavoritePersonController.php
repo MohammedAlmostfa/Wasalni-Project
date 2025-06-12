@@ -72,10 +72,8 @@ class FavoritePersonController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function remove(removeFavoritePersonRequest $request)
-    {// Validate the incoming request data
+    { // Validate the incoming request data
         $validationData = $request->validated();
-
-
 
         // Remove the favorite person using the FavoritePersonService
         $result = $this->favoritePersonService->removeFromFavorite($validationData);

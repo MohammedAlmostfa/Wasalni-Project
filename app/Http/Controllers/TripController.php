@@ -77,7 +77,7 @@ class TripController extends Controller
         $validationData = $request->validated();
 
         // Retrieve trips for the authenticated user via the trip service
-        $result = $this->tripService->showhisTrips($validationData);
+        $result = $this->tripService->showHisTrips($validationData);
 
         // Return paginated response if status is 200, or return an error message
         return $result['status'] === 200
@@ -100,7 +100,7 @@ class TripController extends Controller
         $validationData = $request->validated();
 
         // Call the service to retrieve trips for the specified user
-        $result = $this->tripService->showuserTrips($validationData, $id);
+        $result = $this->tripService->showUserTrips($validationData, $id);
 
         // Return paginated response if the status is 200; otherwise, return an error message
         return $result['status'] === 200
@@ -125,7 +125,7 @@ class TripController extends Controller
         $validationData = $request->validated();
 
         // Call the trip service to create the trip
-        $result = $this->tripService->creattrip($validationData);
+        $result = $this->tripService->creatTrip($validationData);
 
         // Return success or error response based on the result from the trip service
         return $result['status'] === 200
@@ -173,7 +173,7 @@ class TripController extends Controller
         $this->authorize('deletetrip', $trip);
 
         // Call the trip service to delete the trip
-        $result = $this->tripService->delettrip($trip);
+        $result = $this->tripService->deleteTrip($trip);
 
         // Return a success or error response based on the deletion result
         return $result['status'] === 200

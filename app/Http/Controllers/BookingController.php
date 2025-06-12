@@ -43,7 +43,7 @@ class BookingController extends Controller
         $validateddata = $request->validated();
 
         // Retrieve bookings for the current authenticated user
-        $result = $this->BookingService->showmybooking($validateddata);
+        $result = $this->BookingService->showMyBooking($validateddata);
 
         return $result['status'] === 200
                 ? response()->json([
@@ -73,7 +73,7 @@ class BookingController extends Controller
         $this->authorize('showbookingsbytrip', $id);
 
         // Retrieve bookings for the specified trip
-        $result = $this->BookingService->showbookingsbytrip($id);
+        $result = $this->BookingService->showBookingsByTrip($id);
 
         // Return a success or error response based on the result
         return $result['status'] === 200
@@ -157,7 +157,7 @@ class BookingController extends Controller
         $this->authorize('cancel', $booking, Booking::class);
 
         // Call the service to cancel the booking
-        $result = $this->BookingService->cancelbooking($booking);
+        $result = $this->BookingService->cancelBooking($booking);
 
         // Return a success or error response based on the result
         return $result['status'] === 200

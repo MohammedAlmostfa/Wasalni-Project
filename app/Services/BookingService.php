@@ -8,6 +8,7 @@ use App\Models\Booking;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 
 class BookingService
 {
@@ -17,7 +18,7 @@ class BookingService
      * @param array $filteringData An associative array of filtering criteria (e.g., ['status' => 1, 'seats_number' => 2]).
      * @return array Response containing status, message, and data.
      */
-    public function showmybooking($filteringData)
+    public function showMyBooking($filteringData)
     {
         try {
             // Retrieve the authenticated user
@@ -103,21 +104,18 @@ class BookingService
      * @param int $id The ID of the trip.
      * @return array Response containing status, message, and data.
      */
-    public function showbookingsbytrip($id)
+    public function showBookingsByTrip($id)
     {
         try {
-            // Retrieve the trip by ID or fail if not found
-            $trip = Trip::findOrFail($id);
-
             // Fetch all bookings for the trip with user and profile details
-            $bookings = $trip->bookings()->with([
+            $bookings = Booking::with([
                 'user' => function ($query) {
                     $query->select('id'); // Load only the user ID
                 },
                 'user.profile' => function ($query) {
                     $query->select('user_id', 'first_name', 'last_name'); // Load profile details
                 }
-            ])->paginate(10); // Fetch bookings with pagination
+            ])->wherr('trip_id',$id)->paginate(10); // Fetch bookings with pagination
 
             // Return a success response with the bookings data
             return [
@@ -152,6 +150,14 @@ class BookingService
             $user = Auth::user(); // Get the authenticated user
 
             // Check if the user already has pending bookings for the same trip
+            $lock = Cache::lock('trip-' . $data['trip_id'] . '-lock', 10);
+
+            if (!$lock->get()) {
+                return [
+                    'status' => 429, // Too Many Requests
+                    'message' => __('booking.try_again_later'),
+                ];
+            }
             $pendingBookings = $user->bookings()
                 ->where('trip_id', $data['trip_id'])
                 ->where('status', 'pending')
@@ -271,7 +277,7 @@ class BookingService
      * @param Booking $booking The booking to cancel.
      * @return array Response containing status and message.
      */
-    public function cancelbooking(Booking $booking)
+    public function cancelBooking(Booking $booking)
     {
         try {
             // Check if the booking is already canceled

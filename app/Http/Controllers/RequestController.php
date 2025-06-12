@@ -27,22 +27,6 @@ class RequestController extends Controller
     }
 
     /**
-     * Show all requests (not implemented yet).
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * Show the form to create a new request (not implemented yet).
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created request in the database.
      *
      * @param StoreRequesData $request The validated request data
@@ -81,23 +65,4 @@ class RequestController extends Controller
             : self::error(null, $result['message'], $result['status']);
     }
 
-    /**
-     * Show the form to edit an existing request (not implemented yet).
-     *
-     * @param Request $request
-     */
-    public function edit(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Delete an existing request (not implemented yet).
-     *
-     * @param Request $request
-     */
-    public function destroy(Request $request)
-    {
-        //
-    }
 }

@@ -2,12 +2,16 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Models\Booking;
+use App\Models\City;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Foundation\Auth\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 
 class Trip extends Model
 {
@@ -35,15 +39,15 @@ class Trip extends Model
      * @var array<string, string>
      */
     protected $casts = [
-       'trip_start' => 'datetime',
-       'description' => 'string',
-       'from' => 'integer',
-       'to' => 'integer',
-       'status' => 'integer',
-       'seat_price' => 'integer',
-       'available_seats' => 'integer',
-       'user_id' => 'integer',
-];
+        'trip_start' => 'datetime',
+        'description' => 'string',
+        'from' => 'integer',
+        'to' => 'integer',
+        'status' => 'integer',
+        'seat_price' => 'integer',
+        'available_seats' => 'integer',
+        'user_id' => 'integer',
+    ];
 
 
     /**
@@ -128,6 +132,39 @@ class Trip extends Model
     {
         return $this->belongsToMany(User::class, 'trip_user', 'trip_id', 'user_id');
     }
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::created(function ($trip) {
+            self::clearTripCache();
+        });
+
+        static::updated(function ($trip) {
+            self::clearTripCache();
+        });
+
+        static::deleted(function ($trip) {
+            self::clearTripCache();
+        });
+    }
+
+    /**
+     * Clears cached customer data.
+     *
+     * Ensures that old cached records do not interfere with updated or deleted customer entries.
+     *
+     * @return void
+     */
+    protected static function clearTripCache()
+    {
+        $cacheKeys = Cache::get('all_trips_keys', []) ?? [];
+        foreach ($cacheKeys as $key) {
+            Cache::forget($key);
+        }
+        Cache::forget('all_trips_keys');
+    }
+
 
 
     /**
@@ -174,12 +211,10 @@ class Trip extends Model
 
         if (isset($filteringData['seat_price'])) {
             $model->where('seat_price', '<=', $filteringData['seat_price']);
-
         }
 
         if (isset($filteringData['available_seats'])) {
             $model->where('available_seats', '=', $filteringData['available_seats']);
-
         }
 
         return $model;
