@@ -7,7 +7,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class StorRatingRequest extends FormRequest
+class StoreRatingData extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,9 +25,9 @@ class StorRatingRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "booking_id"=>'required|integer|exists:bookings,id',
-            "rate"=>"required|integer|between:1,5",
-            "review"=>"nullable|string"
+            'rate'          => 'required|integer|min:1|max:5',
+            'review'        => 'required|string|max:1000',
+            'rated_user_id' => 'required|exists:users,id',
         ];
     }
     /**

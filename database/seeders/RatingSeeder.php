@@ -18,7 +18,7 @@ class RatingSeeder extends Seeder
         for ($i = 1; $i < 100; $i++) {
             Rating::create([
                 'user_id' => $faker->numberBetween(1, 10),
-                'booking_id'=>$i,
+                'rated_user_id' => $faker->numberBetween(1, 10),
                 'rate'=>$faker->numberBetween(1, 5),
                 'review'=> $faker->sentence,
             ]);

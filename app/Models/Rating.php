@@ -2,43 +2,38 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Rating extends Model
 {
-    use HasFactory;
-
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
     protected $fillable = [
-        "booking_id",
-        "rate",
-        "review",
-        "user_id",
+        'user_id',
+        'rate',
+        'review',
+        "rated_user_id"
+    ];
+
+    protected $casts = [
+        'user_id' => 'integer',
+        'rated_user_id' => 'integer',
+        'rate' => 'integer',
+        'review' => 'string',
     ];
 
     /**
-     * Define a relationship with the Booking model.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * The user who **gave** the rating.
      */
-    public function booking(): BelongsTo
+    public function reviewer(): BelongsTo
     {
-        return $this->belongsTo(Booking::class);
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     /**
-     * Define a relationship with the User model.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * The user who **received** the rating.
      */
-    public function user(): BelongsTo
+    public function ratedUser(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'rated_user_id');
     }
 }

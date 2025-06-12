@@ -2,15 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Booking;
-use Illuminate\Http\Request;
-use App\Services\BookingService;
-use App\Http\Resources\BookingResource;
-use App\Http\Resources\MyBookingResource;
-use App\Http\Resources\GroupedBookingResource;
-use App\Http\Requests\Bookingrequest\FilterinBookingData;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\BookingRequest\FilterinBookingData;
 use App\Http\Requests\BookingRequest\StoreBookingRequest;
 use App\Http\Requests\BookingRequest\UpdateBookingRequest;
+use App\Http\Resources\BookingResource;
+use App\Http\Resources\GroupedBookingResource;
+use App\Models\Booking;
+use App\Services\BookingService;
 
 class BookingController extends Controller
 {

@@ -33,12 +33,12 @@ class UserService
             $users = User::whereHas('profile', function ($query) use ($city_id) {
                 $query->where('city_id', $city_id);
             })
-            ->whereHas('roles', function ($query) {
-                $query->where('name', 'PrivateUser');
-            })
-            ->with('profile:id,user_id,first_name,last_name') // Load limited profile details
-            ->select('id') // Select user IDs only
-            ->get();
+                ->whereHas('roles', function ($query) {
+                    $query->where('name', 'PrivateUser');
+                })
+                ->with('profile:id,user_id,first_name,last_name') // Load limited profile details
+                ->select('id') // Select user IDs only
+                ->get();
 
             return [
                 'message' => __('user.private_user_retrieved'),
@@ -69,24 +69,24 @@ class UserService
                 'profile' => function ($query) {
                     $query->select('user_id', 'first_name', 'last_name', 'birthday');
                 },
-              'tripproperies' => function ($query) {
-                  $query->select('attributes'); // تحميل البيانات بشكل صحيح
-              },
+                'tripproperies' => function ($query) {
+                    $query->select('attributes');
+                },
 
                 'tripRatings' => function ($query) {
                     $query->select('ratings.id', 'ratings.rate', 'ratings.review', 'ratings.user_id', 'ratings.created_at')
-                    ->with(['user.profile' => function ($query) {
-                        $query->select('id', 'user_id', 'first_name', 'last_name', 'phone');
-                    }]);
+                        ->with(['user.profile' => function ($query) {
+                            $query->select('id', 'user_id', 'first_name', 'last_name', 'phone');
+                        }]);
                 },
                 'roles' => function ($query) {
-                    $query->select('roles.id', 'roles.name')->withPivot('about_User', 'car_Type', );
+                    $query->select('roles.id', 'roles.name')->withPivot('about_User', 'car_Type',);
                 },
-'image',
+                'image',
             ])
-            ->withCount('trips as User_trips_count') // Count the number of trips
-            ->withAvg('tripRatings as avg_rating', 'rate') // Calculate average trip rating
-            ->find($user->id);
+                ->withCount('trips as User_trips_count') // Count the number of trips
+                ->withAvg('tripRatings as avg_rating', 'rate') // Calculate average trip rating
+                ->find($user->id);
 
             // Validate if user data exists
             if (!$UserData) {

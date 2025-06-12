@@ -6,7 +6,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class UpdateRatingRequest extends FormRequest
+class UpdateRatingData extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,8 +24,8 @@ class UpdateRatingRequest extends FormRequest
     public function rules(): array
     {
         return [
-             'rate' => 'nullable|integer|between:1,5',
-            "review"=>"nullable|string"
+            'rate'   => 'nullable|integer|min:1|max:5',
+            'review' => 'nullable|string|max:1000',
         ];
     }
     /**

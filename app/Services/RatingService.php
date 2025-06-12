@@ -1,111 +1,106 @@
-<?php
+<?php 
 
 namespace App\Services;
 
-use Exception;
 use App\Models\Rating;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Auth;
+use Exception;
 
+/**
+ * Class RatingService
+ * 
+ * Handles the business logic related to user ratings, including retrieval, creation, updating, and deletion.
+ */
 class RatingService
 {
-    /**
-     * Create a new rating.
-     *
-     * @param array $data Contains rate, review, and booking_id.
-     * @return array Contains message, data (created rating), and status.
-     */
-    public function createRating($data)
-    {
-        try {
-            // Create a new rating
-            $rating = Rating::create([
-                'rate' => $data['rate'],
-                'review' => $data['review'],
-                'booking_id' => $data['booking_id'],
-                'user_id' => Auth::user()->id,]);
-
-            return [
-                'message' => __('rating.rating_created_successfully'),
-                'data' => $rating,
-                'status' => 200,
-            ];
-        } catch (Exception $e) {
-            // Log the error if an exception occurs
-            Log::error('Error in createRating: ' . $e->getMessage());
-
-            // Return an error message and status
-            return [
-                'status' => 500,
-                'message' => [
-                  'errorDetails' => __('rating.general_error'),
-                ],
-            ];
-        }
-    }
+   
 
     /**
-     * Update an existing rating.
-     *
-     * @param array $data Contains rate, review, and booking_id (optional).
-     * @param Rating $rating The rating to be updated.
-     * @return array Contains message, data (updated rating), and status.
+     * Store a new rating in the database.
+     * 
+     * @param array $data Validated request data.
+     * @return array Response containing status and message.
      */
-    public function updateRating($data, $rating)
+    public function storeRate($data)
     {
         try {
-            // Update the rating
-            $rating->update([
-                'rate' => $data['rate'] ?? $rating->rate,
-                'review' => $data['review'] ?? $rating->review,
-                'booking_id' => $data['booking_id'] ?? $rating->booking_id,
+            // Create a new rating record
+            $rate = Rating::create([
+                'user_id'       => auth()->user()->id,  // Authenticated user
+                'rate'          => $data["rate"],       // Rating value (1-5)
+                'review'        => $data["review"],     // Optional review text
+                'rated_user_id' => $data["rated_user_id"], // ID of rated user
             ]);
 
             return [
-                'message' => __('rating.rating_updated_successfully'),
-                'data' => $rating,
-                'status' => 200,
+                'status'  => 200,
+                'message' => __('rate.create_successful'),
             ];
         } catch (Exception $e) {
-            // Log the error if an exception occurs
-            Log::error('Error in updateRating: ' . $e->getMessage());
+            // Log error and return failure response
+            Log::error('Error in storeRate: ' . $e->getMessage());
 
-            // Return an error message and status
             return [
-                'status' => 500,
-                'message' => [
-                   'errorDetails' => __('rating.general_error'),
-                ],
+                'status'  => 500,
+                'message' => __('general.failed'),
             ];
         }
     }
 
     /**
-     * Delete a rating.
-     *
-     * @param Rating $rating The rating to be deleted.
-     * @return array Contains message and status.
+     * Update an existing rating record.
+     * 
+     * @param Rating $rating The rating model instance to update.
+     * @param array $data Data for updating the rating.
+     * @return array Response containing status and message.
      */
-    public function deleteRating(Rating $rating)
+    public function updateRate(Rating $rating, $data)
     {
         try {
-            // Delete the rating
+            // Update provided fields only
+            $rating->update([
+                'rate'   => $data["rate"] ?? $rating->rate,
+                'review' => $data["review"] ?? $rating->review,
+            ]);
+
+            return [
+                'status'  => 200,
+                'message' => __('rate.update_successful'),
+            ];
+        } catch (Exception $e) {
+            // Log error and return failure response
+            Log::error('Error in updateRate: ' . $e->getMessage());
+
+            return [
+                'status'  => 500,
+                'message' => __('general.failed'),
+            ];
+        }
+    }
+
+    /**
+     * Soft delete a rating record.
+     * 
+     * @param Rating $rating The rating model instance to delete.
+     * @return array Response containing status and message.
+     */
+    public function deleteRate(Rating $rating)
+    {
+        try {
+            // Perform soft delete
             $rating->delete();
 
             return [
-                'message' => __('rating.rating_deleted_successfully'),
-                'status' => 200,
+                'status'  => 200,
+                'message' => __('rate.delete_successful'),
             ];
         } catch (Exception $e) {
-            // Log the error if an exception occurs
-            Log::error('Error in deleteRating: ' . $e->getMessage());
+            // Log error and return failure response
+            Log::error('Error in deleteRate: ' . $e->getMessage());
 
-            // Return an error message and status
             return [
-                'status' => 500,
-                'message' => [
-                    'errorDetails' => __('rating.general_error'),
-                ],
+                'status'  => 500,
+                'message' => __('general.failed'),
             ];
         }
     }

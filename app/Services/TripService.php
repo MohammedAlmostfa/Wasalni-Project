@@ -32,25 +32,21 @@ class TripService
                 Cache::put('all_trips_keys', $cacheKeys, now()->addHours(2));
             }
 
-            return Cache::remember($cacheKey, now()->addMinutes(120), function () use ($filteringData, $cityId) {
-                $trips = Trip::with([
+            $trips = Cache::remember($cacheKey, now()->addMinutes(120), function () use ($filteringData, $cityId) {
+                return Trip::with([
                     'user' => function ($query) {
-                        $query->withAvg('tripRatings as avg_driver_rating', 'rate')
-                            ->withCount('tripRatings as number_of_rating');
+                        $query->with([
+                            'profile:id,user_id,first_name,last_name',
+                            'image'
+                        ])
+                            ->withCount('receivedRatings as number_of_rating')
+                            ->withAvg('receivedRatings as avg_driver_rating', 'rate');
                     },
-                    'user.profile' => function ($query) {
-                        $query->select('user_id', 'first_name', 'last_name');
-                    },
-                    'cityFrom' => function ($query) {
-                        $query->select('id', 'city_name');
-                    },
-                    'cityTo' => function ($query) {
-                        $query->select('id', 'city_name');
-                    },
+                    'cityFrom:id,city_name',
+                    'cityTo:id,city_name',
                     'savedByUsers' => function ($query) {
                         $query->where('user_id', auth()->id());
-                    },
-                    'user.image'
+                    }
                 ])
                     ->select([
                         'id AS trip_id',
@@ -80,9 +76,8 @@ class TripService
                     ->orderBy('trip_start', 'asc')
                     ->orderBy('city_priority', 'asc')
                     ->paginate(10);
-
-                return $trips;
             });
+
 
             return [
                 'message' => __('trip.show_trips_success'),
@@ -90,7 +85,6 @@ class TripService
                 'status' => 200,
             ];
         } catch (Exception $e) {
-            // Log the error if an exception occurs
             Log::error('Error in showTrips: ' . $e->getMessage());
             return [
                 'status' => 500,
@@ -100,7 +94,6 @@ class TripService
             ];
         }
     }
-
 
 
     /**
@@ -215,7 +208,7 @@ class TripService
                 'available_seats' => $data['available_seats'],
                 'user_id' => Auth::user()->id,
             ]);
-    
+
             // Retrieve city names for 'from' and 'to' fields
             $fromCity = City::findorfail($data['from']);
             $toCity = City::findorfail($data['to']);
@@ -260,7 +253,7 @@ class TripService
                 'seat_price' => $data['seat_price'] ?? $trip->seat_price,
                 'available_seats' => $data['available_seats'] ?? $trip->available_seats,
             ]);
-      
+
 
             // Retrieve city names for 'from' and 'to' fields
             $fromCity = City::findorfail($trip->from);
@@ -330,7 +323,6 @@ class TripService
             $trip->update([
                 'status' => 'Ending',
             ]);
-
             return [
                 'message' => __('trip.end_success'),
                 'status' => 200,

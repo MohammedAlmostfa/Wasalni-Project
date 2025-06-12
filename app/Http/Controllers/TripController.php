@@ -119,7 +119,7 @@ class TripController extends Controller
     public function store(StoreTripRequest $request)
     {
         // Authorize the user to create a new trip
-        $this->authorize('createtrip', Trip::class);
+       $this->authorize('createtrip', Trip::class);
 
         // Validate the incoming data from the request
         $validationData = $request->validated();

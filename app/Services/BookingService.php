@@ -21,82 +21,52 @@ class BookingService
     public function showMyBooking($filteringData)
     {
         try {
-            // Retrieve the authenticated user
             $user = Auth::user();
 
             /** @var \App\Models\User $user */
-            // Fetch bookings related to the authenticated user and load related trip and profile data
             $bookings = $user->bookings()
                 ->with([
-                    // Load trip data with only required fields
                     'trip' => function ($query) {
-                        $query->select('id', 'user_id', 'trip_start', 'from', 'to', 'available_seats', 'seat_price'); // Select only the relevant columns for the trip
+                        $query->select('id', 'user_id', 'trip_start', 'from', 'to', 'available_seats', 'seat_price');
                     },
-
-                    // Load city data related to the trip's origin city (`cityFrom`)
-                    'trip.cityFrom' => function ($query) {
-                        $query->select('id', 'city_name'); // Select the `id` and `city_name` for the origin city
+                    'trip.cityFrom:id,city_name',
+                    'trip.cityTo:id,city_name',
+                    'trip.user' => function ($query) {
+                        $query->with([
+                            'profile:id,user_id,first_name,last_name',
+                            'image'
+                        ])
+                            ->withCount('receivedRatings as number_of_rating')
+                            ->withAvg('receivedRatings as avg_driver_rating', 'rate');
                     },
-
-                    // Load city data related to the trip's destination city (`cityTo`)
-                    'trip.cityTo' => function ($query) {
-                        $query->select('id', 'city_name'); // Select the `id` and `city_name` for the destination city
-                    },
-
-                  'trip.user' => function ($query) {
-                      $query->select('id', 'created_at')
-                            ->withAvg('tripRatings as avg_driver_rating', 'rate')
-                            ->withCount('tripRatings as number_of_rating');
-                  },
-
-                    // Load the profile of the user who created the trip (just the first and last names)
-                    'trip.user.profile' => function ($query) {
-                        $query->select('user_id', 'first_name', 'last_name'); // Only select `user_id`, `first_name`, and `last_name`
-                    },
-
-                    // Load the roles of the user who made the booking, including the pivot columns
                     'trip.user.image'
                 ])
                 ->when(!empty($filteringData), function ($query) use ($filteringData) {
-                    // Apply filtering criteria if provided (e.g., status, seats_number)
                     $query->filterBy($filteringData);
                 })
-                ->paginate(10); // Fetch data with pagination
+                ->paginate(10);
 
-
+            // Sort bookings by trip start time
             $sortedItems = $bookings->getCollection()->sortBy('trip.trip_start')->values();
             $bookings->setCollection($sortedItems);
 
-
-            // If no bookings found, return an error response
-            if (!$bookings) {
-                return [
-                    'status' => 404,
-                    'message' => [
-                        'errorDetails' => [__('booking.booking_not_found')], // Localization for booking not found message
-                    ],
-                ];
-            }
-
-            // Return a success response with the bookings data
             return [
-                'message' => __('booking.mybookings_retrieved'), // Localization for success message
+                'message' => __('booking.mybookings_retrieved'),
                 'data' => $bookings,
                 'status' => 200,
             ];
         } catch (Exception $e) {
-            // Log any errors that occur
             Log::error('Error in show my booking: ' . $e->getMessage());
 
-            // Return a general error response
             return [
                 'status' => 500,
                 'message' => [
-                    'errorDetails' => [__('booking.general_error')], // Localization for general error message
+                    'errorDetails' => [__('booking.general_error')],
                 ],
             ];
         }
     }
+
 
     /**
      * Retrieve all bookings for a specific trip.
@@ -115,7 +85,7 @@ class BookingService
                 'user.profile' => function ($query) {
                     $query->select('user_id', 'first_name', 'last_name'); // Load profile details
                 }
-            ])->wherr('trip_id',$id)->paginate(10); // Fetch bookings with pagination
+            ])->wherr('trip_id', $id)->paginate(10); // Fetch bookings with pagination
 
             // Return a success response with the bookings data
             return [

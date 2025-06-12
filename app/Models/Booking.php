@@ -77,15 +77,6 @@ class Booking extends Model
         return $this->belongsTo(Trip::class);
     }
 
-    /**
-     * Relationship: Booking has one Rating.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasOne
-     */
-    public function rating(): \Illuminate\Database\Eloquent\Relations\HasOne
-    {
-        return $this->hasOne(Rating::class);
-    }
 
     /**
      * Relationship: Booking belongs to a User.

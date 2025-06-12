@@ -117,17 +117,7 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasMany(Booking::class);
     }
 
-    /**
-     * Define a Has-Many relationship with the Rating model.
-     *
-     * This defines that a user can have many ratings associated with their trips.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    public function ratings()
-    {
-        return $this->hasMany(Rating::class);
-    }
+
 
     /**
      * Many-to-Many relationship with the Trip model via the pivot table (trip_user).
@@ -182,27 +172,51 @@ class User extends Authenticatable implements JWTSubject
     }
 
     /**
-     * Define a HasManyDeep relationship with the Rating model through Trip and Booking models.
+     * Get all ratings **given** by this user.
      *
-     * This allows retrieving ratings for trips booked by this user.
+     * This represents the ratings that the user has submitted for others.
      *
-     * @return \Staudenmeir\EloquentHasManyDeep\HasManyDeep
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function tripRatings()
+    public function givenRatings()
     {
-        return $this->hasManyDeep(
-            Rating::class,
-            [Trip::class, Booking::class], // Intermediate models
-            [
-                'user_id',    // Foreign key on trips table (references users)
-                'trip_id',    // Foreign key on bookings table (references trips)
-                'booking_id'  // Foreign key on ratings table (references bookings)
-            ],
-            [
-                'id',        // Local key on users table
-                'id',        // Local key on trips table
-                'id'         // Local key on bookings table
-            ]
-        );
+        return $this->hasMany(Rating::class, 'user_id');
     }
+
+    /**
+     * Get all ratings **received** by this user.
+     *
+     * These are the ratings others have given to this user.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function receivedRatings()
+    {
+        return $this->hasMany(Rating::class, 'rated_user_id');
+    }
+
+    /**
+     * Calculate and return the **average rating** received by the user.
+     *
+     * If the user has no ratings, the default is 0.
+     *
+     * @return float
+     */
+    public function averageRatings()
+    {
+        return round($this->receivedRatings()->avg('rate') ?? 0, 2);
+    }
+
+    /**
+     * Count the total **number of ratings** received by the user.
+     *
+     * This helps track how many people have rated the user.
+     *
+     * @return int
+     */
+    public function countRatings()
+    {
+        return $this->receivedRatings()->count();
+    }
+
 }

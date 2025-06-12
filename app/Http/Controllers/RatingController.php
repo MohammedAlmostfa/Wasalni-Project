@@ -2,103 +2,94 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Controller;
+use App\Http\Requests\RateRequest\StoreRateData;
+use App\Http\Requests\RateRequest\UpdateRateData;
+use App\Http\Requests\RatingRequest\StoreRatingData;
+use App\Http\Requests\RatingRequest\UpdateRatingData;
 use App\Models\Rating;
-use App\Models\Booking;
-use Illuminate\Http\Request;
 use App\Services\RatingService;
-use App\Http\Requests\RatingRequest\StorRatingRequest;
-use App\Http\Requests\RatingRequest\UpdateRatingRequest;
+use Illuminate\Http\JsonResponse;
 
+
+/**
+ * Class RatingController
+ * 
+ * Manages rating-related HTTP requests, including retrieval, creation, updating, and deletion.
+ */
 class RatingController extends Controller
 {
     /**
-     * The RatingService instance to handle business logic.
+     * RatingService instance to handle business logic.
      *
      * @var RatingService
      */
-    protected $ratingService;
+    private $ratingService;
 
     /**
-     * Constructor to inject the RatingService dependency.
+     * Constructor: Inject the RatingService dependency.
      *
-     * @param RatingService $ratingService
+     * @param RatingService $ratingService Service layer for rating functionality.
      */
     public function __construct(RatingService $ratingService)
     {
         $this->ratingService = $ratingService;
     }
 
+
     /**
-     * Store a newly created rating in storage.
+     * Store a new rating in the database.
      *
-     * This method validates the request, authorizes the user, and creates a new rating.
-     *
-     * @param StorRatingRequest $request The validated request containing rating data.
-     * @return \Illuminate\Http\JsonResponse
+     * @param StoreRateData $request Validated request data for storing a rating.
+     * @return JsonResponse Response indicating success or failure.
      */
-    public function store(StorRatingRequest $request)
+    public function store(StoreRatingData $request)
     {
-        // Validate the request data
-        $validationData = $request->validated();
+        // Validate incoming request data
+        $validatedData = $request->validated();
 
-        // Find the booking associated with the rating
-        $booking = Booking::find($validationData["booking_id"]);
+        // Process storing rating via service layer
+        $result = $this->ratingService->storeRate($validatedData);
 
-        // Authorize the user to create a rating for this booking
-        $this->authorize('createRating', $booking);
-
-        // Create the rating using the RatingService
-        $result = $this->ratingService->createRating($validationData);
-
-        // Return a success or error response based on the result
         return $result['status'] === 200
-            ? self::success($result['data'], $result['message'], $result['status'])
+            ? self::success(null, $result['message'], $result['status'])
             : self::error(null, $result['message'], $result['status']);
     }
 
     /**
-     * Update the specified rating in storage.
+     * Update an existing rating record.
      *
-     * This method validates the request, authorizes the user, and updates the rating.
-     *
-     * @param UpdateRatingRequest $request The validated request containing updated rating data.
-     * @param Rating $rating The rating to be updated.
-     * @return \Illuminate\Http\JsonResponse
+     * @param UpdateRateData $request Validated request data for updating a rating.
+     * @param int $id The ID of the rating to be updated.
+     * @return JsonResponse Response indicating success or failure.
      */
-    public function update(UpdateRatingRequest $request, Rating $rating)
+    public function update(UpdateRatingData $request, $id)
     {
-        // Authorize the user to update the rating
-        $this->authorize('update', $rating);
+        // Validate incoming request data
+        $validatedData = $request->validated();
 
-        // Validate the request data
-        $validationData = $request->validated();
+        // Retrieve the existing rating record
+        $rating = Rating::findOrFail($id);
 
-        // Update the rating using the RatingService
-        $result = $this->ratingService->updateRating($validationData, $rating);
+        // Update the rating via service layer
+        $result = $this->ratingService->updateRate($rating, $validatedData);
 
-        // Return a success or error response based on the result
         return $result['status'] === 200
-            ? self::success($result['data'], $result['message'], $result['status'])
+            ? self::success(null, $result['message'], $result['status'])
             : self::error(null, $result['message'], $result['status']);
     }
 
     /**
-     * Remove the specified rating from storage.
+     * Soft delete a rating record.
      *
-     * This method authorizes the user and deletes the rating.
-     *
-     * @param Rating $rating The rating to be deleted.
-     * @return \Illuminate\Http\JsonResponse
+     * @param Rating $rating The rating model instance to be deleted.
+     * @return JsonResponse Response indicating success or failure.
      */
     public function destroy(Rating $rating)
     {
-        // Authorize the user to delete the rating
-        $this->authorize('delete', $rating);
+        // Perform soft deletion via service layer
+        $result = $this->ratingService->deleteRate($rating);
 
-        // Delete the rating using the RatingService
-        $result = $this->ratingService->deleteRating($rating);
-
-        // Return a success or error response based on the result
         return $result['status'] === 200
             ? self::success(null, $result['message'], $result['status'])
             : self::error(null, $result['message'], $result['status']);
