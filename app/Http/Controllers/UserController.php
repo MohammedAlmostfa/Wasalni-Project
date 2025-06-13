@@ -64,10 +64,10 @@ class UserController extends Controller
      *   - If successful: Returns a JSON response with the profile details and a success message.
      *   - If an error occurs: Returns a JSON response with an error message and status code.
      */
-    public function show(User $user)
+    public function show( $id)
     {
         // Call the UserService to fetch user profile details
-        $result = $this->userService->showUser($user);
+        $result = $this->userService->showUser($id);
 
         // Return a JSON response based on the result status
         return $result['status'] === 200

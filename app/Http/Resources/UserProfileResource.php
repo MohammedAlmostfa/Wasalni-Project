@@ -39,13 +39,14 @@ class UserProfileResource extends JsonResource
             }),
 
             // Ratings mapping
-            'ratings' => $this->tripRatings->map(function ($rating) {
+            // Ratings mapping
+            'ratings' => $this->receivedRatings->map(function ($rating) {
                 return [
                     'id' => $rating->id,
                     'rate' => $rating->rate,
                     'review' => $rating->review,
                     'created_at' => $rating->created_at->format('Y-m-d H:i:s'),
-                    'user_name' => optional($rating->user->profile)->first_name . ' ' . optional($rating->user->profile)->last_name,
+                    'user_name' => optional($rating->reviewer->profile)->first_name . ' ' . optional($rating->reviewer->profile)->last_name,
                 ];
             }),
         ];
